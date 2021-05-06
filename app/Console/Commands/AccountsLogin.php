@@ -1,23 +1,21 @@
 <?php
 
-namespace App\Console\Commands\Accounts;
+namespace App\Console\Commands;
 
 
-use App\Linkedin\Responses\Response;
 use App\Repositories\AccountRepository;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Console\Command;
 use App\Linkedin\Api;
-use Illuminate\Support\Facades\File;
 
-class SyncFriends extends Command
+class AccountsLogin extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'command:SyncFriends {account_id}';
+    protected $signature = 'command:AccountsLogin';
 
     /**
      * The console command description.
@@ -45,11 +43,11 @@ class SyncFriends extends Command
      */
     public function handle(): int
     {
-        $account = (new AccountRepository())->getById($this->argument('account_id'));
 
-        $resp = Api::profile($account->login, $account->password)->getProfileConnections($account->entityUrn);
+        (new AccountRepository())->getAll()->map(function ($account) {
+            Api::auth($account->login, $account->password)->login();
+        });
 
-        File::put(storage_path('a.json'),json_encode($resp));
         return 1;
     }
 

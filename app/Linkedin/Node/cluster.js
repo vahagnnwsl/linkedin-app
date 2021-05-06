@@ -54,17 +54,6 @@ if (cluster.isMaster) {
             }
         };
 
-
-        function getConversationDetails(str) {
-            let arr = str.split(':')
-            let f = arr[3].substring(1, arr[3].length - 1);
-            return f.split(',');
-        }
-
-        function getMessageEntityUrn(str) {
-            return str.split(':')[3];
-        }
-
         var es = new EventSource('https://realtime.www.linkedin.com/realtime/connect', eventSourceInitDict);
 
         let key = 'com.linkedin.realtimefrontend.DecoratedEvent';

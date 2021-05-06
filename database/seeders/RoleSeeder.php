@@ -34,7 +34,6 @@ class RoleSeeder extends Seeder
             'icon' => 'fa fa-users-cog',
         ]);
 
-        User::first()->roles()->sync($adminRole->id);
 
     }
 }

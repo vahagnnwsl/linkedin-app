@@ -1,0 +1,29 @@
+{
+    "reactionSummaries": [],
+    "quickReplies": null,
+    "dashEntityUrn": "urn:li:fsd_message:2-MTYyMDI5ODEyMjc0M2I3MTkwNC0wMDMmZTcwOTYyYmItNTIxMC00MjRhLWExYzgtNWExNzk2YjcwNmYyXzAxMg==",
+    "eventContent": {
+        "messageBodyRenderFormat": "DEFAULT",
+        "body": null,
+        "attributedBody": {
+            "$type": "com.linkedin.pemberly.text.AttributedText",
+            "text": "asdasdas"
+        },
+        "$type": "com.linkedin.voyager.messaging.event.MessageEvent"
+    },
+    "inlineWarning": null,
+    "*from": "urn:li:fs_messagingMember:(2-ZTcwOTYyYmItNTIxMC00MjRhLWExYzgtNWExNzk2YjcwNmYyXzAxMg==,ACoAADUq-E8BciWb5co9zKeNoq7cHDCsjc11kaw)",
+    "originToken": null,
+    "backendUrn": "urn:li:messagingMessage:2-MTYyMDI5ODEyMjc0M2I3MTkwNC0wMDMmZTcwOTYyYmItNTIxMC00MjRhLWExYzgtNWExNzk2YjcwNmYyXzAxMg==",
+    "obfuscatedMessageWarning": null,
+    "expiresAt": null,
+    "$type": "com.linkedin.voyager.messaging.Event",
+    "createdAt": 1620298122876,
+    "quickReplyRecommendations": [],
+    "inlineWarningDismissCTAText": null,
+    "entityUrn": "urn:li:fs_event:(2-ZTcwOTYyYmItNTIxMC00MjRhLWExYzgtNWExNzk2YjcwNmYyXzAxMg==,2-MTYyMDI5ODEyMjc0M2I3MTkwNC0wMDMmZTcwOTYyYmItNTIxMC00MjRhLWExYzgtNWExNzk2YjcwNmYyXzAxMg==)",
+    "subtype": "MEMBER_TO_MEMBER",
+    "previousEventInConversation": "urn:li:fs_event:(2-ZTcwOTYyYmItNTIxMC00MjRhLWExYzgtNWExNzk2YjcwNmYyXzAxMg==,2-MTYyMDI5ODA0NDg1NGIyNDcxOC0wMDMmZTcwOTYyYmItNTIxMC00MjRhLWExYzgtNWExNzk2YjcwNmYyXzAxMg==)",
+    "reportSpamCTAText": null,
+    "viewObfuscatedMessageCTAText": null
+}

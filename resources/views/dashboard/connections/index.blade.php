@@ -24,7 +24,7 @@
         <div class="container-fluid">
             <div class="card">
                 @include('dashboard.connections.filter')
-                <send-connection-requestdiv class="card-body p-0" style="display: block;">
+                <div class="card-body p-0" style="display: block;">
                     <table class="table table-striped projects">
                         <thead>
                         <tr>
@@ -109,7 +109,7 @@
                         </tbody>
                     </table>
 
-                </send-connection-requestdiv>
+                </div>
 
                 {!! $connections->appends($_GET)->links('vendor.pagination') !!}
 

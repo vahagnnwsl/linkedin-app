@@ -108,9 +108,9 @@ abstract class Repository
                     return $subQuery->whereIn('keys.id', $requestData['keys_ids']);
                 });
             })->when(count($userKeysIdes), function ($q) use ($userKeysIdes) {
-                return $q->whereHas('keys', function ($subQuery) use ($userKeysIdes) {
-                    return $subQuery->whereIn('keys.id', $userKeysIdes);
-                });
+//                return $q->whereHas('keys', function ($subQuery) use ($userKeysIdes) {
+//                    return $subQuery->whereIn('keys.id', $userKeysIdes);
+//                });
             })
             ->orderbyDesc('created_at')->paginate(20);
     }

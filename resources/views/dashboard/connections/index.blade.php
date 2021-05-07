@@ -24,8 +24,8 @@
         <div class="container-fluid">
             <div class="card">
                 @include('dashboard.connections.filter')
-                <div class="card-body p-0" style="display: block;">
-                    <table class="table table-striped projects">
+                <div class="card-body p-0" >
+                    <table class="table table-striped ">
                         <thead>
                         <tr>
                             <th style="width: 1%">

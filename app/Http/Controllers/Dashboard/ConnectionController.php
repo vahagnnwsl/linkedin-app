@@ -54,7 +54,7 @@ class ConnectionController extends Controller
         $enableKeysIdes = Auth::user()->keys()->pluck('id')->toArray();
         $accounts = $this->accountRepository->selectForSelect2('full_name');
         $keys = $this->keyRepository->selectForSelect2('name',$enableKeysIdes);
-        $connections = $this->connectionRepository->filter($request->all(),$enableKeysIdes);
+        $connections = $this->connectionRepository->filter($request->all(),[]);
 
         return view('dashboard.connections.index', compact('connections', 'filterAttributes', 'keys', 'accounts'));
     }

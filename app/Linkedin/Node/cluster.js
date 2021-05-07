@@ -1,13 +1,14 @@
 const cluster = require('cluster');
-const fs = require('fs'),
-    path = require('path'),
-    {fork} = require("child_process"),
-    axios = require('axios'),
-    EventSource = require('eventsource');
+const fs = require('fs');
+const axios = require('axios');
+const EventSource = require('eventsource');
 
 
-let strUsers = fs.readFileSync('./storage/linkedin/linkedin_users.json'),
-    users = JSON.parse(strUsers);
+let strUsers = fs.readFileSync('./storage/linkedin/linkedin_users.json');
+let users = JSON.parse(strUsers);
+
+
+
 require('dotenv').config()
 
 if (cluster.isMaster) {
@@ -36,6 +37,7 @@ if (cluster.isMaster) {
 
         let strCookie = fs.readFileSync('./storage/linkedin/cookies/' + msg.data.login + '.json');
         let cookies = JSON.parse(strCookie);
+        let key = 'com.linkedin.realtimefrontend.DecoratedEvent';
 
         let eventSourceInitDict = {
             headers: {
@@ -55,8 +57,6 @@ if (cluster.isMaster) {
         };
 
         var es = new EventSource('https://realtime.www.linkedin.com/realtime/connect', eventSourceInitDict);
-
-        let key = 'com.linkedin.realtimefrontend.DecoratedEvent';
 
         es.onmessage = result => {
 
@@ -79,9 +79,8 @@ if (cluster.isMaster) {
                             }).then((response) => {
                                 console.log(response.data)
                             }).catch((e) => {
-                                console.log(e.response.data.message)
+                                console.log(e.response)
                             })
-
                         }
                     }
                 }

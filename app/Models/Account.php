@@ -20,6 +20,7 @@ class Account extends Model
         'password',
         'login',
         'full_name',
+        'lastActivityAt'
     ];
 
 
@@ -38,7 +39,6 @@ class Account extends Model
     {
         return $this->belongsToMany(Connection::class, 'account_connections', 'account_id', 'connection_id');
     }
-
 
     /**
      * @return HasMany

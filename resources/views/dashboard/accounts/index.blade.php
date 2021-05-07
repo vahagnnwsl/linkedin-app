@@ -44,7 +44,9 @@
                             <th>
                                 Users
                             </th>
-
+                            <th>
+                                LastActivityAt
+                            </th>
                             <th style="width: 20%">
                             </th>
                         </tr>
@@ -75,6 +77,7 @@
                                      <a href="{{route('users.edit',$user->id)}}">{{$user->full_name}}</a>
                                     @endforeach
                                 </td>
+                                <td>{{$account->lastActivityAt}}</td>
                                 <td class="project-actions text-right">
                                     @can('accounts')
 

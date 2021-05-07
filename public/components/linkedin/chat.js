@@ -271,6 +271,7 @@ Vue.component('linkedin-chat', {
                 this.messages.push(response.data.message);
                 this.mapConversationAndSetLastActivityAt(response.data.message.conversation_id,response.data.message.date);
                 this.sortConversations();
+                this.form.message = ''
             }).catch(() => {
                 toastr.error('Something went wrong');
             })

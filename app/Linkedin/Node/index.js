@@ -2,6 +2,7 @@ const key = 'com.linkedin.realtimefrontend.DecoratedEvent';
 const EventSource = require('eventsource');
 const axios = require('axios');
 const cookie = JSON.parse(process.env.COOKIE);
+const fs = require('fs');
 
 const eventSourceInitDict = {
     headers: {
@@ -22,9 +23,6 @@ const eventSourceInitDict = {
 var es = new EventSource('https://realtime.www.linkedin.com/realtime/connect', eventSourceInitDict);
 
 es.onmessage = result => {
-
-    console.log(result)
-
     const data = JSON.parse(result.data);
 
     if (data.hasOwnProperty(key)) {
@@ -38,18 +36,24 @@ es.onmessage = result => {
                 let payload = eventContent.payload;
 
                 if (payload.included.length) {
-                    axios.post(msg.url + `/api/conversations`, {
+                    axios.post(`${process.env.APP_URL}/api/conversations`, {
                         payload: payload,
-                        login: msg.data.login
+                        login: process.env.ACCOUNT_LOGIN
                     })
                 }
             }
         }
     }
+
+
 };
 
 es.onerror = err => {
     console.log('EventSource error: ', err);
 };
 
+
+setInterval(function (){
+    axios.put(`${process.env.APP_URL}/api/accounts/${process.env.ACCOUNT_ID}`)
+},300000)
 

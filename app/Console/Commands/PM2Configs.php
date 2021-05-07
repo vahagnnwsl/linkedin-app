@@ -63,7 +63,9 @@ class PM2Configs extends Command
                     'max_memory_restart' => '200M',
                     'env' => [
                         'COOKIE' => json_decode(File::get(storage_path('linkedin/cookies/' . $account->login . '.json'))),
-                        'LOGIN' => $account->login
+                        'ACCOUNT_LOGIN' => $account->login,
+                        'ACCOUNT_ID' => $account->id,
+                        'APP_URL' => env('APP_URL')
                     ],
                 ]
             );

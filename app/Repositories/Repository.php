@@ -83,9 +83,11 @@ abstract class Repository
     /**
      * @param array $requestData
      * @param array $userKeysIdes
+     * @param string $orderBy
+     * @param string $direction
      * @return mixed
      */
-    public function filter(array $requestData, array $userKeysIdes = [])
+    public function filter(array $requestData, array $userKeysIdes = [], string $orderBy = 'created_at', string $direction = 'desc')
     {
 
         return $this->model()::when(isset($requestData['key']), function ($q) use ($requestData) {
@@ -96,7 +98,7 @@ abstract class Repository
                     ->orWhere('occupation', 'LIKE', "%" . $requestData['key'] . "%");
             }
 
-            return $q->where('name', 'LIKE', "%" . $requestData['name'] . "%");
+            return $q->where('name', 'LIKE', "%" . $requestData['key'] . "%");
         })
             ->when(isset($requestData['accounts_ids']) && count($requestData['accounts_ids']), function ($q) use ($requestData) {
                 return $q->whereHas('accounts', function ($subQuery) use ($requestData) {
@@ -112,7 +114,7 @@ abstract class Repository
 //                    return $subQuery->whereIn('keys.id', $userKeysIdes);
 //                });
             })
-            ->orderbyDesc('created_at')->paginate(20);
+            ->orderby($orderBy, $direction)->paginate(20);
     }
 
     /**

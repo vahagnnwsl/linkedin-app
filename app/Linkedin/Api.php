@@ -3,6 +3,7 @@
 namespace App\Linkedin;
 
 use App\Linkedin\Repositories\Auth;
+use App\Linkedin\Repositories\Company;
 use App\Linkedin\Repositories\Conversation;
 use App\Linkedin\Repositories\Invitation;
 use App\Linkedin\Repositories\Profile;
@@ -48,6 +49,17 @@ class Api
     public static function invitation(string $login, string $password): Invitation
     {
         return (new Invitation())->setCredentials($login, $password);
+    }
+
+
+    /**
+     * @param string $login
+     * @param string $password
+     * @return Company
+     */
+    public static function company(string $login, string $password): Company
+    {
+        return (new Company())->setCredentials($login, $password);
     }
 
 }

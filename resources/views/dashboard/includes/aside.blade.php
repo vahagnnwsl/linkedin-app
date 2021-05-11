@@ -103,10 +103,26 @@
                 </li>
 
                 <li class="nav-item">
+                    <a href="{{route('companies.index')}}"
+                       class="nav-link {{request()->is('dashboard/companies*') ?'active':''}}">
+                        <i class=" fas fa-user-alt nav-icon"></i>
+                        <p>Companies</p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
                     <a href="{{route('linkedin.chat')}}"
                        class="nav-link {{request()->is('dashboard/linkedin/chat') ?'active':''}}">
                         <i class="nav-icon fab fa-linkedin mr-2"></i>
                         <p>Chat</p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="{{route('search.index')}}"
+                       class="nav-link {{request()->is('dashboard/search/linkedin') ?'active':''}}">
+                        <i class="nav-icon fab fa-linkedin mr-2"></i>
+                        <p>Search</p>
                     </a>
                 </li>
 

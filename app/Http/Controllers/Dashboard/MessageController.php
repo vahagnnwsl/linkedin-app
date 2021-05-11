@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\KeyRequest;
 use App\Http\Resources\MessageResource;
-use App\Jobs\LinkedinSearchByKey;
+use App\Jobs\SearchByKeyAndCompany;
 use App\Linkedin\Api;
 use App\Linkedin\Responses\Response;
 use App\Repositories\ConversationRepository;

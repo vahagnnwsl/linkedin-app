@@ -3,11 +3,10 @@
 namespace App\Console\Commands;
 
 
-use App\Http\Repositories\LinkedinConversationRepository;
-use App\Http\Repositories\LinkedinMessageRepository;
-use App\Http\Repositories\UserRepository;
 use App\Linkedin\Helper;
+use App\Linkedin\Responses\Company;
 use App\Linkedin\Responses\Response;
+use App\Models\Account;
 use App\Models\Connection;
 use App\Repositories\AccountRepository;
 use Carbon\Carbon;
@@ -46,13 +45,11 @@ class TestCommand extends Command
      */
     public function handle()
     {
+        $account = Account::where('login','ghukasyan.05@gmail.com')->first();
+        $result = Response::profiles((array)Api::profile($account->login, $account->password)->searchPeople('react',0,3189499));
 
-        $data =json_decode( json_decode(File::get(storage_path('l.json')))->message);
+        File::put(storage_path('a.json'),json_encode($result));
 
-        dd($data);
-
-
-
-
+        dd(12);
     }
 }

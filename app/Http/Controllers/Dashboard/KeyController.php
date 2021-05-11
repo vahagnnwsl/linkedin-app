@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\KeyRequest;
-use App\Jobs\LinkedinSearchByKey;
+use App\Jobs\SearchByKeyAndCompany;
 use App\Repositories\KeyRepository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -65,9 +65,11 @@ class KeyController extends Controller
     {
 
 
+
+
         $account = Auth::user()->account;
 
-        LinkedinSearchByKey::dispatch($id,$account->id);
+        SearchByKeyAndCompany::dispatch($id,$account->id);
 
         $this->putFlashMessage(true,'Your request on process');
 

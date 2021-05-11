@@ -312,7 +312,6 @@ class Response
 
         return [
             'success' => false
-
         ];
     }
 

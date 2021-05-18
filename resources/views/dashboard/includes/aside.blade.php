@@ -57,7 +57,13 @@
                         </a>
                     </li>
                 @endcan
-
+                <li class="nav-item">
+                    <a href="{{route('countries.index')}}"
+                       class="nav-link {{request()->is('dashboard/countries*') ?'active':''}}">
+                        <i class=" fas fa-key nav-icon"></i>
+                        <p>Countries</p>
+                    </a>
+                </li>
 
 
             @can('users')

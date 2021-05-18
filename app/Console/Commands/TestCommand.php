@@ -45,11 +45,15 @@ class TestCommand extends Command
      */
     public function handle()
     {
-        $account = Account::where('login','ghukasyan.05@gmail.com')->first();
-        $result = Response::profiles((array)Api::profile($account->login, $account->password)->searchPeople('react',0,3189499));
-
-        File::put(storage_path('a.json'),json_encode($result));
-
-        dd(12);
+//        $account = Account::where('login','ghukasyan.05@gmail.com')->first();
+//        $res =  Api::profile($account->login, $account->password)->searchPeople('react') ;
+//
+//        $included = $res['data']->included;
+//        $models = collect($included)->groupBy('$type');
+//
+//        File::put(storage_path('d.json'), json_encode($models));
+//
+//
+//        dd(12);
     }
 }

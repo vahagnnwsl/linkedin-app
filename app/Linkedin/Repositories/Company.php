@@ -41,4 +41,17 @@ class Company extends Repository
 
         return $this->client->setHeaders($this->login)->get(Constants::API_URL . '/typeahead/hitsV2', $query_params);
     }
+
+    /**
+     * @param string $country_id
+     * @param int $start
+     * @return array
+     */
+    public function get(string $country_id,int $start = 0): array
+    {
+        $query ="decorationId=com.linkedin.voyager.dash.deco.search.SearchClusterCollection-103&origin=FACETED_SEARCH&q=all&query=(flagshipSearchIntent:SEARCH_SRP,queryParameters:(industry:List(96,4,68,80),companyHqGeo:List(".$country_id."),resultType:List(COMPANIES)),includeFiltersInResponse:false)&start=".$start;
+
+        return $this->client->setHeaders($this->login)->get(Constants::API_URL . '/search/dash/clusters?'.$query);
+    }
+
 }

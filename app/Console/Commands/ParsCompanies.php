@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Linkedin\Helper;
 use App\Repositories\CompanyRepository;
 use App\Repositories\ConnectionRepository;
 use Illuminate\Console\Command;
@@ -43,21 +44,22 @@ class ParsCompanies extends Command
 
         $connections = (new ConnectionRepository())->getAll();
 
-        $connections->map(function ($item) use ($companyRepository) {
 
-            $company_name = explode(' at ', $item->occupation);
+         $array = [];
 
-            if (count($company_name) > 1) {
-                $companyRepository->updateOrCreate(['name' => $company_name[1]], ['name' => $company_name[1]]);
-            } else {
-                $company_name = explode('-', $item->occupation);
-                if (count($company_name) > 1) {
-                    $companyRepository->updateOrCreate(['name' => $company_name[1]], ['name' => $company_name[1]]);
-                }
+        foreach ($connections as $connection) {
+            $chunks = preg_split('/(at|-|–)/', $connection->occupation,-1, PREG_SPLIT_NO_EMPTY);
+
+            if (count($chunks)>1){
+                $companyName  = trim($chunks[count($chunks)-1]);
+                $companyRepository->updateOrCreate(['name'=>$companyName],['name'=>$companyName]);
             }
 
-        });
+        }
 
+
+
+        dd($array);
         return 1;
     }
 

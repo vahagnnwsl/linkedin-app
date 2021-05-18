@@ -5,7 +5,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Search keys</h1>
+                    <h1>Countries</h1>
                 </div>
 
             </div>
@@ -15,16 +15,10 @@
         <div class="container-fluid">
             <div class="card">
                 <div class="card-header p-2">
-                    @can('keys')
-                        <a class="btn btn-success btn-md float-right"  data-toggle="modal" data-target="#createKeyModal">
-                            <i class="fas fa-plus"></i>
-                            Add
-                        </a>
-                        <a class="btn btn-primary btn-md float-right mr-1"  data-toggle="modal" data-target="#myModal">
-                            <i class="fas fa-search"></i>
-                            Search
-                        </a>
-                    @endcan
+                    <a class="btn btn-success btn-md float-right"  data-toggle="modal" data-target="#createKeyModal">
+                        <i class="fas fa-plus"></i>
+                        Add
+                    </a>
                 </div>
                 <div class="card-body p-2">
                     <div class="table-responsive mailbox-messages">
@@ -39,23 +33,39 @@
                                 </th>
 
                                 <th>
-                                    Created At
+                                    EntityUrn
                                 </th>
+                                <th>
 
+                                </th>
                             </tr>
                             </thead>
                             <tbody>
-                            @foreach($keys as $key)
+                            @foreach($countries as $country)
                                 <tr>
                                     <td>
                                         #
                                     </td>
                                     <td>
-                                        {{$key->name}}
+                                        {{$country->name}}
                                     </td>
 
                                     <td>
-                                        {{$key->created_at->format('Y-m-d')}}
+                                        {{$country->entityUrn}}
+                                    </td>
+                                    <td class="float-right">
+                                        <form method="POST"
+                                              action="{{ route('countries.destroy',  $country->id) }}"
+                                              accept-charset="UTF-8"
+                                              style="display:inline">
+                                            {{ method_field('DELETE') }}
+                                            {{ csrf_field() }}
+                                            <button type="submit" class="btn btn-danger btn-sm"
+                                                    title="Delete Permission"
+                                                    onclick="return confirm(&quot;Confirm delete?&quot;)">
+                                                <i class="fas fa-trash"> </i>
+                                            </button>
+                                        </form>
                                     </td>
 
                                 </tr>
@@ -63,7 +73,7 @@
                             </tbody>
                         </table>
                     </div>
-                    {!! $keys->links('vendor.pagination') !!}
+                    {!! $countries->links('vendor.pagination') !!}
 
                 </div>
             </div>
@@ -76,19 +86,22 @@
                 <div class="modal-body">
                     <div class="card card-info">
                         <div class="card-header">
-                            <h3 class="card-title">Create search key</h3>
+                            <h3 class="card-title">Create country</h3>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">×</span>
                             </button>
                         </div>
                         <div class="card-body">
-                            <form method="post" action="{{route('keys.store')}}">
+                            <form method="post" action="{{route('countries.store')}}">
                                 @csrf
                                 <input name="name"  data-vv-as="Name"
                                        class="form-control"
-                                       type="text" placeholder="Type key">
+                                       type="text" placeholder="Type name">
 
-
+                                <br/>
+                                <input name="entityUrn"  data-vv-as="entityUrn"
+                                       class="form-control"
+                                       type="text" placeholder="Type entityUrn">
                                 <br/>
                                 <div class="btn-group float-right">
                                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -99,49 +112,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal" id="myModal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-
-                <!-- Modal Header -->
-                <div class="modal-header">
-                    <h4 class="modal-title">Get companies</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-
-                <!-- Modal body -->
-                <div class="modal-body">
-
-                    <form method="GET" action="{{route('keys.search')}}">
-                        <div class="form-group">
-                            <select class="form-control" name="key_id">
-                                @foreach($keys as $key)
-                                    <option value="{{$key->id}}">{{$key->name}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <select class="form-control" name="country_id">
-                                @foreach($countries as $country)
-                                    <option value="{{$country->id}}">{{$country->name}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="form-group text-right">
-                            <button class="btn btn-secondary">Search</button>
-                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-
-                        </div>
-
-                    </form>
-
-                </div>
-
-
-
             </div>
         </div>
     </div>

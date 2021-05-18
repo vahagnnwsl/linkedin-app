@@ -15,21 +15,19 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\File;
 
-class SearchByKeyAndCompany implements ShouldQueue
+class LinkedinSearchByKeyAndCountryAndCompany implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    protected $account;
+    protected $country;
+    protected $company;
     protected $key;
 
-    protected $company;
-
-    protected $country;
-
-    protected $account;
-
     /**
-     * SearchByKeyAndCompany constructor.
+     * LinkedinSearchByKeyAndCountryAndCompany constructor.
      * @param int $account_id
      * @param int $country_id
      * @param int $company_id
@@ -37,26 +35,24 @@ class SearchByKeyAndCompany implements ShouldQueue
      */
     public function __construct(int $account_id, int $country_id, int $company_id, int $key_id)
     {
-        $this->key = (new KeyRepository())->getById($key_id);
+        $this->account = (new AccountRepository())->getById($account_id);
         $this->country = (new CountryRepository())->getById($country_id);
         $this->company = (new CompanyRepository())->getById($company_id);
-        $this->account = (new AccountRepository())->getById($account_id);
+        $this->key = (new KeyRepository())->getById($key_id);
 
     }
 
 
     public function searchPeople($account, $country, $company, $key, int $start = 0)
     {
+        $result = (new Profile_2((array)Api::profile($account->login, $account->password)->searchPeopleByCompanyIdAndKeyAndCountry($country->entityUrn, $company->entityUrn, $key->name, $start)))();
 
-        $result = (new Profile_2((array)Api::profile($account->login, $account->password)->searchPeopleByCompanyIdAndKey($country->entityUrn, $company->entityUrn, $key->name, $start)))();
 
         if ($result['success']) {
-            (new ConnectionRepository())->updateOrCreateSelfAndConversationThoughCollection((array)$result['data'], $account->id, false, true, $key->id,true);
+            (new ConnectionRepository())->updateOrCreateSelfAndConversationThoughCollection((array)$result['data'], $account->id, false, true, $key->id, true);
             $start += 10;
             sleep(5);
             $this->searchPeople($account, $country, $company, $key, $start);
-
-
         }
     }
 
@@ -68,7 +64,6 @@ class SearchByKeyAndCompany implements ShouldQueue
      */
     public function handle()
     {
-
         $this->searchPeople($this->account, $this->country, $this->company, $this->key, 0);
     }
 }

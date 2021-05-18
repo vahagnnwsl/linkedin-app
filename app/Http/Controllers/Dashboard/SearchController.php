@@ -9,6 +9,7 @@ use App\Jobs\SyncLastMessagesForOneAccount;
 use App\Linkedin\Api;
 use App\Linkedin\Responses\Profile_2;
 use App\Repositories\CompanyRepository;
+use App\Repositories\CountryRepository;
 use App\Repositories\KeyRepository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -32,42 +33,52 @@ class SearchController extends Controller
      */
     protected $companyRepository;
 
+    /**
+     * @var CountryRepository
+     */
+    protected $countryRepository;
+
 
     /**
      * SearchController constructor.
      * @param KeyRepository $keyRepository
      * @param CompanyRepository $companyRepository
      */
-    public function __construct(KeyRepository $keyRepository, CompanyRepository $companyRepository)
+    public function __construct(KeyRepository $keyRepository, CompanyRepository $companyRepository, CountryRepository $countryRepository)
     {
         $this->keyRepository = $keyRepository;
         $this->companyRepository = $companyRepository;
+        $this->countryRepository = $countryRepository;
     }
 
-
+    /**
+     * @return Application|Factory|View
+     */
     public function index()
     {
 
         $keys = $this->keyRepository->getAll();
-        $companies = $this->companyRepository->getFiled();
+        $companies = $this->companyRepository->getParsed();
+        $countries = $this->countryRepository->getAll();
 
-        return view('dashboard.search.index', compact('keys', 'companies'));
+        return view('dashboard.search.index', compact('keys', 'companies', 'countries'));
     }
 
 
     /**
      * @param Request $request
-     * @return JsonResponse
+     * @return RedirectResponse
      */
-    public function linkedin(Request $request): JsonResponse
+    public function linkedin(Request $request)
     {
+
         $account = Auth::user()->account;
 
-        SearchByKeyAndCompany::dispatch($request->get('key_id'),$request->get('company_id'),$account->id);
+        SearchByKeyAndCompany::dispatch( $account->id,$request->get('country_id'), $request->get('company_id'),$request->get('key_id'));
 
         $this->putFlashMessage(true, 'Request in process');
 
-        return response()->json([]);
+        return redirect()->back();
     }
 
 }

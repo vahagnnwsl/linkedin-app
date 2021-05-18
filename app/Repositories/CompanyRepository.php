@@ -7,6 +7,10 @@ use App\Models\Company;
 
 class CompanyRepository extends Repository
 {
+    public static $NO_PARSED_STATUS = 0;
+    public static $PARSED_SUCCESS_STATUS = 1;
+    public static $PARSED_FAILED_STATUS = 2;
+
     public function model(): string
     {
         return Company::class;
@@ -15,8 +19,26 @@ class CompanyRepository extends Repository
     /**
      * @return mixed
      */
-    public function getFiled()
+    public function getParsed()
     {
-        return $this->model()::whereNotNull('entityUrn')->get();
+        return $this->model()::where('is_parsed', self::$PARSED_SUCCESS_STATUS)->get();
     }
+
+    /**
+     * @return mixed
+     */
+    public function getNotFiled()
+    {
+        return $this->model()::whereNull('entityUrn')->get();
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public function getNoParsed()
+    {
+        return $this->model()::where('is_parsed', self::$NO_PARSED_STATUS)->get();
+    }
+
 }

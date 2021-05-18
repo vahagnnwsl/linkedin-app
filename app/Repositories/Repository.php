@@ -45,10 +45,11 @@ abstract class Repository
     /**
      * @param int $id
      * @param array $data
+     * @return mixed
      */
     public function update(int $id, array $data)
     {
-        $this->model()::whereId($id)->update($data);
+      return  $this->model()::whereId($id)->update($data);
     }
 
     /**
@@ -70,6 +71,14 @@ abstract class Repository
         return $this->model()::paginate($limit);
     }
 
+    /**
+     * @param int $id
+     * @return mixed
+     */
+    public function delete(int $id)
+    {
+        return $this->model()::destroy($id);
+    }
 
     /**
      * @return mixed

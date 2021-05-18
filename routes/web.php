@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 
 
 
+//dd(\App\Models\Company::whereIn('id',[1942,1945])->get());
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -16,6 +17,8 @@ use Illuminate\Support\Facades\Auth;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+
 Auth::routes(['register' => false]);
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
@@ -43,7 +46,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
     Route::group(['prefix' => 'keys'], function () {
         Route::get('/', [App\Http\Controllers\Dashboard\KeyController::class, 'index'])->name('keys.index')->middleware('permission:keys');
         Route::post('/store', [App\Http\Controllers\Dashboard\KeyController::class, 'store'])->name('keys.store')->middleware('permission:keys');
-        Route::get('/search/{id}', [App\Http\Controllers\Dashboard\KeyController::class, 'search'])->name('keys.search')->middleware('permission:keys');
+        Route::get('/search', [App\Http\Controllers\Dashboard\KeyController::class, 'search'])->name('keys.search')->middleware('permission:keys');
 
     });
 
@@ -72,10 +75,13 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
         Route::get('/', [App\Http\Controllers\Dashboard\ConnectionRequestController::class, 'index'])->name('connectionRequest.index');
     });
 
+    Route::group(['prefix' => 'jobs'], function () {
+        Route::get('/', [App\Http\Controllers\Dashboard\JobController::class, 'index'])->name('jobs.index');
+    });
 
     Route::group(['prefix' => 'companies'], function () {
         Route::get('/', [App\Http\Controllers\Dashboard\CompanyController::class, 'index'])->name('companies.index');
-        Route::get('/getInfo', [App\Http\Controllers\Dashboard\CompanyController::class, 'getInfo'])->name('companies.getInfo');
+        Route::get('/sync', [App\Http\Controllers\Dashboard\CompanyController::class, 'sync'])->name('companies.sync');
         Route::get('/{id}/connections', [App\Http\Controllers\Dashboard\CompanyController::class, 'getConnections'])->name('companies.connections');
     });
 
@@ -97,7 +103,14 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
     Route::group(['prefix' => 'search'], function () {
 
         Route::get('',[App\Http\Controllers\Dashboard\SearchController::class, 'index'])->name('search.index');
-        Route::get('/linkedin',[App\Http\Controllers\Dashboard\SearchController::class, 'linkedin']);
+        Route::post('/linkedin',[App\Http\Controllers\Dashboard\SearchController::class, 'linkedin'])->name('search.linkedin');;
+    });
+
+    Route::group(['prefix' => 'countries'], function () {
+
+        Route::get('',[App\Http\Controllers\Dashboard\CountryController::class, 'index'])->name('countries.index');
+        Route::post('/store',[App\Http\Controllers\Dashboard\CountryController::class, 'store'])->name('countries.store');
+        Route::delete('/{id}}',[App\Http\Controllers\Dashboard\CountryController::class, 'destroy'])->name('countries.destroy');
     });
 
     Route::group(['prefix' => 'linkedin'], function () {

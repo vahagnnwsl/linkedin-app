@@ -29,7 +29,6 @@ class Profile_2
 
     public function __invoke(): array
     {
-        File::put(storage_path('a.json'), json_encode($this->data));
 
         if ($this->data['success'] && isset($this->data['data']) && count($this->data['data']->included)) {
 

@@ -111,7 +111,6 @@ class Profiles
             return empty($item);
         })->toArray();
 
-//        File::put(storage_path('test/' . time() . '.json'), json_encode($result));
 
         return [
             'success' => true,

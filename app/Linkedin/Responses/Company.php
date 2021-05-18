@@ -17,6 +17,8 @@ class Company
 
     protected $data;
 
+    protected $miniCompany = 'com.linkedin.voyager.entities.shared.MiniCompany';
+
     public function __construct(array $data)
     {
         $this->data = $data;
@@ -28,22 +30,32 @@ class Company
 
         if ($this->data['success'] && isset($this->data['data']) && count($this->data['data']->included)) {
 
-            $resp = $this->data['data']->included[0];
+            $included = $this->data['data']->included;
 
-            $company = [
-                "entityUrn" => explode(':', $resp->entityUrn)[3],
-                "name" => $resp->name,
-            ];
+            $models = collect($included)->groupBy('$type')[$this->miniCompany];
 
-            if (isset($resp->logo) && isset($resp->logo->artifacts)) {
-                $company['image'] = $resp->logo->rootUrl . $resp->logo->artifacts[0]->fileIdentifyingUrlPathSegment;
+            $companies = $models->map(function ($item) {
+                $company = [
+                    "name" => $item->name,
+                    "entityUrn" => explode(':', $item->entityUrn)[3],
+                ];
 
-            }
+                try {
+
+                    $company['image'] = $item->logo->rootUrl . $item->logo->artifacts[0]->fileIdentifyingUrlPathSegment;
+
+                } catch (\Exception $exception) {
+                    $company['image'] = Constants::DEFAULT_AVATAR;
+                }
+                return $company;
+            });
 
             return [
                 'success' => true,
-                'data' => $company
+                'paging' => $this->data['data']->data->paging,
+                'data' => $companies
             ];
+
         }
 
         return [

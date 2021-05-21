@@ -53,6 +53,7 @@ class SyncAccountConnectionsJob implements ShouldQueue
      */
     public function handle()
     {
+
         $this->connectionService->getAccountConnections($this->account, $this->proxy);
     }
 }

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateKeysTable extends Migration
+class CreateProxiesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,14 @@ class CreateKeysTable extends Migration
      */
     public function up()
     {
-        Schema::create('keys', function (Blueprint $table) {
+        Schema::create('proxies', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->unsignedBigInteger('country_id')->nullable();
-            $table->foreign('country_id')->references('id')->on('countries')->onDelete('cascade');
-            $table->tinyInteger('status')->default(1);
+            $table->string('ip');
+            $table->string('port');
+            $table->string('login');
+            $table->string('password');
+            $table->string('country');
+            $table->string('type');
             $table->timestamps();
         });
     }
@@ -30,6 +32,6 @@ class CreateKeysTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('keys');
+        Schema::dropIfExists('proxies');
     }
 }

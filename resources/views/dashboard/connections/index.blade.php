@@ -28,32 +28,28 @@
                     <table class="table table-striped ">
                         <thead>
                         <tr>
-                            <th style="width: 1%">
+                            <th>
                                 #
                             </th>
-                            <th style="width: 5%">
+                            <th >
                                 Avatar
                             </th>
-                            <th style="width: 20%">
+                            <th >
                                 Full name
                             </th>
 
-                            <th style="width: 20%">
-                                Public identifier
-                            </th>
-                            <th style="width: 25%">
+
+                            <th >
                                 Occupation
                             </th>
 
-                            @can('accounts')
-                            <th style="width: 15%">
+                            <th >
                                 Accounts
                             </th>
-                            @endcan
-                            <th style="width: 15%;" class="text-center">
+                            <th >
                                 Keys
                             </th>
-                            <th style="width: 15%">
+                            <th >
                                  Actions
                             </th>
                         </tr>
@@ -62,7 +58,7 @@
                         @foreach($connections as $connection)
                             <tr>
                                 <td>
-                                    #
+                                    {{$connection->id}}
                                 </td>
                                 <td>
                                     <img class="table-avatar" src="{{$connection->image}}"
@@ -71,9 +67,7 @@
                                 <td>
                                     {{$connection->fullName}}
                                 </td>
-                                <td>
-                                    {{$connection->publicIdentifier}}
-                                </td>
+
                                 <td>
                                     {{$connection->occupation}}
                                 </td>
@@ -84,8 +78,8 @@
                                     @endforeach
                                 </td>
                                 @endcan
-                                <th style="width: 20%">
-                                <td class="text-center">
+
+                                <td >
                                     @foreach($connection->keys as $key)
                                         <span class="badge badge-secondary">#{{$key->name}}</span>
                                     @endforeach

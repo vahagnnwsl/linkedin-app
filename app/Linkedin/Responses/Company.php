@@ -36,8 +36,7 @@ class Company
 
             $companies = $models->map(function ($item) {
                 $company = [
-                    "name" => $item->name,
-                    "entityUrn" => explode(':', $item->entityUrn)[3],
+                    "entityUrn" => explode(':', $item->entityUrn)[3]
                 ];
 
                 try {

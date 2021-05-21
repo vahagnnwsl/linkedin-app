@@ -18,6 +18,8 @@ class CreateCompaniesTable extends Migration
             $table->string('entityUrn')->nullable();
             $table->string('name')->nullable();
             $table->string('image')->nullable();
+            $table->tinyInteger('is_parsed')->default(0);
+
             $table->timestamps();
         });
     }

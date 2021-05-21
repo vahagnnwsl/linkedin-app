@@ -5,17 +5,20 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AccountRequest;
 use App\Http\Resources\Collections\ConversationCollection;
-use App\Jobs\SyncConnectionsForOneAccount;
-use App\Jobs\SyncConversationsForOneAccount;
+use App\Jobs\GetAccountConversations;
+use App\Jobs\SyncAccountConnectionsJob;
+use App\Jobs\SyncAccountConversations;
 use App\Repositories\AccountRepository;
 use App\Repositories\ConversationRepository;
 use App\Repositories\MessageRepository;
+use App\Repositories\ProxyRepository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 
 class AccountController extends Controller
@@ -27,19 +30,23 @@ class AccountController extends Controller
 
     protected $messageRepository;
 
+    protected $proxyRepository;
+
 
     /**
      * AccountController constructor.
      * @param AccountRepository $accountRepository
      * @param ConversationRepository $conversationRepository
      * @param MessageRepository $messageRepository
+     * @param ProxyRepository $proxyRepository
      */
 
-    public function __construct(AccountRepository $accountRepository, ConversationRepository $conversationRepository, MessageRepository $messageRepository)
+    public function __construct(AccountRepository $accountRepository, ConversationRepository $conversationRepository, MessageRepository $messageRepository,ProxyRepository $proxyRepository)
     {
         $this->accountRepository = $accountRepository;
         $this->conversationRepository = $conversationRepository;
         $this->messageRepository = $messageRepository;
+        $this->proxyRepository = $proxyRepository;
     }
 
     /**
@@ -110,8 +117,9 @@ class AccountController extends Controller
      */
     public function syncConversations($id): RedirectResponse
     {
-
-        SyncConversationsForOneAccount::dispatch($id);
+        $account = $this->accountRepository->getById($id);
+        $proxy = $this->proxyRepository->inRandomOrderFirst();
+        GetAccountConversations::dispatch($account,$proxy);
 
         $this->putFlashMessage(true, 'Your request on process');
 
@@ -125,7 +133,9 @@ class AccountController extends Controller
     public function syncConnections($id): RedirectResponse
     {
 
-        SyncConnectionsForOneAccount::dispatch($id);
+        $account = $this->accountRepository->getById($id);
+        $proxy = $this->proxyRepository->inRandomOrderFirst();
+        SyncAccountConnectionsJob::dispatch($account,$proxy);
 
         $this->putFlashMessage(true, 'Your request on process');
 

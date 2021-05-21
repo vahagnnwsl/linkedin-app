@@ -2,26 +2,39 @@
 
 namespace App\Linkedin;
 
+use App\Models\Proxy;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Arr;
 
 class Client
 {
-
     /**
      * @var GuzzleClient
      */
     protected GuzzleClient $client;
 
-
     /**
      * @param string $cookie_name
      * @param string $header_type
+     * @param Proxy|null $proxy
      * @return $this
      */
-    public function setHeaders(string $cookie_name = '', string $header_type = 'REQUEST_HEADERS'): self
+    public function setHeaders(string $cookie_name = '', string $header_type = 'REQUEST_HEADERS',Proxy $proxy = null): self
     {
+
+        $config = [];
+
+        if ($proxy){
+            if ($proxy->login && $proxy->password){
+                $config['proxy'] = "{$proxy->type}://{$proxy->login}:{$proxy->password}@{$proxy->ip}:{$proxy->port}";
+
+            }else{
+                $config['proxy'] = "{$proxy->type}://{$proxy->ip}:{$proxy->port}";
+
+            }
+        }
+
         $headers = [];
 
         if ($cookie_name) {
@@ -34,7 +47,9 @@ class Client
             $headers = Arr::add($headers, $key, $val);
         }
 
-        $this->client = new GuzzleClient(['headers' => $headers]);
+        $config['headers'] = $headers;
+
+        $this->client = new GuzzleClient($config);
 
         return $this;
     }

@@ -22,23 +22,20 @@
                         </a>
                     @endcan
                 </div>
-                <div class="card-body p-0" style="display: block;">
-                    <table class="table table-striped projects">
+                <div class="card-body p-0 table-responsive" >
+                    <table class="table table-striped ">
                         <thead>
                         <tr>
-                            <th style="width: 1%">
-                                #
-                            </th>
-                            <th style="width: 15%">
+                            <th >
                                 Full name
                             </th>
-                            <th style="width: 20%">
+                            <th>
                                 Login
                             </th>
-                            <th style="width: 15%">
+                            <th>
                               Password
                             </th>
-                            <th style="width: 20%">
+                            <th >
                                 EntityUrn
                             </th>
                             <th>
@@ -47,17 +44,13 @@
                             <th>
                                 LastActivityAt
                             </th>
-                            <th style="width: 20%">
+                            <th>
                             </th>
                         </tr>
                         </thead>
                         <tbody>
                         @foreach($accounts as $account)
                             <tr>
-                                <td>
-                                    #
-                                </td>
-
                                 <td>
                                     {{$account->full_name}}
                                 </td>
@@ -73,31 +66,28 @@
                                 </td>
 
                                 <td>
-                                 @foreach($account->users as $user)
+                                    @foreach($account->users as $user)
                                      <a href="{{route('users.edit',$user->id)}}">{{$user->full_name}}</a>
                                     @endforeach
                                 </td>
                                 <td>{{$account->lastActivityAt}}</td>
-                                <td class="project-actions text-right">
-                                    @can('accounts')
+                                <td>
 
-                                        <a class="btn btn-dark btn-sm" href="{{route('accounts.conversations',$account->id)}}" title="Conversations List">
-                                            <i class="fas fa-envelope"></i>
-                                        </a>
+                                    <a class="btn btn-dark btn-sm" href="{{route('accounts.conversations',$account->id)}}" title="Conversations List">
+                                        <i class="fas fa-envelope"></i>
+                                    </a>
 
-                                        <a class="btn btn-default btn-sm" href="{{route('accounts.syncConversations',$account->id)}}" title="Sync Conversations">
-                                            <i class="fas fa-sync"></i>
-                                        </a>
+                                    <a class="btn btn-default btn-sm" href="{{route('accounts.syncConversations',$account->id)}}" title="Sync Conversations">
+                                        <i class="fas fa-sync"></i>
+                                    </a>
 
-                                        <a class="btn btn-info btn-sm" href="{{route('accounts.syncConnections',$account->id)}}" title="Sync Connections">
-                                            <i class="fas fa-sync"></i>
-                                        </a>
+                                    <a class="btn btn-info btn-sm" href="{{route('accounts.syncConnections',$account->id)}}" title="Sync Connections">
+                                        <i class="fas fa-sync"></i>
+                                    </a>
 
-                                        <a class="btn btn-primary btn-sm" href="{{route('accounts.edit',$account->id)}}" title="Edit">
-                                            <i class="fas fa-user-edit"></i>
-                                        </a>
-
-                                    @endcan
+                                    <a class="btn btn-primary btn-sm" href="{{route('accounts.edit',$account->id)}}" title="Edit">
+                                        <i class="fas fa-user-edit"></i>
+                                    </a>
                                 </td>
                             </tr>
 

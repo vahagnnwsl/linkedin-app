@@ -7,6 +7,7 @@ use App\Linkedin\Repositories\Company;
 use App\Linkedin\Repositories\Conversation;
 use App\Linkedin\Repositories\Invitation;
 use App\Linkedin\Repositories\Profile;
+use App\Models\Proxy;
 
 class Api
 {
@@ -24,21 +25,23 @@ class Api
     /**
      * @param string $login
      * @param string $password
-     * @return Conversation|Repositories\Repository
+     * @param Proxy|null $proxy
+     * @return Conversation
      */
-    public static function conversation(string $login, string $password): Conversation
+    public static function conversation(string $login, string $password, Proxy $proxy = null): Conversation
     {
-        return (new Conversation())->setCredentials($login, $password);
+        return (new Conversation())->setCredentials($login, $password,$proxy);
     }
 
     /**
      * @param string $login
      * @param string $password
+     * @param Proxy|null $proxy
      * @return Profile
      */
-    public static function profile(string $login, string $password): Profile
+    public static function profile(string $login, string $password, Proxy $proxy = null): Profile
     {
-        return (new Profile())->setCredentials($login, $password);
+        return (new Profile())->setCredentials($login, $password, $proxy);
     }
 
     /**
@@ -55,11 +58,12 @@ class Api
     /**
      * @param string $login
      * @param string $password
+     * @param Proxy|null $proxy
      * @return Company
      */
-    public static function company(string $login, string $password): Company
+    public static function company(string $login, string $password, Proxy $proxy = null): Company
     {
-        return (new Company())->setCredentials($login, $password);
+        return (new Company())->setCredentials($login, $password, $proxy);
     }
 
 }

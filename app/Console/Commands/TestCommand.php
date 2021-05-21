@@ -8,6 +8,7 @@ use App\Linkedin\Responses\Company;
 use App\Linkedin\Responses\Response;
 use App\Models\Account;
 use App\Models\Connection;
+use App\Models\Proxy;
 use App\Repositories\AccountRepository;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -45,15 +46,44 @@ class TestCommand extends Command
      */
     public function handle()
     {
-//        $account = Account::where('login','ghukasyan.05@gmail.com')->first();
-//        $res =  Api::profile($account->login, $account->password)->searchPeople('react') ;
+
+//        $url = 'https://01c6de5caa46.ngrok.io';
+//        $proxy = '64.120.85.2:40182';
+//        $proxyauth = 'sexy4321:sexy654321';
 //
-//        $included = $res['data']->included;
-//        $models = collect($included)->groupBy('$type');
+//        $ch = curl_init();
+//        curl_setopt($ch, CURLOPT_URL,$url);
+//        curl_setopt($ch, CURLOPT_PROXY, $proxy);
+//        curl_setopt($ch, CURLOPT_PROXYUSERPWD, $proxyauth);
+//        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+//        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+//        curl_setopt($ch, CURLOPT_HEADER, 1);
+//        $curl_scraped_page = curl_exec($ch);
+//        curl_close($ch);
 //
-//        File::put(storage_path('d.json'), json_encode($models));
+//        dd($curl_scraped_page,$ch);
+
+
 //
-//
-//        dd(12);
+        $client = new \GuzzleHttp\Client([
+            'base_uri' => 'https://api.myip.com',
+            'proxy' => 'http://sexy4321:sexy654321@64.120.85.2:40182'
+
+        ]);
+        $res = $client->request('GET', '/');
+
+        dd($res->getBody()->getContents());
+
+        $account = Account::where('login', 'stella.000@inbox.ru')->first();
+        $proxy = Proxy::first();
+
+
+        $res = Api::company($account->login, $account->password, $proxy)->search('NWSLAB');
+
+
+        File::put(storage_path('d.json'), json_encode($res));
+
+
+        dd(12);
     }
 }

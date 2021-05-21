@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class KeyRequest extends FormRequest
+class ProxyRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,11 +25,13 @@ class KeyRequest extends FormRequest
     {
 
         return [
-            'name' => 'required|string|max:255',
-            'country_id'=>'required|exists:App\Models\Country,id',
-            'accounts_id'=>'required|array|min:1',
-            'proxies_id'=>'required|array|min:1',
-            'status'=>'sometimes'
+            'login' => 'required|string|max:255',
+            'password' => 'required|string|max:255',
+            'ip' => 'required|string|max:255',
+            'port' => 'required|string|max:255',
+            'country' => 'required|string|max:255',
+            'type' => 'required|string|max:255'
         ];
+
     }
 }

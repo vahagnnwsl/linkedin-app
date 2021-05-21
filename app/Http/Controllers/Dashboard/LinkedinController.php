@@ -63,9 +63,12 @@ class LinkedinController extends Controller
     {
         $conversations = [];
 
+
         if ($account = Auth::user()->account) {
 
             $conversations = new ConversationCollection($account->conversations()->orderByDesc('lastActivityAt')->get());
+
+
 
             if ($request->ajax()) {
                 return response()->json(['conversations' => $conversations]);

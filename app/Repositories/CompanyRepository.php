@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 
 use App\Models\Company;
+use Illuminate\Support\Facades\Log;
 
 class CompanyRepository extends Repository
 {
@@ -41,4 +42,15 @@ class CompanyRepository extends Repository
         return $this->model()::where('is_parsed', self::$NO_PARSED_STATUS)->get();
     }
 
+
+    /**
+     * @param $name
+     * @return mixed
+     */
+    public function getByName($name)
+    {
+        Log::channel('que_log')->info($name);
+        return $this->model()::where('name', $name)->first();
+
+    }
 }

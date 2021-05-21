@@ -1,5 +1,9 @@
 @extends('dashboard.layouts')
+@push('css')
+    <link rel="stylesheet" href="/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="/plugins/daterangepicker/daterangepicker.css">
 
+@endpush
 @section('sub_content')
     <section class="content-header">
         <div class="container-fluid">
@@ -16,14 +20,11 @@
             <div class="card">
                 <div class="card-header p-2">
                     @can('keys')
-                        <a class="btn btn-success btn-md float-right"  data-toggle="modal" data-target="#createKeyModal">
+                        <a class="btn btn-success btn-md float-right" data-toggle="modal" data-target="#createKeyModal">
                             <i class="fas fa-plus"></i>
                             Add
                         </a>
-                        <a class="btn btn-primary btn-md float-right mr-1"  data-toggle="modal" data-target="#myModal">
-                            <i class="fas fa-search"></i>
-                            Search
-                        </a>
+
                     @endcan
                 </div>
                 <div class="card-body p-2">
@@ -37,9 +38,20 @@
                                 <th style="width: 20%">
                                     Name
                                 </th>
-
+                                <th style="width: 20%">
+                                    Account
+                                </th>
+                                <th style="width: 20%">
+                                    Country
+                                </th>
+                                <th style="width: 20%">
+                                    Proxy
+                                </th>
+                                <th style="width: 20%">
+                                    Status
+                                </th>
                                 <th>
-                                    Created At
+
                                 </th>
 
                             </tr>
@@ -48,16 +60,38 @@
                             @foreach($keys as $key)
                                 <tr>
                                     <td>
-                                        #
+                                        {{$key->id}}
                                     </td>
                                     <td>
                                         {{$key->name}}
                                     </td>
-
                                     <td>
-                                        {{$key->created_at->format('Y-m-d')}}
+                                        @foreach($key->accounts as $account)
+                                            {{$account->full_name}} <br/>
+                                        @endforeach
                                     </td>
+                                    <td>
+                                        <a> {{$key->country->name}}</a>
+                                    </td>
+                                    <td>
+                                        @foreach($key->proxies as $proxy)
+                                            {{$proxy->ip}} <br/>
+                                        @endforeach
+                                    </td>
+                                    <td>
+                                        @if($key->status)
+                                            <span class="badge badge-success">Active</span>
+                                        @else
+                                            <span class="badge badge-danger">Inactive</span>
 
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-primary btn-sm" href="{{route('keys.edit',$key->id)}}"
+                                           title="Edit">
+                                            <i class="fas fa-user-edit"></i>
+                                        </a>
+                                    </td>
                                 </tr>
                             @endforeach
                             </tbody>
@@ -84,9 +118,40 @@
                         <div class="card-body">
                             <form method="post" action="{{route('keys.store')}}">
                                 @csrf
-                                <input name="name"  data-vv-as="Name"
-                                       class="form-control"
-                                       type="text" placeholder="Type key">
+                                <div class="form-group">
+                                    <label>Name *</label>
+                                    <input name="name" required class="form-control" type="text" placeholder="Type key">
+                                </div>
+                                <div class="form-group">
+                                    <label>Proxies *</label>
+                                    <select multiple="multiple" class="select2 form-control w-100" required
+                                            data-placeholder="Select something" id="proxies_id" name="proxies_id[]">
+                                        @foreach($proxies as $key)
+                                            <option value="{{$key['id']}}">{{$key['text']}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Account *</label>
+                                    <select multiple="multiple" class="select2 form-control" required
+                                            data-placeholder="Select something" id="accounts_id" name="accounts_id[]">
+                                        @foreach($accounts as $key)
+                                            <option value="{{$key['id']}}">{{$key['text']}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Country *</label>
+                                    <select class="form-control" name="country_id" required>
+                                        <option selected disabled value="">Select one</option>
+                                        @foreach($countries as $country)
+                                            <option value="{{$country->id}}">
+                                                {{$country->name}}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
 
 
                                 <br/>
@@ -102,47 +167,23 @@
             </div>
         </div>
     </div>
-    <div class="modal" id="myModal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-
-                <!-- Modal Header -->
-                <div class="modal-header">
-                    <h4 class="modal-title">Get companies</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-
-                <!-- Modal body -->
-                <div class="modal-body">
-
-                    <form method="GET" action="{{route('keys.search')}}">
-                        <div class="form-group">
-                            <select class="form-control" name="key_id">
-                                @foreach($keys as $key)
-                                    <option value="{{$key->id}}">{{$key->name}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <select class="form-control" name="country_id">
-                                @foreach($countries as $country)
-                                    <option value="{{$country->id}}">{{$country->name}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="form-group text-right">
-                            <button class="btn btn-secondary">Search</button>
-                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-
-                        </div>
-
-                    </form>
-
-                </div>
-
-
-
-            </div>
-        </div>
-    </div>
 @endsection
+
+@push('js')
+    <script src="/plugins/select2/js/select2.full.min.js"></script>
+    <script src="/plugins/moment/moment.min.js"></script>
+
+
+
+    <script>
+
+        $(function () {
+
+            $('.select2').select2({
+                multiple: true,
+                width: '100%'
+            })
+
+        });
+    </script>
+@endpush

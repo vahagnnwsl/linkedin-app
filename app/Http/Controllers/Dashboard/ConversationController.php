@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Collections\MessageCollection;
+use App\Jobs\GetLastMessagesConversation;
 use App\Jobs\SyncLastMessagesForOneAccount;
 use App\Repositories\ConversationRepository;
 use App\Repositories\MessageRepository;
@@ -54,7 +55,9 @@ class ConversationController extends Controller
     {
         $account = Auth::user()->account;
 
-        SyncLastMessagesForOneAccount::dispatch($account->id, $id, Auth::id());
+        $conversation = $this->conversationRepository->getById($id);
+
+        GetLastMessagesConversation::dispatch($account, $conversation, Auth::user());
 
         return response()->json([]);
     }

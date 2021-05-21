@@ -53,7 +53,7 @@
                         <a href="{{route('keys.index')}}"
                            class="nav-link {{request()->is('dashboard/keys*') ?'active':''}}">
                             <i class=" fas fa-key nav-icon"></i>
-                            <p>Search keys</p>
+                            <p> Keys</p>
                         </a>
                     </li>
                 @endcan
@@ -62,6 +62,14 @@
                        class="nav-link {{request()->is('dashboard/countries*') ?'active':''}}">
                         <i class=" fas fa-key nav-icon"></i>
                         <p>Countries</p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="{{route('proxies.index')}}"
+                       class="nav-link {{request()->is('dashboard/proxies*') ?'active':''}}">
+                        <i class=" fas fa-key nav-icon"></i>
+                        <p>Proxies</p>
                     </a>
                 </li>
 
@@ -124,13 +132,13 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
-                    <a href="{{route('search.index')}}"
-                       class="nav-link {{request()->is('dashboard/search/linkedin') ?'active':''}}">
-                        <i class="nav-icon fab fa-linkedin mr-2"></i>
-                        <p>Search</p>
-                    </a>
-                </li>
+{{--                <li class="nav-item">--}}
+{{--                    <a href="{{route('search.index')}}"--}}
+{{--                       class="nav-link {{request()->is('dashboard/search/linkedin') ?'active':''}}">--}}
+{{--                        <i class="nav-icon fab fa-linkedin mr-2"></i>--}}
+{{--                        <p>Search</p>--}}
+{{--                    </a>--}}
+{{--                </li>--}}
 
             </ul>
         </nav>

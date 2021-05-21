@@ -10,7 +10,7 @@ class Constants
     const API_URL = 'https://www.linkedin.com/voyager/api';
     const SESSIONS_PATH = '/storage/linkedin/sessions/';
     const DEFAULT_AVATAR = '/dist/img/lin_def_image.svg';
-
+    const REQUEST_HEADERS_TYPE = 'REQUEST_HEADERS';
 
     /**
      * @var array|string[]

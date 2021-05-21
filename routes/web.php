@@ -18,7 +18,6 @@ use Illuminate\Support\Facades\Auth;
 |
 */
 
-
 Auth::routes(['register' => false]);
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
@@ -43,10 +42,20 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
         Route::get('/{id}/conversations/{conversation_id}/messages', [App\Http\Controllers\Dashboard\AccountController::class, 'conversationMessages'])->name('accounts.conversationMessages')->middleware('permission:accounts');
 
     });
+
     Route::group(['prefix' => 'keys'], function () {
         Route::get('/', [App\Http\Controllers\Dashboard\KeyController::class, 'index'])->name('keys.index')->middleware('permission:keys');
         Route::post('/store', [App\Http\Controllers\Dashboard\KeyController::class, 'store'])->name('keys.store')->middleware('permission:keys');
-        Route::get('/search', [App\Http\Controllers\Dashboard\KeyController::class, 'search'])->name('keys.search')->middleware('permission:keys');
+        Route::get('/{id}/edit', [App\Http\Controllers\Dashboard\KeyController::class, 'edit'])->name('keys.edit')->middleware('permission:keys');
+        Route::put('/{id}/update', [App\Http\Controllers\Dashboard\KeyController::class, 'update'])->name('keys.update')->middleware('permission:keys');
+
+    });
+
+    Route::group(['prefix' => 'proxies'], function () {
+        Route::get('/', [App\Http\Controllers\Dashboard\ProxyController::class, 'index'])->name('proxies.index');
+        Route::post('/store', [App\Http\Controllers\Dashboard\ProxyController::class, 'store'])->name('proxies.store');
+        Route::get('/{id}/edit', [App\Http\Controllers\Dashboard\ProxyController::class, 'edit'])->name('proxies.edit');
+        Route::put('/update/{id}', [App\Http\Controllers\Dashboard\ProxyController::class, 'update'])->name('proxies.update');
 
     });
 

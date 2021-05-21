@@ -4,6 +4,9 @@ namespace App\Jobs;
 
 use App\Linkedin\Api;
 use App\Linkedin\Responses\Response;
+use App\Models\Account;
+use App\Models\Conversation;
+use App\Models\User;
 use App\Repositories\AccountRepository;
 use App\Repositories\ConnectionRepository;
 use App\Repositories\ConversationRepository;
@@ -14,26 +17,27 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class SyncLastMessagesForOneAccount implements ShouldQueue
+class GetLastMessagesConversation implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $account;
-
     protected $conversation;
-    protected $user_id;
+    protected $user;
+    protected $messageRepository;
 
     /**
-     * LinkedinSearchByKey constructor.
-     * @param int $account_id
-     * @param int $conversation_id
-     * @param int $user_id
+     * GetLastMessagesConversation constructor.
+     * @param Account $account
+     * @param Conversation $conversation
+     * @param User $user
      */
-    public function __construct(int $account_id, int $conversation_id, int $user_id)
+    public function __construct(Account $account, Conversation $conversation, User $user)
     {
-        $this->account = (new AccountRepository())->getById($account_id);
-        $this->conversation = (new ConversationRepository())->getById($conversation_id);
-        $this->user_id = $user_id;
+        $this->account = $account;
+        $this->conversation = $conversation;
+        $this->user = $user;
+        $this->messageRepository = new MessageRepository();
     }
 
     public function handle()
@@ -42,7 +46,7 @@ class SyncLastMessagesForOneAccount implements ShouldQueue
         $response = Response::messages((array)Api::conversation($this->account->login, $this->account->password)->getConversationMessages($this->conversation->entityUrn), $this->conversation->entityUrn);
 
         if ($response['success']) {
-            (new MessageRepository())->updateOrCreateCollection($response['data']->toArray(), $this->conversation->id, $this->user_id, $this->account->id, $this->account->entityUrn, MessageRepository::SENDED_STATUS, MessageRepository::RECEIVE_EVENT);
+            $this->messageRepository->updateOrCreateCollection($response['data']->toArray(), $this->conversation->id, $this->user->id, $this->account->id, $this->account->entityUrn, $this->messageRepository::SENDED_STATUS, $this->messageRepository::RECEIVE_EVENT);
         }
     }
 }

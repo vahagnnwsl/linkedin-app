@@ -60,10 +60,11 @@ class Profile extends Repository
     /**
      * @param string $key
      * @param string $country_id
+     * @param string|null $company_id
      * @param int $start
      * @return array
      */
-    public function searchPeople(string $key,  string $country_id ,int $start = 0): array
+    public function searchPeople(string $key,  string $country_id ,string $company_id = null,int $start = 0): array
     {
 //        $query_params = [
 //            'count' => 50,
@@ -80,7 +81,14 @@ class Profile extends Repository
 
 //        return $this->client->setHeaders($this->login)->get(Constants::API_URL . '/search/blended', $query_params);
 
-        $query = "decorationId=com.linkedin.voyager.dash.deco.search.SearchClusterCollection-103&origin=FACETED_SEARCH&q=all&query=(keywords:" . $key . ",flagshipSearchIntent:SEARCH_SRP,queryParameters:(resultType:List(PEOPLE),geoUrn:List(" . $country_id . ")),includeFiltersInResponse:false)&start=" . $start;
+        $companyStr ="";
+
+        if ($company_id){
+            $companyStr = "currentCompany:List(" . $company_id . "),";
+        }
+
+
+        $query = "decorationId=com.linkedin.voyager.dash.deco.search.SearchClusterCollection-92&origin=FACETED_SEARCH&q=all&query=(keywords:" . $key . ",flagshipSearchIntent:SEARCH_SRP,queryParameters:(".$companyStr."resultType:List(PEOPLE),geoUrn:List(" . $country_id . ")),includeFiltersInResponse:false)&start=" . $start;
 
         return $this->client->setHeaders($this->login)->get(Constants::API_URL . '/search/dash/clusters?' . $query);
     }

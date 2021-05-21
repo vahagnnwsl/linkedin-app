@@ -61,6 +61,8 @@ class SyncKeyCompaniesJob implements ShouldQueue
      */
     public function handle()
     {
+        ini_set('max_execution_time', 172800);
+
         $noParsedCompanies = $this->key->noParsedCompanies;
 
         $noParsedCompanies->map(function ($company)  {

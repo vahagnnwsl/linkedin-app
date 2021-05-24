@@ -55,5 +55,4 @@ class Conversation extends Model
         return $this->belongsTo(Connection::class);
     }
 
-
 }

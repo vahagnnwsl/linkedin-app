@@ -65,14 +65,14 @@ class TestCommand extends Command
 
 
 //
-//        $client = new \GuzzleHttp\Client([
-//            'base_uri' => 'https://api.myip.com',
-//            'proxy' => 'http://sexy4321:sexy654321@64.120.85.2:40182'
-//
-//        ]);
-//        $res = $client->request('GET', '/');
-//
-//        dd($res->getBody()->getContents());
+        $client = new \GuzzleHttp\Client([
+            'base_uri' => 'https://api.myip.com',
+            'proxy' => 'http://europe152535:europe455565@196.17.13.25:62817'
+
+        ]);
+        $res = $client->request('GET', '/');
+
+        dd($res->getBody()->getContents());
 
         $account = Account::where('login', 'stella.000@inbox.ru')->first();
         $proxy = Proxy::first();

@@ -1,20 +1,27 @@
 @extends('dashboard.layouts')
 @push('js')
     <script src="/components/connection/request.js"></script>
+    <script src="/components/connection/message.js"></script>
 
     <script>
         $(document).on("click", ".setConnectionRequest", function () {
-            $(document).trigger('sendConnectionRequest',$(this).attr('data-connectionId'));
+            $(document).trigger('sendConnectionRequest', $(this).attr('data-connectionId'));
+        });
+
+        $(document).on("click", ".sendMessage", function () {
+            $(document).trigger('sendMessage', $(this).attr('data-connectionId'));
         });
     </script>
 
 @endpush
+
 @section('sub_content')
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-12">
-                    <h1>Connections  <span style="float: right" class="text-blue">Total: {{$connections->total()}}</span></h1>
+                    <h1>Connections <span style="float: right" class="text-blue">Total: {{$connections->total()}}</span>
+                    </h1>
                 </div>
 
             </div>
@@ -24,33 +31,33 @@
         <div class="container-fluid">
             <div class="card">
                 @include('dashboard.connections.filter')
-                <div class="card-body p-0" >
+                <div class="card-body p-0">
                     <table class="table table-striped ">
                         <thead>
                         <tr>
                             <th>
                                 #
                             </th>
-                            <th >
+                            <th>
                                 Avatar
                             </th>
-                            <th >
+                            <th>
                                 Full name
                             </th>
 
 
-                            <th >
+                            <th>
                                 Occupation
                             </th>
 
-                            <th >
+                            <th>
                                 Accounts
                             </th>
-                            <th >
+                            <th>
                                 Keys
                             </th>
-                            <th >
-                                 Actions
+                            <th>
+                                Actions
                             </th>
                         </tr>
                         </thead>
@@ -72,29 +79,43 @@
                                     {{$connection->occupation}}
                                 </td>
                                 @can('accounts')
-                                <td>
-                                    @foreach($connection->accounts as $account)
-                                        <a href="{{route('accounts.edit',$account->id)}}">{{$account->full_name}}</a>
-                                    @endforeach
-                                </td>
+                                    <td>
+                                        @foreach($connection->accounts as $account)
+                                            <a href="{{route('accounts.edit',$account->id)}}">{{$account->full_name}}</a>
+                                        @endforeach
+                                    </td>
                                 @endcan
 
-                                <td >
+                                <td>
                                     @foreach($connection->keys as $key)
                                         <span class="badge badge-secondary">#{{$key->name}}</span>
                                     @endforeach
                                 </td>
                                 <td>
-                                   <div class="btn-group">
-                                       <a class="btn btn-info" title="Get info" href="{{route('connections.getInfo',$connection->id)}}">
-                                           <i class="fa fa-info-circle"></i>
-                                       </a>
+                                    <div class="btn-group">
 
-                                       <a class="btn btn-primary setConnectionRequest" title="Sent Connection Request" href="javascript:void(0)" data-connectionId="{{$connection->id}}">
-                                           <i class="fa fa-plus-circle"></i>
-                                       </a>
+                                        @if($userAccount)
+                                            @if($connection->canSendConnectionRequest() && !$connection->requestByAccount($userAccount->id)->first())
+                                                <a class="btn btn-primary setConnectionRequest"
+                                                   title="Sent Connection Request" href="javascript:void(0)"
+                                                   data-connectionId="{{$connection->id}}">
+                                                    <i class="fa fa-plus-circle"></i>
+                                                </a>
+                                            @endif
 
-                                   </div>
+                                            @if($connection->requestByAccount($userAccount->id)->first())
+                                                <span class="badge badge-warning">Pending accept</span>
+                                            @endif
+
+                                            @if($connection->canWrite($userAccount->id))
+                                                <a class="btn btn-info sendMessage" href="javascript:void(0)"
+                                                   data-connectionId="{{$connection->id}}">
+                                                    <i class="fa fa-envelope"></i>
+                                                </a>
+                                            @endif
+                                        @endif
+
+                                    </div>
                                 </td>
                             </tr>
 
@@ -108,12 +129,12 @@
                 {!! $connections->appends($_GET)->links('vendor.pagination') !!}
 
                 <send-connection-request></send-connection-request>
+                <send-message></send-message>
 
             </div>
         </div>
 
     </section>
 @endsection
-
 
 

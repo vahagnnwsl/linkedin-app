@@ -11,6 +11,8 @@ class ConnectionRepository extends Repository
 {
 
     protected $companyRepository;
+    public static $PARSED_STATUS = 1;
+    public static $UNPARSED_STATUS = 0;
 
     public function __construct()
     {
@@ -25,6 +27,21 @@ class ConnectionRepository extends Repository
         return Connection::class;
     }
 
+    /**
+     * @param array $data
+     */
+    public function updateAll(array $data)
+    {
+        $this->model()::update($data);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUnParsedFirst()
+    {
+        return $this->model()::where('is_parsed', self::$UNPARSED_STATUS)->first();
+    }
 
     /**
      * @param string $entityUrn
@@ -38,13 +55,13 @@ class ConnectionRepository extends Repository
     public function filter(array $requestData, array $userKeysIdes = [], string $orderBy = 'created_at', string $direction = 'desc')
     {
         return $this->model()::when(isset($requestData['accounts_ids']) && count($requestData['accounts_ids']), function ($q) use ($requestData) {
-                return $q->whereHas('accounts', function ($subQuery) use ($requestData) {
-                    return $subQuery->whereIn('accounts.id', $requestData['accounts_ids']);
-                });
-            })
+            return $q->whereHas('accounts', function ($subQuery) use ($requestData) {
+                return $subQuery->whereIn('accounts.id', $requestData['accounts_ids']);
+            });
+        })
             ->when(isset($requestData['keys_ids']) && count($requestData['keys_ids']), function ($q) use ($requestData) {
                 return $q->whereHas('keys', function ($subQuery) use ($requestData) {
-                    return  $subQuery->whereIn('id', $requestData['keys_ids']);
+                    return $subQuery->whereIn('id', $requestData['keys_ids']);
                 });
             })->when(isset($requestData['key']), function ($q) use ($requestData) {
                 return $q

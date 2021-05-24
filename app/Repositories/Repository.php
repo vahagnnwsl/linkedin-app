@@ -131,10 +131,10 @@ abstract class Repository
      * @param array $enableKeysIdes
      * @return mixed
      */
-    public function selectForSelect2($joinedFields, array $enableKeysIdes = [])
+    public function selectForSelect2($joinedFields, array $query = [])
     {
-        return $this->model()::select(DB::raw("CONCAT(" . $joinedFields . ") AS text"), 'id')->when(count($enableKeysIdes), function ($q) use ($enableKeysIdes) {
-            return $q->whereIn('id', $enableKeysIdes);
+        return $this->model()::select(DB::raw("CONCAT(" . $joinedFields . ") AS text"), 'id')->when(count($query), function ($q) use ($query) {
+            return $q->where($query);
         })->get()->toArray();
     }
 

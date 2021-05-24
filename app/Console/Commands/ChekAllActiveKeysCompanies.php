@@ -3,20 +3,22 @@
 namespace App\Console\Commands;
 
 
+use App\Jobs\ChekKeyCompanies;
 use App\Jobs\SearchByKey;
 
+use App\Jobs\SyncKeyCompaniesJob;
 use App\Repositories\KeyRepository;
 
 use Illuminate\Console\Command;
 
-class RunAllActiveKeys extends Command
+class ChekAllActiveKeysCompanies extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'command:RunAllActiveKeys';
+    protected $signature = 'command:ChekAllActiveKeysCompanies';
 
     /**
      * The console command description.
@@ -49,9 +51,9 @@ class RunAllActiveKeys extends Command
 
 
         $keys->map(function ($key) {
-
             $this->alert('KEY: '.$key->id);
-            SearchByKey::dispatch($key);
+
+            ChekKeyCompanies::dispatch($key);
         });
 
         return 1;

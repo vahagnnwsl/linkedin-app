@@ -66,10 +66,9 @@ class KeyController extends Controller
 
         $keys = $this->keyRepository->paginate();
         $countries = $this->countryRepository->getAll();
-        $accounts = $this->accountRepository->selectForSelect2('full_name');
-        $proxies = $this->proxyRepository->selectForSelect2('ip');
+        $accounts = $this->accountRepository->selectForSelect2('full_name', ['status' => 1]);
 
-        return view('dashboard.keys.index', compact('keys', 'countries', 'accounts', 'proxies'));
+        return view('dashboard.keys.index', compact('keys', 'countries', 'accounts'));
     }
 
 
@@ -85,8 +84,6 @@ class KeyController extends Controller
         $key = $this->keyRepository->store(Arr::except($data, ['proxies_id', 'accounts_id']));
 
         $this->keyRepository->syncAccounts($key->id, $data['accounts_id']);
-
-        $this->keyRepository->syncProxies($key->id, $data['proxies_id']);
 
         $this->putFlashMessage(true, 'Successfully created');
 
@@ -104,11 +101,10 @@ class KeyController extends Controller
 
         $countries = $this->countryRepository->getAll();
 
-        $accounts = $this->accountRepository->selectForSelect2('full_name');
+        $accounts = $this->accountRepository->selectForSelect2('full_name', ['status' => 1]);
 
-        $proxies = $this->proxyRepository->selectForSelect2('ip');
 
-        return view('dashboard.keys.edit', compact('key', 'countries', 'accounts', 'proxies'));
+        return view('dashboard.keys.edit', compact('key', 'countries', 'accounts'));
 
     }
 
@@ -125,8 +121,6 @@ class KeyController extends Controller
         $this->keyRepository->update($id, Arr::except($data, ['proxies_id', 'accounts_id']));
 
         $this->keyRepository->syncAccounts($id, $data['accounts_id']);
-
-        $this->keyRepository->syncProxies($id, $data['proxies_id']);
 
         $this->putFlashMessage(true, 'Successfully updated');
 

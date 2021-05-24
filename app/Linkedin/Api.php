@@ -47,11 +47,12 @@ class Api
     /**
      * @param string $login
      * @param string $password
+     * @param Proxy|null $proxy
      * @return Invitation
      */
-    public static function invitation(string $login, string $password): Invitation
+    public static function invitation(string $login, string $password, Proxy $proxy = null): Invitation
     {
-        return (new Invitation())->setCredentials($login, $password);
+        return (new Invitation())->setCredentials($login, $password,$proxy);
     }
 
 

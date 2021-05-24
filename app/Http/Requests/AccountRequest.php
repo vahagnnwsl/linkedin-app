@@ -27,7 +27,9 @@ class AccountRequest extends FormRequest
             'full_name' => 'required|string|max:255',
             'password' => 'required|string|max:255',
             'login' => 'required|string|max:255|unique:accounts,login',
-            'entityUrn' => 'required|string|max:255|unique:accounts,entityUrn'
+            'entityUrn' => 'required|string|max:255|unique:accounts,entityUrn',
+            'proxies_id'=>'required|array|min:1',
+            'status'=>'sometimes'
 
         ];
 

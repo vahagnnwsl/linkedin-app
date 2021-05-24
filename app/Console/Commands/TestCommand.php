@@ -65,25 +65,25 @@ class TestCommand extends Command
 
 
 //
-        $client = new \GuzzleHttp\Client([
-            'base_uri' => 'https://api.myip.com',
-            'proxy' => 'http://sexy4321:sexy654321@64.120.85.2:40182'
-
-        ]);
-        $res = $client->request('GET', '/');
-
-        dd($res->getBody()->getContents());
+//        $client = new \GuzzleHttp\Client([
+//            'base_uri' => 'https://api.myip.com',
+//            'proxy' => 'http://sexy4321:sexy654321@64.120.85.2:40182'
+//
+//        ]);
+//        $res = $client->request('GET', '/');
+//
+//        dd($res->getBody()->getContents());
 
         $account = Account::where('login', 'stella.000@inbox.ru')->first();
         $proxy = Proxy::first();
 
 
-        $res = Api::company($account->login, $account->password, $proxy)->search('NWSLAB');
+        $res = Api::conversation($account->login, $account->password, $proxy)->createConversation('alo', 'ACoAADXe-9gBGbfKHpKWFps7Fp08ax_TJp9TYEM');
 
 
         File::put(storage_path('d.json'), json_encode($res));
 
 
-        dd(12);
+        dd($res);
     }
 }

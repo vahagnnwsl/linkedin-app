@@ -49,13 +49,12 @@ class SearchByKey implements ShouldQueue
      */
     public function handle()
     {
-        ini_set('max_execution_time', 172800);
 
         $this->connectionService->search($this->key, [
             'conCompany' => true,
         ]);
 
-        SyncKeyCompaniesJob::dispatch($this->key);
+
 
     }
 }

@@ -25,21 +25,20 @@ class ConnectionService
         $this->connectionRepository = new ConnectionRepository();
     }
 
-
     public function search(Key $key, array $params)
     {
 
         $account = $key->getRandomRelation('accounts');
-        $proxy = $key->getRandomRelation('proxies');
+        $proxy = $account->getRandomFirstProxy();
         $country = $key->country;
 
         $this->recursiveSearch($key, $proxy, $account, $country, $params, 0);
     }
 
-    public function getAccountConnections(Account $account,Proxy $proxy)
+    public function getAccountConnections(Account $account, Proxy $proxy)
     {
 
-        $this->recursiveGetAccountConnections($account,$proxy,0);
+        $this->recursiveGetAccountConnections($account, $proxy, 0);
     }
 
     public function getAccountConversations(Account $account, Proxy $proxy)
@@ -48,12 +47,13 @@ class ConnectionService
         $this->recursiveGetAccountConversations($account, $proxy, []);
 
     }
+
     public function recursiveGetAccountConnections(Account $account, Proxy $proxy, int $start = 0)
     {
         $result = Response::connections(Api::profile($account->login, $account->password, $proxy)->getProfileConnections($start));
 
         if ($result['success']) {
-            $this->connectionRepository->updateOrCreateSelThoughCollection((array)$result['data'], $account->id,0,true,false,false);
+            $this->connectionRepository->updateOrCreateSelThoughCollection((array)$result['data'], $account->id, 0, true, false, false);
             $start += 50;
             sleep(5);
 
@@ -83,7 +83,6 @@ class ConnectionService
         }
 
     }
-
 
     public function recursiveGetAccountConversations(Account $account, Proxy $proxy, array $params)
     {

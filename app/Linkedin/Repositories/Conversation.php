@@ -6,6 +6,7 @@ namespace App\Linkedin\Repositories;
 use App\Linkedin\Client;
 use App\Linkedin\Constants;
 use Carbon\Carbon;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\File;
 
 
@@ -51,12 +52,12 @@ class Conversation extends Repository
      * @param array $query_params
      * @return array
      */
-    public function getConversationMessages(string $conversation_urn_id,array $query_params = []): array
+    public function getConversationMessages(string $conversation_urn_id, array $query_params = []): array
     {
 
         $query_params['keyVersion'] = 'LEGACY_INBOX';
 
-        return $this->client->setHeaders($this->login)->get(Constants::API_URL . '/messaging/conversations/' . $conversation_urn_id . '/events',$query_params);
+        return $this->client->setHeaders($this->login)->get(Constants::API_URL . '/messaging/conversations/' . $conversation_urn_id . '/events', $query_params);
     }
 
 
@@ -64,7 +65,7 @@ class Conversation extends Repository
      * @param string $message
      * @param string $conversation_urn_id
      * @return array
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function writeMessage(string $message, string $conversation_urn_id): array
     {
@@ -93,7 +94,7 @@ class Conversation extends Repository
     /**
      * @param string $conversation_urn_id
      * @return array
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function markConversationAsSeen(string $conversation_urn_id): array
     {
@@ -111,7 +112,7 @@ class Conversation extends Repository
 
     /**
      * @return array
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function markAllItemsAsSeen(): array
     {
@@ -120,6 +121,41 @@ class Conversation extends Repository
         ];
 
         return $this->client->setHeaders($this->login)->post(Constants::API_URL . '/messaging/badge?', $payload, ['action' => 'markAllItemsAsSeen']);
+    }
 
+    /**
+     * @param string $message
+     * @param string $connectionEntityUrn
+     * @return array
+     * @throws GuzzleException
+     */
+    public function createConversation(string $message, string $connectionEntityUrn): array
+    {
+
+        $message_event = [
+            'eventCreate' => [
+                'value' => [
+                    'com.linkedin.voyager.messaging.create.MessageCreate' => [
+                        'body' => $message,
+                        'attachments' => [],
+                        'attributedBody' => [
+                            'text' => $message,
+                            'attributes' => []
+                        ],
+                        'mediaAttachments' => []
+                    ]
+                ]
+            ],
+            'recipients' => [$connectionEntityUrn],
+            'subtype' => "MEMBER_TO_MEMBER",
+        ];
+
+        $payload = [
+            "keyVersion" => "LEGACY_INBOX",
+            "conversationCreate" => $message_event,
+        ];
+
+
+        return $this->client->setHeaders($this->login)->post(Constants::API_URL . '/messaging/conversations?action=create', $payload);
     }
 }

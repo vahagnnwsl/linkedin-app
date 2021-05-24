@@ -5,9 +5,11 @@ namespace App\Jobs;
 use App\Linkedin\Api;
 use App\Linkedin\Responses\Response;
 use App\Models\Account;
+use App\Models\Key;
 use App\Models\Proxy;
 use App\Repositories\AccountRepository;
 use App\Repositories\ConnectionRepository;
+use App\Services\CompanyService;
 use App\Services\ConnectionService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -15,34 +17,27 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class GetAccountConversations implements ShouldQueue
+class ChekKeyCompanies implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    /**
-     * @var Account
-     */
-    protected $account;
-
-    /**
-     * @var Proxy
-     */
-    protected $proxy;
-
+    protected $key;
 
     protected $connectionService;
 
+    protected $companyService;
 
     /**
-     * GetAccountConversations constructor.
-     * @param Account $account
+     * ChekKeyCompanies constructor.
+     * @param Key $key
      */
-    public function __construct(Account $account)
+    public function __construct(Key $key)
     {
-        $this->account = $account;
-        $this->proxy = $account->getRandomFirstProxy();
+        $this->key = $key;
+
         $this->connectionService = new ConnectionService();
 
+        $this->companyService = new CompanyService();
     }
 
 
@@ -53,6 +48,19 @@ class GetAccountConversations implements ShouldQueue
      */
     public function handle()
     {
-        $this->connectionService->getAccountConversations($this->account, $this->proxy);
+        $noParsedCompanies = $this->key->noParsedCompanies;
+
+        $noParsedCompanies->map(function ($company)  {
+
+            $account = $this->key->getRandomRelation('accounts');
+
+            $proxy = $account->getRandomFirstProxy();
+
+            $this->companyService->getInfoFormLinkedinAndUpdate($company, $account, $proxy);
+
+            sleep(3);
+
+        });
+
     }
 }

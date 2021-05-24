@@ -54,6 +54,7 @@ class Profile extends Repository
      */
     public function getProfile(string $public_identifier): array
     {
+
         return $this->client->setHeaders($this->login)->get(Constants::API_URL . '/identity/profiles/' . $public_identifier . '/profileView');
     }
 

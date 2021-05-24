@@ -323,11 +323,12 @@ class Response
 
     public static function getTrackingId(array $data, string $publicIdentifier): array
     {
+
         if ($data['success'] && isset($data['data']) && count($data['data']->included)) {
             $profiles = collect($data['data']->included)->groupBy('$type')[self::TYPE_MINI_PROFILE];
 
             $profile = $profiles->first(function ($item) use ($publicIdentifier) {
-                return $item->publicIdentifier === $publicIdentifier;
+                return $item->entityUrn === 'urn:li:fs_miniProfile:' . $publicIdentifier;
             });
 
             return [
@@ -341,11 +342,11 @@ class Response
         ];
     }
 
-    public static function newMessageEvent(array $data,string $login): array
+    public static function newMessageEvent(array $data, string $login): array
     {
         $data = collect($data);
 
-        $profile = $data->first(function ($item)  {
+        $profile = $data->first(function ($item) {
 
             return $item[self::TYPE_KEY] === self::TYPE_MINI_PROFILE;
         });
@@ -367,14 +368,14 @@ class Response
         });
 
         $conversation = [
-            'entityUrn' => Helper::searchInString($event['entityUrn'],'urn:li:fs_event:(',','),
+            'entityUrn' => Helper::searchInString($event['entityUrn'], 'urn:li:fs_event:(', ','),
             'lastActivityAt' => Carbon::createFromTimestampMsUTC($event['createdAt'])->toDateTimeString(),
         ];
 
-        $message['entityUrn'] = explode(':',$event['backendUrn'])[3];
+        $message['entityUrn'] = explode(':', $event['backendUrn'])[3];
         $message['date'] = Carbon::createFromTimestampMsUTC($event['createdAt'])->toDateTimeString();
 
-        if (isset($event['eventContent']['attributedBody']['text']) ) {
+        if (isset($event['eventContent']['attributedBody']['text'])) {
             $message['text'] = $event['eventContent']['attributedBody']['text'];
         }
 
@@ -387,10 +388,24 @@ class Response
         }
 
         return [
-           'login'=>$login,
-           'message'=>$message,
-           'writer'=>$writer,
-           'conversation'=>$conversation,
+            'login' => $login,
+            'message' => $message,
+            'writer' => $writer,
+            'conversation' => $conversation,
+        ];
+    }
+
+    public static function newConversation(array $data): array
+    {
+        if ($data['success'] && isset($data['data']) && isset($data['data']->data)) {
+            return [
+                'entityUrn' => explode(':',$data['data']->data->value->conversationUrn)[3],
+                'lastActivityAt' => Carbon::createFromTimestampMsUTC($data['data']->data->value->createdAt)->toDateTimeString(),
+                'success' => true
+            ];
+        }
+        return [
+            'success' => false
         ];
     }
 }

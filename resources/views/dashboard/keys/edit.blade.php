@@ -37,16 +37,7 @@
                                     <input name="name" required class="form-control" type="text" value="{{$key->name}}">
                                 </div>
 
-                                <div class="form-group">
-                                    <label>Proxies *</label>
-                                    <select multiple="multiple" class="select2 form-control w-100" required data-placeholder="Select something" id="proxies_id" name="proxies_id[]">
-                                        @foreach($proxies as $item)
-                                            <option value="{{$item['id']}}"
-                                                    @if(in_array($item['id'],$key->proxies()->pluck('id')->toArray())) selected @endif
-                                            >{{$item['text']}}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
+
                                 <div class="form-group">
                                     <label>Account *</label>
                                     <select multiple="multiple" class="select2 form-control" required data-placeholder="Select something" id="accounts_id" name="accounts_id[]">
@@ -69,6 +60,7 @@
                                         @endforeach
                                     </select>
                                 </div>
+
 
 
                                 <div class="form-group">

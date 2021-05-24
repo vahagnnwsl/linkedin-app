@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateKeysProxiesTable extends Migration
+class CreateAccountsProxiesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateKeysProxiesTable extends Migration
      */
     public function up()
     {
-        Schema::create('keys_proxies', function (Blueprint $table) {
-            $table->unsignedBigInteger('key_id')->nullable();
-            $table->foreign('key_id')->references('id')->on('keys')->onDelete('cascade');
+        Schema::create('accounts_proxies', function (Blueprint $table) {
             $table->unsignedBigInteger('proxy_id')->nullable();
             $table->foreign('proxy_id')->references('id')->on('proxies')->onDelete('cascade');
+            $table->unsignedBigInteger('account_id')->nullable();
+            $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
         });
     }
 
@@ -28,6 +28,6 @@ class CreateKeysProxiesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('keys_proxies');
+        Schema::dropIfExists('accounts_proxies');
     }
 }

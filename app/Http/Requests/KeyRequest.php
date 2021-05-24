@@ -28,7 +28,6 @@ class KeyRequest extends FormRequest
             'name' => 'required|string|max:255',
             'country_id'=>'required|exists:App\Models\Country,id',
             'accounts_id'=>'required|array|min:1',
-            'proxies_id'=>'required|array|min:1',
             'status'=>'sometimes'
         ];
     }

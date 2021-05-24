@@ -24,6 +24,7 @@ class GetLastMessagesConversation implements ShouldQueue
     protected $account;
     protected $conversation;
     protected $user;
+    protected $proxy;
     protected $messageRepository;
 
     /**
@@ -35,6 +36,7 @@ class GetLastMessagesConversation implements ShouldQueue
     public function __construct(Account $account, Conversation $conversation, User $user)
     {
         $this->account = $account;
+        $this->proxy = $account->getRandomFirstProxy();
         $this->conversation = $conversation;
         $this->user = $user;
         $this->messageRepository = new MessageRepository();
@@ -43,7 +45,7 @@ class GetLastMessagesConversation implements ShouldQueue
     public function handle()
     {
 
-        $response = Response::messages((array)Api::conversation($this->account->login, $this->account->password)->getConversationMessages($this->conversation->entityUrn), $this->conversation->entityUrn);
+        $response = Response::messages((array)Api::conversation($this->account->login, $this->account->password, $this->proxy)->getConversationMessages($this->conversation->entityUrn), $this->conversation->entityUrn);
 
         if ($response['success']) {
             $this->messageRepository->updateOrCreateCollection($response['data']->toArray(), $this->conversation->id, $this->user->id, $this->account->id, $this->account->entityUrn, $this->messageRepository::SENDED_STATUS, $this->messageRepository::RECEIVE_EVENT);

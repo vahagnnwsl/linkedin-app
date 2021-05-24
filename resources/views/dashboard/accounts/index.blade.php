@@ -45,6 +45,9 @@
                                 LastActivityAt
                             </th>
                             <th>
+                                Status
+                            </th>
+                            <th>
                             </th>
                         </tr>
                         </thead>
@@ -71,6 +74,14 @@
                                     @endforeach
                                 </td>
                                 <td>{{$account->lastActivityAt}}</td>
+                                <td>
+                                    @if($account->status)
+                                        <span class="badge badge-success">Active</span>
+                                    @else
+                                        <span class="badge badge-danger">Inactive</span>
+
+                                    @endif
+                                </td>
                                 <td>
 
                                     <a class="btn btn-dark btn-sm" href="{{route('accounts.conversations',$account->id)}}" title="Conversations List">

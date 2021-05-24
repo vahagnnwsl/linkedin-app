@@ -20,7 +20,8 @@ class Account extends Model
         'password',
         'login',
         'full_name',
-        'lastActivityAt'
+        'lastActivityAt',
+        'status'
     ];
 
 
@@ -46,5 +47,22 @@ class Account extends Model
     public function conversations(): HasMany
     {
         return $this->hasMany(Conversation::class, 'account_id', 'id');
+    }
+
+
+    /**
+     * @return belongsToMany
+     */
+    public function proxies(): belongsToMany
+    {
+        return $this->belongsToMany(Proxy::class, 'accounts_proxies', 'account_id', 'proxy_id');
+    }
+
+    /**
+     * @return mixed|null
+     */
+    public function getRandomFirstProxy()
+    {
+        return $this->proxies()->inRandomOrder()->first();
     }
 }

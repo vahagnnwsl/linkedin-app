@@ -44,9 +44,7 @@
                                 <th style="width: 20%">
                                     Country
                                 </th>
-                                <th style="width: 20%">
-                                    Proxy
-                                </th>
+
                                 <th style="width: 20%">
                                     Status
                                 </th>
@@ -73,11 +71,7 @@
                                     <td>
                                         <a> {{$key->country->name}}</a>
                                     </td>
-                                    <td>
-                                        @foreach($key->proxies as $proxy)
-                                            {{$proxy->ip}} <br/>
-                                        @endforeach
-                                    </td>
+
                                     <td>
                                         @if($key->status)
                                             <span class="badge badge-success">Active</span>
@@ -122,15 +116,7 @@
                                     <label>Name *</label>
                                     <input name="name" required class="form-control" type="text" placeholder="Type key">
                                 </div>
-                                <div class="form-group">
-                                    <label>Proxies *</label>
-                                    <select multiple="multiple" class="select2 form-control w-100" required
-                                            data-placeholder="Select something" id="proxies_id" name="proxies_id[]">
-                                        @foreach($proxies as $key)
-                                            <option value="{{$key['id']}}">{{$key['text']}}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
+
                                 <div class="form-group">
                                     <label>Account *</label>
                                     <select multiple="multiple" class="select2 form-control" required

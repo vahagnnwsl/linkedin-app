@@ -34,13 +34,12 @@ class SyncAccountConnectionsJob implements ShouldQueue
     /**
      * SyncAccountConnectionsJob constructor.
      * @param Account $account
-     * @param Proxy $proxy
      */
-    public function __construct(Account $account,Proxy $proxy)
+    public function __construct(Account $account)
     {
-        $this->account =$account;
+        $this->account = $account;
 
-        $this->proxy =$proxy;
+        $this->proxy = $account->getRandomFirstProxy();
 
         $this->connectionService = new ConnectionService();
 

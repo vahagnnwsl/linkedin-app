@@ -8,11 +8,13 @@ use App\Models\Account;
 class AccountRepository extends Repository
 {
 
+    public static $ACTIVE_STATUS = 1;
+    public static $INACTIVE_STATUS = 0;
+
     public function model(): string
     {
         return Account::class;
     }
-
 
     /**
      * @param string $login
@@ -29,7 +31,7 @@ class AccountRepository extends Repository
      */
     public function checkAccountExist(string $entityUrn)
     {
-        return $this->model()::where('entityUrn',$entityUrn)->exists();
+        return $this->model()::where('entityUrn', $entityUrn)->exists();
     }
 
     /**
@@ -51,7 +53,6 @@ class AccountRepository extends Repository
     }
 
 
-
     /**
      * @param int $id
      * @return mixed
@@ -66,13 +67,13 @@ class AccountRepository extends Repository
      * @param int $conversation_id
      * @return bool
      */
-    public function checkConversationRelationExist(int $id,int $conversation_id): bool
+    public function checkConversationRelationExist(int $id, int $conversation_id): bool
     {
-        if ($this->getById($id)->conversations()->whereId($conversation_id)->exists()){
+        if ($this->getById($id)->conversations()->whereId($conversation_id)->exists()) {
             return true;
         }
 
-        return  false;
+        return false;
     }
 
     /**
@@ -80,14 +81,32 @@ class AccountRepository extends Repository
      * @param int $connection_id
      * @return bool
      */
-    public function checkConnectionRelationExist(int $id,int $connection_id): bool
+    public function checkConnectionRelationExist(int $id, int $connection_id): bool
     {
-        if ($this->getById($id)->connections()->whereId($connection_id)->exists()){
+        if ($this->getById($id)->connections()->whereId($connection_id)->exists()) {
             return true;
         }
 
-        return  false;
+        return false;
     }
 
 
+    /**
+     * @param int $id
+     * @param array $proxies
+     */
+    public function syncProxies(int $id, array $proxies): void
+    {
+        $this->getById($id)->proxies()->sync($proxies);
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public function getRandomFirst()
+    {
+        return $this->model()::where('status',self::$ACTIVE_STATUS)->inRandomOrder()->first();
+
+    }
 }

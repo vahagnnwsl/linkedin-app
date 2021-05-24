@@ -1,5 +1,9 @@
 @extends('dashboard.layouts')
+@push('css')
+    <link rel="stylesheet" href="/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="/plugins/daterangepicker/daterangepicker.css">
 
+@endpush
 @section('sub_content')
     <section class="content-header">
         <div class="container-fluid">
@@ -78,6 +82,15 @@
                                             @enderror
                                         </div>
 
+                                        <div class="form-group">
+                                            <label>Proxies *</label>
+                                            <select multiple="multiple" class="select2 form-control w-100" required
+                                                    data-placeholder="Select something" id="proxies_id" name="proxies_id[]">
+                                                @foreach($proxies as $key)
+                                                    <option value="{{$key['id']}}">{{$key['text']}}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
 
                                         <div class="form-group">
                                             <button type="submit" class="btn btn-success float-right"><i class="fa fa-check-circle"></i> Submit
@@ -94,4 +107,21 @@
     </section>
 @endsection
 
+@push('js')
+    <script src="/plugins/select2/js/select2.full.min.js"></script>
+    <script src="/plugins/moment/moment.min.js"></script>
 
+
+
+    <script>
+
+        $(function () {
+
+            $('.select2').select2({
+                multiple: true,
+                width: '100%'
+            })
+
+        });
+    </script>
+@endpush

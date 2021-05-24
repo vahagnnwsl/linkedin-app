@@ -44,14 +44,6 @@ class Key extends Model
     }
 
     /**
-     * @return belongsToMany
-     */
-    public function proxies(): belongsToMany
-    {
-        return $this->belongsToMany(Proxy::class, 'keys_proxies', 'key_id', 'proxy_id');
-    }
-
-    /**
      * @return BelongsTo
      */
     public function country(): BelongsTo
@@ -75,5 +67,6 @@ class Key extends Model
     {
         return $this->$relationName()->inRandomOrder()->first();
     }
+
 
 }

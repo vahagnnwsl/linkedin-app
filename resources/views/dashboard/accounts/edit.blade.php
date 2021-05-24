@@ -1,5 +1,9 @@
 @extends('dashboard.layouts')
+@push('css')
+    <link rel="stylesheet" href="/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="/plugins/daterangepicker/daterangepicker.css">
 
+@endpush
 @section('sub_content')
     <section class="content-header">
         <div class="container-fluid">
@@ -79,7 +83,28 @@
                                       </span>
                                             @enderror
                                         </div>
+                                        <div class="form-group">
+                                            <label>Proxies *</label>
+                                            <select multiple="multiple" class="select2 form-control w-100" required
+                                                    data-placeholder="Select something" id="proxies_id" name="proxies_id[]">
+                                                @foreach($proxies as $item)
+                                                    <option value="{{$item['id']}}" @if(in_array($item['id'],$account->proxies()->pluck('id')->toArray())) selected @endif>{{$item['text']}}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
 
+                                        <div class="form-group">
+                                            <label>Status </label>
+                                            <select class="form-control" name="status" required>
+                                                <option value="0"  @if($account->status === 0) selected @endif>
+                                                    Inactive
+                                                </option>
+                                                <option value="1"  @if($account->status === 1) selected @endif>
+                                                    Active
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <br/>
 
                                         <div class="form-group">
                                             <button type="submit" class="btn btn-success float-right"><i class="fa fa-check-circle"></i> Submit
@@ -96,4 +121,19 @@
     </section>
 @endsection
 
+@push('js')
+    <script src="/plugins/select2/js/select2.full.min.js"></script>
+
+    <script>
+
+        $(function () {
+
+            $('.select2').select2({
+                multiple: true,
+                width: '100%'
+            })
+
+        });
+    </script>
+@endpush
 

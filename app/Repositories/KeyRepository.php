@@ -1,21 +1,18 @@
 <?php
-
 namespace App\Repositories;
-
 
 use App\Models\Key;
 
 class KeyRepository extends Repository
 {
-
     public static $ACTIVE_STATUS = 1;
+
     public static $INACTIVE_STATUS = 0;
 
     public function model(): string
     {
         return Key::class;
     }
-
 
     /**
      * @return mixed
@@ -33,14 +30,4 @@ class KeyRepository extends Repository
     {
         $this->getById($id)->accounts()->sync($accounts);
     }
-
-    /**
-     * @param int $id
-     * @param array $proxies
-     */
-    public function syncProxies(int $id, array $proxies): void
-    {
-        $this->getById($id)->proxies()->sync($proxies);
-    }
-
 }

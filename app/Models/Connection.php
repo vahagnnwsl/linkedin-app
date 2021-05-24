@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Connection extends Model
 {
@@ -17,7 +18,9 @@ class Connection extends Model
         'publicIdentifier',
         'occupation',
         'image',
-        'data'
+        'data',
+        'is_parsed',
+        'parsed_date'
     ];
 
     /**
@@ -50,6 +53,42 @@ class Connection extends Model
     public function keys(): BelongsToMany
     {
         return $this->belongsToMany(Key::class, 'connections_keys', 'connection_id', 'key_id');
+    }
+
+    /**
+     * @return bool
+     */
+    public function canSendConnectionRequest(): bool
+    {
+        $countAccounts = $this->accounts()->count();
+
+        if ($countAccounts) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @param int $id
+     * @return HasOne
+     */
+    public function requestByAccount(int $id): HasOne
+    {
+       return $this->hasOne(ConnectionRequest::class,'connection_id','id')->where('account_id',$id);
+    }
+
+    /**
+     * @param int $id
+     * @return bool
+     */
+    public function canWrite(int $id): bool
+    {
+
+        if ($this->accounts()->where('accounts.id', $id)->exists()) {
+            return true;
+        }
+
+        return false;
     }
 
 }

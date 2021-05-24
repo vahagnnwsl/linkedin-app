@@ -18,6 +18,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -41,7 +42,7 @@ class AccountController extends Controller
      * @param ProxyRepository $proxyRepository
      */
 
-    public function __construct(AccountRepository $accountRepository, ConversationRepository $conversationRepository, MessageRepository $messageRepository,ProxyRepository $proxyRepository)
+    public function __construct(AccountRepository $accountRepository, ConversationRepository $conversationRepository, MessageRepository $messageRepository, ProxyRepository $proxyRepository)
     {
         $this->accountRepository = $accountRepository;
         $this->conversationRepository = $conversationRepository;
@@ -64,8 +65,8 @@ class AccountController extends Controller
      */
     public function create()
     {
-
-        return view('dashboard.accounts.create');
+        $proxies = $this->proxyRepository->selectForSelect2('ip');
+        return view('dashboard.accounts.create', compact('proxies'));
     }
 
 
@@ -75,13 +76,14 @@ class AccountController extends Controller
      */
     public function edit(int $id)
     {
+        $proxies = $this->proxyRepository->selectForSelect2('ip');
 
         $account = $this->accountRepository->getById($id);
         if (!$account) {
             abort(404);
         }
 
-        return view('dashboard.accounts.edit', compact('account'));
+        return view('dashboard.accounts.edit', compact('account', 'proxies'));
     }
 
 
@@ -93,8 +95,14 @@ class AccountController extends Controller
     public function update(AccountRequest $request, int $id): RedirectResponse
     {
 
-        $this->accountRepository->update($id, $request->validated());
+        $data = $request->validated();
+
+        $this->accountRepository->update($id, Arr::except($data, 'proxies_id'));
+
+        $this->accountRepository->syncProxies($id, $data['proxies_id']);
+
         $this->putFlashMessage(true, 'Successfully updated');
+
         return redirect()->route('accounts.edit', $id);
     }
 
@@ -105,8 +113,12 @@ class AccountController extends Controller
      */
     public function store(AccountRequest $request): RedirectResponse
     {
+        $data = $request->validated();
 
-        $this->accountRepository->store($request->validated());
+        $proxy = $this->accountRepository->store(Arr::except($data, 'proxies_id'));
+
+        $this->accountRepository->syncProxies($proxy->id, $data['proxies_id']);
+
         $this->putFlashMessage(true, 'Successfully created');
         return redirect()->route('accounts.index');
     }
@@ -118,8 +130,7 @@ class AccountController extends Controller
     public function syncConversations($id): RedirectResponse
     {
         $account = $this->accountRepository->getById($id);
-        $proxy = $this->proxyRepository->inRandomOrderFirst();
-        GetAccountConversations::dispatch($account,$proxy);
+        GetAccountConversations::dispatch($account);
 
         $this->putFlashMessage(true, 'Your request on process');
 
@@ -134,8 +145,7 @@ class AccountController extends Controller
     {
 
         $account = $this->accountRepository->getById($id);
-        $proxy = $this->proxyRepository->inRandomOrderFirst();
-        SyncAccountConnectionsJob::dispatch($account,$proxy);
+        SyncAccountConnectionsJob::dispatch($account);
 
         $this->putFlashMessage(true, 'Your request on process');
 
@@ -149,7 +159,7 @@ class AccountController extends Controller
      */
     public function getConversations(Request $request, int $id): JsonResponse
     {
-        $conversations = new ConversationCollection($this->conversationRepository->getByAccountId($id, $request->get('start'),$request->get('key')));
+        $conversations = new ConversationCollection($this->conversationRepository->getByAccountId($id, $request->get('start'), $request->get('key')));
         return response()->json(['conversations' => $conversations]);
     }
 
@@ -176,6 +186,6 @@ class AccountController extends Controller
         $account = $this->accountRepository->getById($account_id);
         $conversation = $this->conversationRepository->getById($conversation_id);
 
-        return view('dashboard.accounts.messages', compact('messages', 'account','conversation'));
+        return view('dashboard.accounts.messages', compact('messages', 'account', 'conversation'));
     }
 }

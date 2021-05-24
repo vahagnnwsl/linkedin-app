@@ -70,6 +70,9 @@ Vue.component('send-connection-request', {
                 this.connection_id = '';
                 $('#requestModal').modal('hide')
                 toastr.success('Successfully send');
+                setTimeout(function (){
+                    location.reload()
+                },1000)
 
             }).catch(() => {
                 toastr.error('Something went wrong');

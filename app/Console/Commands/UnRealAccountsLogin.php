@@ -8,14 +8,14 @@ use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Console\Command;
 use App\Linkedin\Api;
 
-class AccountsLogin extends Command
+class UnRealAccountsLogin extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'command:AccountsLogin';
+    protected $signature = 'command:UnRealAccountsLogin';
 
     /**
      * The console command description.
@@ -44,7 +44,7 @@ class AccountsLogin extends Command
     public function handle(): int
     {
 
-        (new AccountRepository())->getAllRealAccounts()->map(function ($account) {
+        (new AccountRepository())->getAllUnRealAccounts()->map(function ($account) {
             Api::auth($account->login, $account->password)->login();
         });
 

@@ -18,32 +18,32 @@
     <div class="card-body" style="display: block;" data-select2-id="31">
         <form method="GET" action="{{url(request()->path())}}">
             <div class="row">
-                <div class="col-md-4">
-                    <label for="accounts_ids">Accounts</label>
-                    <select multiple="multiple" class="select2 form-control" data-placeholder="Select something" id="accounts_ids" name="accounts_ids[]">
-                    @foreach($accounts as $account)
-                        <option
-                            @if(request()->get('accounts_ids') && count(request()->get('accounts_ids')) && in_array($account['id'],request()->get('accounts_ids'))) selected
-                            @endif value="{{$account['id']}}">{{$account['text']}}</option>
-                        @endforeach
-                        </select>
+{{--                <div class="col-md-4">--}}
+{{--                    <label for="accounts_ids">Accounts</label>--}}
+{{--                    <select multiple="multiple" class="select2 form-control" data-placeholder="Select something" id="accounts_ids" name="accounts_ids[]">--}}
+{{--                    @foreach($accounts as $account)--}}
+{{--                        <option--}}
+{{--                            @if(request()->get('accounts_ids') && count(request()->get('accounts_ids')) && in_array($account['id'],request()->get('accounts_ids'))) selected--}}
+{{--                            @endif value="{{$account['id']}}">{{$account['text']}}</option>--}}
+{{--                        @endforeach--}}
+{{--                        </select>--}}
 
-                </div>
+{{--                </div>--}}
 
                 <div class="col-md-4">
                     <label for="keys_ids">Keys</label>
                     <select multiple="multiple" class="select2 form-control" data-placeholder="Select something" id="keys_ids" name="keys_ids[]">
                         @foreach($keys as $key)
                             <option
-                                @if(request()->get('keys_ids') && count(request()->get('keys_ids')) && in_array($key['id'],request()->get('keys_ids'))) selected
-                                @endif value="{{$key['id']}}">{{$key['text']}}</option>
+                                @if(request()->get('keys_ids') && count(request()->get('keys_ids')) && in_array($key->id,request()->get('keys_ids'))) selected
+                                @endif value="{{$key->id}}">{{$key->name}}</option>
                         @endforeach
                     </select>
                 </div>
 
                 <div class="col-md-4">
-                    <label for="keys_ids">Key</label>
-                     <input type="text" class="form-control" name="key" placeholder="Search key" value="{{request()->get('key')}}">
+                    <label for="keys_ids">Keyword</label>
+                     <input type="text" class="form-control" name="key" placeholder="Type keyword" value="{{request()->get('key')}}">
 
                 </div>
 

@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 
 use App\Linkedin\Helper;
 use App\Linkedin\Responses\Company;
+use App\Linkedin\Responses\Invitation;
 use App\Linkedin\Responses\Response;
 use App\Models\Account;
 use App\Models\Connection;
@@ -65,20 +66,20 @@ class TestCommand extends Command
 
 
 //
-        $client = new \GuzzleHttp\Client([
-            'base_uri' => 'https://api.myip.com',
-            'proxy' => 'http://europe152535:europe455565@196.17.13.25:62817'
+//        $client = new \GuzzleHttp\Client([
+//            'base_uri' => 'https://api.myip.com',
+//            'proxy' => 'http://europe152535:europe455565@196.17.13.25:62817'
+//
+//        ]);
+//        $res = $client->request('GET', '/');
+//
+//        dd($res->getBody()->getContents());
 
-        ]);
-        $res = $client->request('GET', '/');
-
-        dd($res->getBody()->getContents());
-
-        $account = Account::where('login', 'stella.000@inbox.ru')->first();
-        $proxy = Proxy::first();
+        $account = Account::where('login', 'shushbetskova@gmail.com')->first();
+//        $proxy = Proxy::first();
 
 
-        $res = Api::conversation($account->login, $account->password, $proxy)->createConversation('alo', 'ACoAADXe-9gBGbfKHpKWFps7Fp08ax_TJp9TYEM');
+        $res =  (new Invitation(Api::invitation($account->login, $account->password)->getSentInvitations()))();
 
 
         File::put(storage_path('d.json'), json_encode($res));

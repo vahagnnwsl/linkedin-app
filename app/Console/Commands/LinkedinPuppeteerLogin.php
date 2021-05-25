@@ -58,7 +58,7 @@ class LinkedinPuppeteerLogin extends Command
      */
     public function handle(): int
     {
-        $accounts = (new AccountRepository())->getAll();
+        $accounts = (new AccountRepository())->getAllRealAccounts();
 
         foreach ($accounts as $account) {
             try {

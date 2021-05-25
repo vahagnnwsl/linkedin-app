@@ -15,7 +15,6 @@
     <section class="content">
         <div class="container-fluid">
             <div class="card">
-                @can('roles')
                     <div class="card-header p-2">
                         <a class="btn btn-success btn-sm float-right" href="#" data-toggle="modal"
                            data-target="#role__create">
@@ -24,7 +23,6 @@
                         </a>
 
                     </div>
-                @endcan
                 <div class="card-body p-2">
                     <div class="table-responsive mailbox-messages">
                         <table class="table table-striped projects">

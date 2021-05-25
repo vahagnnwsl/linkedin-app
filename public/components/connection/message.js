@@ -38,11 +38,14 @@ Vue.component('send-message', {
         }
     },
     mounted() {
+
         let _this = this
+
         $(document).on('sendMessage', function (e, id) {
             $('#messageModal').modal('show')
             _this.connection_id = id;
         });
+
     },
     methods: {
 

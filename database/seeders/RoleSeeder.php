@@ -18,22 +18,20 @@ class RoleSeeder extends Seeder
     public function run()
     {
 
-
-        $adminRole = Role::create([
+        Role::create([
             'name' => 'Admin',
             'icon' => 'fa fa-user-secret',
         ]);
 
-        $permissions = Permission::pluck('id')->toArray();
-
-        $adminRole->syncPermissions($permissions);
-
+        Role::create([
+            'name' => 'Manager',
+            'icon' => 'fa fa-users-cog',
+        ]);
 
         Role::create([
             'name' => 'Hr',
             'icon' => 'fa fa-users-cog',
         ]);
-
 
     }
 }

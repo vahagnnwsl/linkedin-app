@@ -50,7 +50,7 @@ class CompanyController extends Controller
      */
     public function index(Request $request)
     {
-        $companies = $this->companyRepository->filter($request->all(),[],'name','asc');
+        $companies = $this->companyRepository->paginate();
 
         $countries = $this->countryRepository->getAll();
 

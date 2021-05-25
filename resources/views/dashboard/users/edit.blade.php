@@ -90,8 +90,8 @@
                                             <label for="roles">Account </label>
                                             <select class="form-control" name="account_id">
                                                 <option selected disabled>Select</option>
-                                                @foreach($accounts as $account)
-                                                    <option @if($user->account && $user->account->id === $account->id) selected @endif value="{{$account->id}}">{{$account->full_name}}</option>
+                                                @foreach($realAccounts as $realAccount)
+                                                    <option @if($user->account && $user->account->id === $realAccount->id) selected @endif value="{{$realAccount->id}}">{{$realAccount->full_name}}</option>
                                                 @endforeach
                                             </select>
                                             @error('account_id')
@@ -100,6 +100,24 @@
                                             </span>
                                             @enderror
                                         </div>
+
+                                        <div class="form-group">
+                                            <label for="roles">Unreal accounts </label>
+                                            <select class="form-control select2" name="unreal_accounts_ides[]" multiple="multiple" >
+                                                @foreach($unRealAccounts as $unRealAccount)
+                                                    <option value="{{$unRealAccount->id}}" @if(in_array($unRealAccount->id,$user->unRealAccounts()->pluck('id')->toArray())) selected @endif>{{$unRealAccount->full_name}}</option>
+                                                @endforeach
+                                            </select>
+
+                                            @error('unreal_accounts_ides')
+                                            <span class="invalid-feedback d-block" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                            @enderror
+
+                                        </div>
+
+
                                         <div class="form-group">
                                             <label for="keys_ides">Keys </label>
                                             <select class="select2" style="width: 100%;" name="keys_ides[]" id="keys_ides" multiple="multiple">
@@ -156,7 +174,12 @@
 
         $(function () {
 
-            $('.select2').select2()
+            $('.select2').select2({
+                multiple: true,
+                width: '100%'
+            })
+
         });
     </script>
 @endpush
+

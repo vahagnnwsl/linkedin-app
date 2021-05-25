@@ -4,13 +4,16 @@ namespace App\Services;
 
 
 use App\Linkedin\Api;
+use App\Linkedin\Responses\Invitation;
 use App\Linkedin\Responses\Profile_2;
 use App\Linkedin\Responses\Response;
 use App\Models\Account;
 use App\Models\Country;
 use App\Models\Key;
 use App\Models\Proxy;
+use App\Repositories\AccountRepository;
 use App\Repositories\ConnectionRepository;
+use App\Repositories\ConnectionRequestRepository;
 use App\Repositories\ProxyRepository;
 
 class ConnectionService
@@ -18,11 +21,15 @@ class ConnectionService
 
 
     protected $connectionRepository;
+    protected $connectionRequestRepository;
     protected $proxyRepository;
+    protected $accountRepository;
 
     public function __construct()
     {
         $this->connectionRepository = new ConnectionRepository();
+        $this->connectionRequestRepository = new ConnectionRequestRepository();
+        $this->accountRepository = new AccountRepository();
     }
 
     public function search(Key $key, array $params)
@@ -94,5 +101,48 @@ class ConnectionService
             $this->recursiveGetAccountConversations($account, $proxy, ['createdBefore' => $resp['lastActivityAt']]);
         }
 
+    }
+
+
+    /**
+     * @param Account $account
+     */
+    public function getAccountRequest(Account $account)
+    {
+        $proxy = $account->getRandomFirstProxy();
+
+        $resp = (new Invitation(Api::invitation($account->login, $account->password, $proxy)->getSentInvitations()))();
+
+        if ($resp['success']) {
+
+            $ides = [];
+
+            foreach ($resp['data'] as $item) {
+
+                $connection = $this->connectionRepository->updateOrCreate(['entityUrn' => $item['connection']['entityUrn']], $item['connection']);
+
+                $request = $this->connectionRequestRepository->updateOrCreate([
+                    'account_id' => $account->id,
+                    'connection_id' => $connection->id,
+                ], [
+                    'account_id' => $account->id,
+                    'connection_id' => $connection->id,
+                    'status' => $this->connectionRequestRepository::$PENDING_STATUS,
+                    'message' => $item['message'],
+                    'created_at' => $item['created_at']
+                ]);
+
+                array_push($ides, $request->id);
+            }
+
+            $connection_ides = $this->connectionRequestRepository->updateCollectionStatusAndReturnRecordsConnectionIdes($account->id, $ides);
+
+            if (count($connection_ides)) {
+                foreach ($connection_ides as $connection_id) {
+                    $this->accountRepository->attachConnection($account->id, $connection_id);
+
+                }
+            }
+        }
     }
 }

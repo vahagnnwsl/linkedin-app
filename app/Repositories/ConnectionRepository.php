@@ -52,24 +52,26 @@ class ConnectionRepository extends Repository
         return $this->model()::where('entityUrn', $entityUrn)->first('id');
     }
 
-    public function filter(array $requestData, array $userKeysIdes = [], string $orderBy = 'created_at', string $direction = 'desc')
+    public function filter(array $requestData, string $orderBy = 'created_at', string $direction = 'desc')
     {
-        return $this->model()::when(isset($requestData['accounts_ids']) && count($requestData['accounts_ids']), function ($q) use ($requestData) {
-            return $q->whereHas('accounts', function ($subQuery) use ($requestData) {
-                return $subQuery->whereIn('accounts.id', $requestData['accounts_ids']);
-            });
-        })
-            ->when(isset($requestData['keys_ids']) && count($requestData['keys_ids']), function ($q) use ($requestData) {
-                return $q->whereHas('keys', function ($subQuery) use ($requestData) {
-                    return $subQuery->whereIn('id', $requestData['keys_ids']);
-                });
-            })->when(isset($requestData['key']), function ($q) use ($requestData) {
-                return $q
-                    ->where('firstName', 'LIKE', "%" . $requestData['key'] . "%")
-                    ->orWhere('lastName', 'LIKE', "%" . $requestData['key'] . "%")
-                    ->orWhere('occupation', 'LIKE', "%" . $requestData['key'] . "%");
+        return $this->model()::when(isset($requestData['key']), function ($q) use ($requestData) {
+            return $q
+                ->where('firstName', 'LIKE', "%" . $requestData['key'] . "%")
+                ->orWhere('lastName', 'LIKE', "%" . $requestData['key'] . "%")
+                ->orWhere('occupation', 'LIKE', "%" . $requestData['key'] . "%");
 
-            })
+        })->when(isset($requestData['keys_ids']) && count($requestData['keys_ids']), function ($q) use ($requestData) {
+            $q->where(function ($subQuery) use ($requestData) {
+                return $subQuery->whereHas('keys', function ($subQuery_1) use ($requestData) {
+                    return $subQuery_1->whereIn('id', $requestData['keys_ids']);
+                });
+            })->orWhere(function ($subQuery) {
+                return $subQuery->whereHas('accounts', function ($subQuery_1) {
+                    return $subQuery_1->where('accounts.id', 1);
+                });
+            });
+
+        })
             ->orderby('id', 'desc')->paginate(20);
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Repositories\ConnectionRequestRepository;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -74,7 +75,7 @@ class Connection extends Model
      */
     public function requestByAccount(int $id): HasOne
     {
-       return $this->hasOne(ConnectionRequest::class,'connection_id','id')->where('account_id',$id);
+       return $this->hasOne(ConnectionRequest::class,'connection_id','id')->where(['account_id'=>$id,'status'=>ConnectionRequestRepository::$PENDING_STATUS]);
     }
 
     /**

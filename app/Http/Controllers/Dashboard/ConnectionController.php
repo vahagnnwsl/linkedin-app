@@ -57,15 +57,28 @@ class ConnectionController extends Controller
     public function index(Request $request)
     {
         $filterAttributes = ['account', 'name'];
-        $enableKeysIdes = Auth::user()->keys()->pluck('id')->toArray();
-        $accounts = $this->accountRepository->selectForSelect2('full_name');
-        $keys = $this->keyRepository->selectForSelect2('name', $enableKeysIdes);
-        $connections = $this->connectionRepository->filter($request->all(), [], 'entityUrn');
+        $data = $request->all();
+
+//        if (Auth::user()->hasRole('Hr')){
+//            $enableKeysQuery = Auth::user()->keys();
+//            $keys = $enableKeysQuery->get();
+//            $data['keys_ids'] = $data['keys_ids'] ?? $enableKeysQuery->pluck('id')->toArray();
+//
+//        }else{
+//
+//            $keys = $this->keyRepository->getAll();
+//
+//        }
+
+        $keys = $this->keyRepository->getAll();
+
+
+
+        $connections = $this->connectionRepository->filter($data, 'entityUrn');
 
         $userAccount = Auth::user()->account;
 
-
-        return view('dashboard.connections.index', compact('connections', 'filterAttributes', 'keys', 'accounts', 'userAccount'));
+        return view('dashboard.connections.index', compact('connections', 'filterAttributes', 'keys', 'userAccount'));
     }
 
 
@@ -97,6 +110,14 @@ class ConnectionController extends Controller
     {
 
         $account = Auth::user()->account;
+
+
+        if ($account->getSendRequestCount() >= $account->limit_connection_request){
+            return response()->json([
+                'limitError'=>'Daily limit is consume'
+            ]);
+        }
+
         $connection = $this->connectionRepository->getById($id);
         $proxy = $account->getRandomFirstProxy();
 

@@ -19,13 +19,11 @@
         <div class="container-fluid">
             <div class="card">
                 <div class="card-header p-2">
-                    @can('keys')
                         <a class="btn btn-success btn-md float-right" data-toggle="modal" data-target="#createKeyModal">
                             <i class="fas fa-plus"></i>
                             Add
                         </a>
 
-                    @endcan
                 </div>
                 <div class="card-body p-2">
                     <div class="table-responsive mailbox-messages">

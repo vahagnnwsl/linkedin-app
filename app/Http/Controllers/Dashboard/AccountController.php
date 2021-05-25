@@ -8,6 +8,7 @@ use App\Http\Resources\Collections\ConversationCollection;
 use App\Jobs\GetAccountConversations;
 use App\Jobs\SyncAccountConnectionsJob;
 use App\Jobs\SyncAccountConversations;
+use App\Jobs\SyncRequestsJob;
 use App\Repositories\AccountRepository;
 use App\Repositories\ConversationRepository;
 use App\Repositories\MessageRepository;
@@ -169,9 +170,9 @@ class AccountController extends Controller
      */
     public function conversations(int $id)
     {
+        $account = $this->accountRepository->getById($id);
 
-        $conversations = $this->accountRepository->getConversations($id);
-        return view('dashboard.accounts.conversations', compact('conversations', 'id'));
+        return view('dashboard.accounts.conversations',compact('account'));
     }
 
     /**
@@ -187,5 +188,14 @@ class AccountController extends Controller
         $conversation = $this->conversationRepository->getById($conversation_id);
 
         return view('dashboard.accounts.messages', compact('messages', 'account', 'conversation'));
+    }
+
+    public function syncRequests(int $id): RedirectResponse
+    {
+        $account = $this->accountRepository->getById($id);
+        SyncRequestsJob::dispatch($account);
+        $this->putFlashMessage(true, 'Your request on process');
+
+        return redirect()->back();
     }
 }

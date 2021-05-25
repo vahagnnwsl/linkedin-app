@@ -36,7 +36,7 @@
                         <thead>
                         <tr>
                             <th>
-                                #
+                                ID
                             </th>
                             <th>
                                 Avatar
@@ -44,8 +44,6 @@
                             <th>
                                 Full name
                             </th>
-
-
                             <th>
                                 Occupation
                             </th>
@@ -78,13 +76,13 @@
                                 <td>
                                     {{$connection->occupation}}
                                 </td>
-                                @can('accounts')
+
                                     <td>
                                         @foreach($connection->accounts as $account)
-                                            <a href="{{route('accounts.edit',$account->id)}}">{{$account->full_name}}</a>
+                                            {{$account->full_name}} <br>
                                         @endforeach
                                     </td>
-                                @endcan
+
 
                                 <td>
                                     @foreach($connection->keys as $key)
@@ -104,7 +102,7 @@
                                             @endif
 
                                             @if($connection->requestByAccount($userAccount->id)->first())
-                                                <span class="badge badge-warning">Pending accept</span>
+                                                <span class="badge badge-warning">Pending</span>
                                             @endif
 
                                             @if($connection->canWrite($userAccount->id))

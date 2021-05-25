@@ -55,7 +55,13 @@ Vue.component('send-connection-request', {
                         $('#requestModal').modal('show')
                         this.form.trackingId = response.data.trackingId;
                     } else {
-                        toastr.error('Something went wrong');
+
+                        if (response.data.limitError){
+                            toastr.error(response.data.limitError);
+                        }else {
+                            toastr.error('Something went wrong');
+                        }
+
                     }
 
                 }).catch(() => {

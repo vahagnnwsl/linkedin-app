@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PasswordRequest;
 use App\Notifications\SendPasswordNotification;
 use App\Repositories\AccountRepository;
 use App\Repositories\KeyRepository;
@@ -37,7 +38,7 @@ class UserController extends Controller
      * @param AccountRepository $accountRepository
      * @param KeyRepository $keyRepository
      */
-    public function __construct(UserRepository $userRepository, RoleRepository $roleRepository, AccountRepository $accountRepository,KeyRepository $keyRepository)
+    public function __construct(UserRepository $userRepository, RoleRepository $roleRepository, AccountRepository $accountRepository, KeyRepository $keyRepository)
     {
         $this->userRepository = $userRepository;
         $this->roleRepository = $roleRepository;
@@ -61,7 +62,9 @@ class UserController extends Controller
      */
     public function create()
     {
-        return view('dashboard.users.create');
+        $roles = $this->roleRepository->getAll();
+
+        return view('dashboard.users.create', compact('roles'));
     }
 
 
@@ -72,16 +75,16 @@ class UserController extends Controller
     public function edit(int $id)
     {
         $user = $this->userRepository->getById($id);
-        if (!$user) {
-            abort(404);
-        }
+
         $roles = $this->roleRepository->getAll();
-        $accounts = $this->accountRepository->getAll();
+
+        $realAccounts = $this->accountRepository->getAllRealAccounts();
+
+        $unRealAccounts = $this->accountRepository->getAllUnRealAccounts();
+
         $keys = $this->keyRepository->getAll();
 
-
-        return view('dashboard.users.edit', compact('roles', 'user', 'accounts','keys'));
-
+        return view('dashboard.users.edit', compact('roles', 'user', 'realAccounts', 'keys', 'unRealAccounts'));
     }
 
     /**
@@ -93,19 +96,24 @@ class UserController extends Controller
     {
         $data = $request->validated();
 
-        $this->userRepository->update($id, Arr::except($data, ['role_id', 'account_id','keys_ides']));
+        $this->userRepository->update($id, Arr::except($data, ['role_id', 'account_id', 'keys_ides', 'unreal_accounts_ides']));
 
-        $this->userRepository->syncRole($id, $data['role_id']);
+        $this->userRepository->syncRelation($id, 'roles', [$data['role_id']]);
 
         if (isset($data['keys_ides'])) {
-            $this->userRepository->syncKeys($id, $data['keys_ides']);
+            $this->userRepository->syncRelation($id, 'keys', $data['keys_ides']);
         }
 
-        if (isset($data['account_id'])){
-            $this->userRepository->syncAccounts($id, $data['account_id']);
+        if (isset($data['account_id'])) {
+            $this->userRepository->syncRelation($id, 'accounts', [$data['account_id']]);
+        }
+
+        if (isset($data['unreal_accounts_ides'])) {
+            $this->userRepository->syncRelation($id, 'unRealAccounts', $data['unreal_accounts_ides']);
         }
 
         $this->putFlashMessage(true, 'Successfully updated');
+
         return redirect()->route('users.edit', $id);
 
     }
@@ -120,9 +128,12 @@ class UserController extends Controller
         $data = $request->validated();
 
         $data['status'] = UserRepository::ACTIVE_STATUS;
+
         $data['password'] = bcrypt($data['password']);
 
         $user = $this->userRepository->store($data);
+
+        $this->userRepository->syncRelation($user->id, 'roles', [$data['role_id']]);
 
         $user->notify(new SendPasswordNotification($request->get('password')));
 
@@ -133,32 +144,43 @@ class UserController extends Controller
 
 
     /**
+     * @param int $id
+     * @return Application|Factory|View
+     */
+    public function updatePasswordForm(int $id)
+    {
+        $user = $this->userRepository->getById($id);
+
+        return view('dashboard.users.password',compact('user'));
+    }
+
+    /**
+     * @param int $id
+     * @param PasswordRequest $request
+     * @return RedirectResponse
+     */
+    public function updatePassword(int $id,PasswordRequest $request): RedirectResponse
+    {
+
+        $this->userRepository->update($id,['password'=>bcrypt($request->get('password'))]);
+
+        $this->putFlashMessage(true, 'Successfully updated');
+
+        return redirect()->route('users.index');
+    }
+
+    /**
      * @param $id
      * @return RedirectResponse
      */
     public function login($id): RedirectResponse
     {
         Auth::loginUsingId($id, true);
+
         $this->putFlashMessage(true, 'successfully');
 
         return redirect('/dashboard');
     }
 
-    /**
-     * @param int $id
-     * @return Application|Factory|View
-     */
-    public function linkedin(int $id)
-    {
-
-        $user = $this->userRepository->getById($id);
-        if (!$user) {
-            abort(404);
-        }
-
-        $conversations = $user->linkedinConversations()->orderByDesc('lastActivityAt')->get();
-
-        return view('dashboard.users.linkedin', compact('user', 'conversations'));
-    }
 
 }

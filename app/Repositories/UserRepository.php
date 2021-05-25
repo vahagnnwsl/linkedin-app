@@ -43,15 +43,6 @@ class UserRepository extends Repository
 
     }
 
-    /**
-     * @param int $user_id
-     * @param array $data
-     */
-    public function syncKeys(int $user_id, array $data): void
-    {
-        $this->getById($user_id)->keys()->sync($data);
-    }
-
 
     /**
      * @param int $user_id
@@ -72,22 +63,14 @@ class UserRepository extends Repository
         return $this->model()::whereNotNull('linkedin_login')->whereNotNull('linkedin_password')->get();
     }
 
-    /**
-     * @param $user_id
-     * @param $role_id
-     */
-    public function syncRole($user_id, $role_id)
-    {
-        $this->getById($user_id)->roles()->sync($role_id);
-
-    }
 
     /**
-     * @param $user_id
-     * @param $account_id
+     * @param int $model_id
+     * @param string $relation_name
+     * @param array $relation_ides
      */
-    public function syncAccounts($user_id, $account_id)
+    public function syncRelation(int $model_id,string $relation_name, array $relation_ides)
     {
-        $this->getById($user_id)->accounts()->sync($account_id);
+        $this->getById($model_id)->$relation_name()->sync($relation_ides);
     }
 }

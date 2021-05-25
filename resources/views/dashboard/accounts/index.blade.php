@@ -15,37 +15,38 @@
         <div class="container-fluid">
             <div class="card">
                 <div class="card-header p-2">
-                    @can('accounts')
+                    @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))
                         <a class="btn btn-success btn-md float-right" href="{{route('accounts.create')}}">
                             <i class="fas fa-plus"></i>
                             Add
                         </a>
-                    @endcan
+                    @endif
                 </div>
-                <div class="card-body p-0 table-responsive" >
+                <div class="card-body p-0 table-responsive">
                     <table class="table table-striped ">
                         <thead>
                         <tr>
-                            <th >
+                            <th>
                                 Full name
                             </th>
                             <th>
                                 Login
                             </th>
+
+                            @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))
+                                <th>
+                                    Users
+                                </th>
+                            @endif
+
                             <th>
-                              Password
-                            </th>
-                            <th >
-                                EntityUrn
+                                Status
                             </th>
                             <th>
-                                Users
+                                Type
                             </th>
                             <th>
                                 LastActivityAt
-                            </th>
-                            <th>
-                                Status
                             </th>
                             <th>
                             </th>
@@ -60,20 +61,15 @@
                                 <td>
                                     {{$account->login}}
                                 </td>
-                                <td>
-                                    {{$account->password}}
-                                </td>
 
-                                <td>
-                                    {{$account->entityUrn}}
-                                </td>
+                                @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))
+                                    <td>
+                                        @foreach($account->users as $user)
+                                            <a href="{{route('users.edit',$user->id)}}">{{$user->full_name}}</a>
+                                        @endforeach
+                                    </td>
+                                @endif
 
-                                <td>
-                                    @foreach($account->users as $user)
-                                     <a href="{{route('users.edit',$user->id)}}">{{$user->full_name}}</a>
-                                    @endforeach
-                                </td>
-                                <td>{{$account->lastActivityAt}}</td>
                                 <td>
                                     @if($account->status)
                                         <span class="badge badge-success">Active</span>
@@ -83,22 +79,54 @@
                                     @endif
                                 </td>
                                 <td>
+                                    @if($account->type===1)
+                                        <span class="badge badge-warning">Real</span>
+                                    @else
+                                        <span class="badge badge-danger">Unreal</span>
 
-                                    <a class="btn btn-dark btn-sm" href="{{route('accounts.conversations',$account->id)}}" title="Conversations List">
-                                        <i class="fas fa-envelope"></i>
-                                    </a>
+                                    @endif
+                                </td>
+                                <td>{{$account->lastActivityAt}}</td>
 
-                                    <a class="btn btn-default btn-sm" href="{{route('accounts.syncConversations',$account->id)}}" title="Sync Conversations">
-                                        <i class="fas fa-sync"></i>
-                                    </a>
+                                <td>
+                                    <div class="btn-group btn-group-md float-right">
 
-                                    <a class="btn btn-info btn-sm" href="{{route('accounts.syncConnections',$account->id)}}" title="Sync Connections">
-                                        <i class="fas fa-sync"></i>
-                                    </a>
+                                        @if($account->type === 1)
+                                            <a class="btn btn-default btn-sm"
+                                               href="{{route('accounts.syncConversations',$account->id)}}"
+                                               title="Sync Conversations">
+                                                <i class="fas fa-sync"></i>
+                                            </a>
 
-                                    <a class="btn btn-primary btn-sm" href="{{route('accounts.edit',$account->id)}}" title="Edit">
-                                        <i class="fas fa-user-edit"></i>
-                                    </a>
+                                            <a class="btn btn-info btn-sm"
+                                               href="{{route('accounts.syncConnections',$account->id)}}"
+                                               title="Sync Connections">
+                                                <i class="fas fa-sync"></i>
+                                            </a>
+
+                                            <a class="btn btn-warning btn-sm"
+                                               href="{{route('accounts.syncRequests',$account->id)}}"
+                                               title="Sync send request">
+                                                <i class="fas fa-sync"></i>
+                                            </a>
+
+                                        @endif
+                                        <a class="btn btn-dark btn-sm"
+                                           href="{{route('accounts.conversations',$account->id)}}"
+                                           title="Conversations List">
+                                            <i class="fas fa-envelope"></i>
+                                        </a>
+
+
+                                        @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))
+                                            <a class="btn btn-primary btn-sm"
+                                               href="{{route('accounts.edit',$account->id)}}"
+                                               title="Edit">
+                                                <i class="fas fa-user-edit"></i>
+                                            </a>
+                                        @endif
+
+                                    </div>
                                 </td>
                             </tr>
 

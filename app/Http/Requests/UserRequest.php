@@ -28,7 +28,9 @@ class UserRequest extends FormRequest
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'keys_ides' => 'sometimes|array',
+            'role_id' =>  'required|exists:Spatie\Permission\Models\Role,id',
             'email' => 'required|string|max:255|email|unique:users,email',
+            'unreal_accounts_ides' => 'sometimes|array',
         ];
 
 
@@ -36,11 +38,10 @@ class UserRequest extends FormRequest
             $rules['password'] = 'required|string|min:8|confirmed';
         } else {
             $rules['email'] .= ',' . $this->route('id');
-            $rules['role_id'] = 'required|exists:Spatie\Permission\Models\Role,id';
             $rules['account_id'] = 'sometimes|exists:App\Models\Account,id';
             $rules['status'] = 'required';
-
         }
+
 
         return $rules;
 

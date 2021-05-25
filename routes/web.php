@@ -29,25 +29,26 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
 
     Route::group(['prefix' => 'accounts'], function () {
 
-        Route::get('/', [App\Http\Controllers\Dashboard\AccountController::class, 'index'])->name('accounts.index')->middleware('permission:accounts');
+        Route::get('/', [App\Http\Controllers\Dashboard\AccountController::class, 'index'])->name('accounts.index');
 
-        Route::get('/create', [App\Http\Controllers\Dashboard\AccountController::class, 'create'])->name('accounts.create')->middleware('permission:accounts');
-        Route::post('/store', [App\Http\Controllers\Dashboard\AccountController::class, 'store'])->name('accounts.store')->middleware('permission:accounts');
-        Route::get('/edit/{id}', [App\Http\Controllers\Dashboard\AccountController::class, 'edit'])->name('accounts.edit')->middleware('permission:accounts');
-        Route::put('/update/{id}', [App\Http\Controllers\Dashboard\AccountController::class, 'update'])->name('accounts.update')->middleware('permission:accounts');
-        Route::get('/{id}/conversations/sync', [App\Http\Controllers\Dashboard\AccountController::class, 'syncConversations'])->name('accounts.syncConversations')->middleware('permission:accounts');
-        Route::get('/{id}/connections/sync', [App\Http\Controllers\Dashboard\AccountController::class, 'syncConnections'])->name('accounts.syncConnections')->middleware('permission:accounts');
+        Route::get('/create', [App\Http\Controllers\Dashboard\AccountController::class, 'create'])->name('accounts.create');
+        Route::post('/store', [App\Http\Controllers\Dashboard\AccountController::class, 'store'])->name('accounts.store');
+        Route::get('/edit/{id}', [App\Http\Controllers\Dashboard\AccountController::class, 'edit'])->name('accounts.edit');
+        Route::put('/update/{id}', [App\Http\Controllers\Dashboard\AccountController::class, 'update'])->name('accounts.update');
+        Route::get('/{id}/conversations/sync', [App\Http\Controllers\Dashboard\AccountController::class, 'syncConversations'])->name('accounts.syncConversations');
+        Route::get('/{id}/connections/sync', [App\Http\Controllers\Dashboard\AccountController::class, 'syncConnections'])->name('accounts.syncConnections');
+        Route::get('/{id}/requests/sync', [App\Http\Controllers\Dashboard\AccountController::class, 'syncRequests'])->name('accounts.syncRequests');
         Route::get('/{id}/conversations', [App\Http\Controllers\Dashboard\AccountController::class, 'getConversations']);
-        Route::get('/{id}/conversations/view', [App\Http\Controllers\Dashboard\AccountController::class, 'conversations'])->name('accounts.conversations')->middleware('permission:accounts');
-        Route::get('/{id}/conversations/{conversation_id}/messages', [App\Http\Controllers\Dashboard\AccountController::class, 'conversationMessages'])->name('accounts.conversationMessages')->middleware('permission:accounts');
+        Route::get('/{id}/conversations/history', [App\Http\Controllers\Dashboard\AccountController::class, 'conversations'])->name('accounts.conversations');
+        Route::get('/{id}/conversations/{conversation_id}/messages', [App\Http\Controllers\Dashboard\AccountController::class, 'conversationMessages'])->name('accounts.conversationMessages');
 
     });
 
     Route::group(['prefix' => 'keys'], function () {
-        Route::get('/', [App\Http\Controllers\Dashboard\KeyController::class, 'index'])->name('keys.index')->middleware('permission:keys');
-        Route::post('/store', [App\Http\Controllers\Dashboard\KeyController::class, 'store'])->name('keys.store')->middleware('permission:keys');
-        Route::get('/{id}/edit', [App\Http\Controllers\Dashboard\KeyController::class, 'edit'])->name('keys.edit')->middleware('permission:keys');
-        Route::put('/{id}/update', [App\Http\Controllers\Dashboard\KeyController::class, 'update'])->name('keys.update')->middleware('permission:keys');
+        Route::get('/', [App\Http\Controllers\Dashboard\KeyController::class, 'index'])->name('keys.index');
+        Route::post('/store', [App\Http\Controllers\Dashboard\KeyController::class, 'store'])->name('keys.store');
+        Route::get('/{id}/edit', [App\Http\Controllers\Dashboard\KeyController::class, 'edit'])->name('keys.edit');
+        Route::put('/{id}/update', [App\Http\Controllers\Dashboard\KeyController::class, 'update'])->name('keys.update');
 
     });
 
@@ -61,19 +62,21 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
 
     Route::group(['prefix' => 'users'], function () {
 
-        Route::get('/', [App\Http\Controllers\Dashboard\UserController::class, 'index'])->name('users.index')->middleware('permission:users');
-        Route::get('/create', [App\Http\Controllers\Dashboard\UserController::class, 'create'])->name('users.create')->middleware('permission:users');
-        Route::post('/store', [App\Http\Controllers\Dashboard\UserController::class, 'store'])->name('users.store')->middleware('permission:users');;
-        Route::get('/edit/{id}', [App\Http\Controllers\Dashboard\UserController::class, 'edit'])->name('users.edit')->middleware('permission:users');
-        Route::put('/update/{id}', [App\Http\Controllers\Dashboard\UserController::class, 'update'])->name('users.update')->middleware('permission:users');
-        Route::get('/linkedin/{id}', [App\Http\Controllers\Dashboard\UserController::class, 'linkedin'])->name('users.linkedin');
+        Route::get('/', [App\Http\Controllers\Dashboard\UserController::class, 'index'])->name('users.index');
+        Route::get('/create', [App\Http\Controllers\Dashboard\UserController::class, 'create'])->name('users.create');
+        Route::post('/store', [App\Http\Controllers\Dashboard\UserController::class, 'store'])->name('users.store');
+        Route::get('/edit/{id}', [App\Http\Controllers\Dashboard\UserController::class, 'edit'])->name('users.edit');
+        Route::put('/update/{id}', [App\Http\Controllers\Dashboard\UserController::class, 'update'])->name('users.update');
+        Route::get('/{id}/login', [App\Http\Controllers\Dashboard\UserController::class, 'login'])->name('users.login');
+        Route::get('/{id}/password', [App\Http\Controllers\Dashboard\UserController::class, 'updatePasswordForm'])->name('users.updatePasswordForm');
+        Route::put('/{id}/password', [App\Http\Controllers\Dashboard\UserController::class, 'updatePassword'])->name('users.updatePassword');
 
     });
 
     Route::group(['prefix' => 'connections'], function () {
 
-        Route::get('/', [App\Http\Controllers\Dashboard\ConnectionController::class, 'index'])->name('connections.index')->middleware('permission:connections');
-        Route::get('/{id}/getInfo', [App\Http\Controllers\Dashboard\ConnectionController::class, 'getInfo'])->name('connections.getInfo')->middleware('permission:connections');
+        Route::get('/', [App\Http\Controllers\Dashboard\ConnectionController::class, 'index'])->name('connections.index');
+        Route::get('/{id}/getInfo', [App\Http\Controllers\Dashboard\ConnectionController::class, 'getInfo'])->name('connections.getInfo');
         Route::get('/{id}/trackingId', [App\Http\Controllers\Dashboard\ConnectionController::class, 'getTrackingId']);
         Route::post('/{id}/sendInvitation', [App\Http\Controllers\Dashboard\ConnectionController::class, 'sendInvitation']);
         Route::get('/{id}/messages', [App\Http\Controllers\Dashboard\ConnectionController::class, 'getMessages']);
@@ -132,21 +135,6 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
         Route::get('/invitations/sent', [App\Http\Controllers\Dashboard\LinkedinController::class, 'getSentInvitations']);
 
     });
-
-
-
-    Route::get('/permissions', [App\Http\Controllers\Dashboard\PermissionController::class, 'index'])->name('permissions.index')->middleware('permission:permissions');
-
-    Route::get('/roles', [App\Http\Controllers\Dashboard\RoleController::class, 'index'])->name('roles.index')->middleware('permission:roles');
-    Route::post('/roles', [App\Http\Controllers\Dashboard\RoleController::class, 'store'])->name('roles.store')->middleware('permission:roles');
-    Route::post('/roles/{id}', [App\Http\Controllers\Dashboard\RoleController::class, 'syncPermissions'])->middleware('permission:roles');
-    Route::get('/roles/{id}', [App\Http\Controllers\Dashboard\RoleController::class, 'get'])->middleware('permission:roles');
-
-
-    Route::get('/profile', [App\Http\Controllers\Dashboard\IndexController::class, 'profile'])->name('account.profile');
-
-
-
 
     Route::group(['prefix' => 'linkedin'], function () {
         Route::post('/message', [App\Http\Controllers\Dashboard\LinkedinController::class, 'storeMessage']);

@@ -81,6 +81,26 @@
                                       </span>
                                             @enderror
                                         </div>
+                                        <div class="form-group">
+                                            <label for="limit_connection_request">Limit connection request *</label>
+                                            <input type="number" min="1" id="limit_connection_request" class="form-control" name="limit_connection_request" value="{{old('limit_connection_request')}}">
+
+                                            @error('limit_connection_request')
+                                            <span class="invalid-feedback d-block" role="alert">
+                                          <strong>{{ $message }}</strong>
+                                      </span>
+                                            @enderror
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="limit_conversation">Limit conversation *</label>
+                                            <input type="number" min="1" id="limit_conversation" class="form-control" name="limit_conversation" value="{{old('limit_conversation')}}">
+
+                                            @error('limit_conversation')
+                                            <span class="invalid-feedback d-block" role="alert">
+                                          <strong>{{ $message }}</strong>
+                                      </span>
+                                            @enderror
+                                        </div>
 
                                         <div class="form-group">
                                             <label>Proxies *</label>
@@ -91,7 +111,15 @@
                                                 @endforeach
                                             </select>
                                         </div>
-
+                                        <div class="form-group">
+                                            <label>Type </label>
+                                            <select class="form-control" name="type" required>
+                                                <option selected disabled> Select one </option>
+                                                <option value="1"> Real </option>
+                                                <option value="2"> Unreal </option>
+                                            </select>
+                                        </div>
+                                        <br/>
                                         <div class="form-group">
                                             <button type="submit" class="btn btn-success float-right"><i class="fa fa-check-circle"></i> Submit
                                             </button>

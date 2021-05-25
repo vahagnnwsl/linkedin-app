@@ -83,6 +83,27 @@
                                       </span>
                                             @enderror
                                         </div>
+
+                                        <div class="form-group">
+                                            <label for="limit_connection_request">Limit connection request *</label>
+                                            <input type="number" min="1" id="limit_connection_request" class="form-control" name="limit_connection_request" value="{{$account->limit_connection_request}}">
+
+                                            @error('limit_connection_request')
+                                            <span class="invalid-feedback d-block" role="alert">
+                                          <strong>{{ $message }}</strong>
+                                      </span>
+                                            @enderror
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="limit_conversation">Limit conversation *</label>
+                                            <input type="number" min="1" id="limit_conversation" class="form-control" name="limit_conversation" value="{{$account->limit_conversation}}">
+
+                                            @error('limit_conversation')
+                                            <span class="invalid-feedback d-block" role="alert">
+                                          <strong>{{ $message }}</strong>
+                                      </span>
+                                            @enderror
+                                        </div>
                                         <div class="form-group">
                                             <label>Proxies *</label>
                                             <select multiple="multiple" class="select2 form-control w-100" required
@@ -90,6 +111,14 @@
                                                 @foreach($proxies as $item)
                                                     <option value="{{$item['id']}}" @if(in_array($item['id'],$account->proxies()->pluck('id')->toArray())) selected @endif>{{$item['text']}}</option>
                                                 @endforeach
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Type </label>
+                                            <select class="form-control" name="type" required>
+                                                <option value="1" @if($account->type === 1) selected @endif> Real </option>
+                                                <option value="2" @if($account->type === 2) selected @endif> Unreal </option>
                                             </select>
                                         </div>
 
@@ -104,6 +133,8 @@
                                                 </option>
                                             </select>
                                         </div>
+
+
                                         <br/>
 
                                         <div class="form-group">

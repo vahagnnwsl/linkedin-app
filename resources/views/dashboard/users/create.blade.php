@@ -88,7 +88,20 @@
                                             @enderror
                                         </div>
 
-
+                                        <div class="form-group">
+                                            <label for="roles">Roles *</label>
+                                            <select class="form-control" name="role_id">
+                                                <option selected disabled>Select</option>
+                                                @foreach($roles as $role)
+                                                    <option value="{{$role->id}}">{{$role->name}}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('role_id')
+                                            <span class="invalid-feedback d-block" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                            @enderror
+                                        </div>
 
 
                                         <div class="form-group">

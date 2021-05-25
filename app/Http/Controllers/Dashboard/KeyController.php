@@ -66,7 +66,7 @@ class KeyController extends Controller
 
         $keys = $this->keyRepository->paginate();
         $countries = $this->countryRepository->getAll();
-        $accounts = $this->accountRepository->selectForSelect2('full_name', ['status' => 1]);
+        $accounts = $this->accountRepository->selectForSelect2('full_name', ['status' => 1,'type'=>$this->accountRepository::$TYPE_REAL]);
 
         return view('dashboard.keys.index', compact('keys', 'countries', 'accounts'));
     }
@@ -101,7 +101,7 @@ class KeyController extends Controller
 
         $countries = $this->countryRepository->getAll();
 
-        $accounts = $this->accountRepository->selectForSelect2('full_name', ['status' => 1]);
+        $accounts = $this->accountRepository->selectForSelect2('full_name', ['status' => 1,'type'=>$this->accountRepository::$TYPE_REAL]);
 
 
         return view('dashboard.keys.edit', compact('key', 'countries', 'accounts'));
@@ -127,21 +127,5 @@ class KeyController extends Controller
         return redirect()->back();
     }
 
-    /**
-     * @param int $id
-     * @return RedirectResponse
-     */
-    public function search(Request $request): RedirectResponse
-    {
 
-
-        $account = Auth::user()->account;
-
-        LinkedinSearchByKeyAndCountry::dispatch($request->get('key_id'), $request->get('country_id'), $account->id);
-
-        $this->putFlashMessage(true, 'Your request on process');
-
-        return redirect()->route('keys.index');
-
-    }
 }

@@ -81,6 +81,13 @@ class User extends Authenticatable
         return $this->belongsToMany(Interlocutor::class, 'user_interlocutors', 'user_id', 'interlocutor_id');
     }
 
+    /**
+     * @return BelongsToMany
+     */
+    public function unRealAccounts(): BelongsToMany
+    {
+        return $this->belongsToMany(Account::class, 'users_un_real_accounts', 'user_id', 'account_id');
+    }
 
     /**
      * @return BelongsToMany

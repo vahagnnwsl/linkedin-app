@@ -14,14 +14,14 @@ use App\Repositories\KeyRepository;
 use App\Repositories\ProxyRepository;
 use Illuminate\Console\Command;
 
-class GetAccountsConversations extends Command
+class GetUnRealAccountsConversations extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'command:GetAccountsConversations';
+    protected $signature = 'command:GetUnRealAccountsConversations';
 
     /**
      * The console command description.
@@ -53,7 +53,7 @@ class GetAccountsConversations extends Command
      */
     public function handle()
     {
-        $accounts = $this->accountsRepository->getAllRealAccounts();
+        $accounts = $this->accountsRepository->getAllUnRealAccounts();
 
         $accounts->map(function ($account) {
             $proxy = $this->proxyRepository->inRandomOrderFirst();

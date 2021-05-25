@@ -21,7 +21,10 @@ class Account extends Model
         'login',
         'full_name',
         'lastActivityAt',
-        'status'
+        'status',
+        'type',
+        'limit_connection_request',
+        'limit_conversation',
     ];
 
 
@@ -65,4 +68,13 @@ class Account extends Model
     {
         return $this->proxies()->inRandomOrder()->first();
     }
+
+    /**
+     * @return int
+     */
+    public function getSendRequestCount(): int
+    {
+        return $this->hasMany(ConnectionRequest::class)->whereDate('created_at',date('Y-m-d'))->count();
+    }
+
 }

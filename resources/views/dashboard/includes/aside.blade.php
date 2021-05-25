@@ -12,7 +12,7 @@
             <div class="image">
             </div>
             <div class="info">
-{{--                <a href="{{route('account.profile')}}" class="d-block">{{\Illuminate\Support\Facades\Auth::user()->fullName}}</a>--}}
+                {{--                <a href="{{route('account.profile')}}" class="d-block">{{\Illuminate\Support\Facades\Auth::user()->fullName}}</a>--}}
                 <p class="text-white mt-2">
                     @foreach(\Illuminate\Support\Facades\Auth::user()->roles as $role)
                         <i class="{{$role->icon}}" title="{{$role->name}}"> {{$role->name}}</i>
@@ -22,33 +22,11 @@
         </div>
 
 
-        <!-- Sidebar Menu -->
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                <!-- Add icons to the links using the .nav-icon class
-                     with font-awesome or any other icon font library -->
 
-                @can('permissions')
-                    <li class="nav-item ">
-                        <a href="{{route('permissions.index')}}"
-                           class="nav-link {{request()->is('dashboard/permissions*') ?'active':''}}">
-                            <i class=" fas fa-user-tag nav-icon"></i>
-                            <p>Permissions</p>
-                        </a>
-                    </li>
-                @endcan
 
-                @can('roles')
-                    <li class="nav-item">
-                        <a href="{{route('roles.index')}}"
-                           class="nav-link {{request()->is('dashboard/roles*') ?'active':''}}">
-                            <i class=" fas fa-user-tag nav-icon"></i>
-                            <p>Roles</p>
-                        </a>
-                    </li>
-                @endcan
-
-                @can('keys')
+                @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))
                     <li class="nav-item">
                         <a href="{{route('keys.index')}}"
                            class="nav-link {{request()->is('dashboard/keys*') ?'active':''}}">
@@ -56,25 +34,29 @@
                             <p> Keys</p>
                         </a>
                     </li>
-                @endcan
-                <li class="nav-item">
-                    <a href="{{route('countries.index')}}"
-                       class="nav-link {{request()->is('dashboard/countries*') ?'active':''}}">
-                        <i class=" fas fa-key nav-icon"></i>
-                        <p>Countries</p>
-                    </a>
-                </li>
+                @endif
 
-                <li class="nav-item">
-                    <a href="{{route('proxies.index')}}"
-                       class="nav-link {{request()->is('dashboard/proxies*') ?'active':''}}">
-                        <i class=" fas fa-key nav-icon"></i>
-                        <p>Proxies</p>
-                    </a>
-                </li>
+                @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))
+                    <li class="nav-item">
+                        <a href="{{route('countries.index')}}"
+                           class="nav-link {{request()->is('dashboard/countries*') ?'active':''}}">
+                            <i class=" fas fa-key nav-icon"></i>
+                            <p>Countries</p>
+                        </a>
+                    </li>
+                @endif
 
+                @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))
+                    <li class="nav-item">
+                        <a href="{{route('proxies.index')}}"
+                           class="nav-link {{request()->is('dashboard/proxies*') ?'active':''}}">
+                            <i class=" fas fa-key nav-icon"></i>
+                            <p>Proxies</p>
+                        </a>
+                    </li>
+                @endif
 
-            @can('users')
+                @if(\Illuminate\Support\Facades\Auth::user()->hasAnyRole('Admin','Manager'))
                     <li class="nav-item">
                         <a href="{{route('users.index')}}"
                            class="nav-link {{request()->is('dashboard/users*') ?'active':''}}">
@@ -82,9 +64,9 @@
                             <p>Users</p>
                         </a>
                     </li>
-                @endcan
+                @endif
 
-                @can('accounts')
+                @if(\Illuminate\Support\Facades\Auth::user()->hasAnyRole('Admin','Manager'))
                     <li class="nav-item">
                         <a href="{{route('accounts.index')}}"
                            class="nav-link {{request()->is('dashboard/accounts*') ?'active':''}}">
@@ -92,11 +74,8 @@
                             <p>Accounts</p>
                         </a>
                     </li>
-                @endcan
+                @endif
 
-
-
-                @can('connections')
                 <li class="nav-item">
                     <a href="{{route('connections.index')}}"
                        class="nav-link {{request()->is('dashboard/connections*') ?'active':''}}">
@@ -105,24 +84,27 @@
                     </a>
                 </li>
 
-                @endcan
+                @if(\Illuminate\Support\Facades\Auth::user()->hasAnyRole('Admin','Manager'))
 
+                    <li class="nav-item">
+                        <a href="{{route('connectionRequest.index')}}"
+                           class="nav-link {{request()->is('dashboard/connection-request*') ?'active':''}}">
+                            <i class=" fas fa-user-alt nav-icon"></i>
+                            <p>Connection Requests</p>
+                        </a>
+                    </li>
+                @endif
 
-                <li class="nav-item">
-                    <a href="{{route('connectionRequest.index')}}"
-                       class="nav-link {{request()->is('dashboard/connection-request*') ?'active':''}}">
-                        <i class=" fas fa-user-alt nav-icon"></i>
-                        <p>Connection Requests</p>
-                    </a>
-                </li>
+                @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))
 
-                <li class="nav-item">
-                    <a href="{{route('companies.index')}}"
-                       class="nav-link {{request()->is('dashboard/companies*') ?'active':''}}">
-                        <i class=" fas fa-user-alt nav-icon"></i>
-                        <p>Companies</p>
-                    </a>
-                </li>
+                    <li class="nav-item">
+                        <a href="{{route('companies.index')}}"
+                           class="nav-link {{request()->is('dashboard/companies*') ?'active':''}}">
+                            <i class=" fas fa-user-alt nav-icon"></i>
+                            <p>Companies</p>
+                        </a>
+                    </li>
+                @endif
 
                 <li class="nav-item">
                     <a href="{{route('linkedin.chat')}}"
@@ -132,14 +114,17 @@
                     </a>
                 </li>
 
-{{--                <li class="nav-item">--}}
-{{--                    <a href="{{route('search.index')}}"--}}
-{{--                       class="nav-link {{request()->is('dashboard/search/linkedin') ?'active':''}}">--}}
-{{--                        <i class="nav-icon fab fa-linkedin mr-2"></i>--}}
-{{--                        <p>Search</p>--}}
-{{--                    </a>--}}
-{{--                </li>--}}
-
+                @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Hr'))
+                    @foreach(\Illuminate\Support\Facades\Auth::user()->unRealAccounts as $unRealAccount)
+                        <li class="nav-item">
+                            <a href="{{route('accounts.conversations',$unRealAccount->id)}}"
+                               class="nav-link {{request()->is('dashboard/accounts/'.$unRealAccount->id.'/conversations') ?'active':''}}">
+                                <i class="nav-icon fab fa-linkedin mr-2"></i>
+                                <p>{{$unRealAccount->full_name}}</p>
+                            </a>
+                        </li>
+                    @endforeach
+                @endif
             </ul>
         </nav>
         <!-- /.sidebar-menu -->

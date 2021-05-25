@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Account;
+use Illuminate\Support\Facades\DB;
 
 
 class AccountRepository extends Repository
@@ -10,6 +11,11 @@ class AccountRepository extends Repository
 
     public static $ACTIVE_STATUS = 1;
     public static $INACTIVE_STATUS = 0;
+
+
+    public static $TYPE_REAL = 1;
+    public static $TYPE_UNREAL = 2;
+
 
     public function model(): string
     {
@@ -106,7 +112,35 @@ class AccountRepository extends Repository
      */
     public function getRandomFirst()
     {
-        return $this->model()::where('status',self::$ACTIVE_STATUS)->inRandomOrder()->first();
+        return $this->model()::where('status', self::$ACTIVE_STATUS)->inRandomOrder()->first();
+    }
 
+
+    /**
+     * @return mixed
+     */
+    public function getAllRealAccounts()
+    {
+        return $this->model()::where('type', self::$TYPE_REAL)->get();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAllUnRealAccounts()
+    {
+        return $this->model()::where('type', self::$TYPE_UNREAL)->get();
+    }
+
+    /**
+     * @param $account_id
+     * @param $connection_id
+     */
+    public function attachConnection($account_id,$connection_id){
+        DB::table('account_connections')
+            ->updateOrInsert(
+                ['account_id' => $account_id, 'connection_id' => $connection_id],
+                ['account_id' => $account_id, 'connection_id' => $connection_id]
+            );
     }
 }

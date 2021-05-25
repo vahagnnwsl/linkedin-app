@@ -60,7 +60,7 @@
                                         <span class="text-gray-dark text-bold"> {{$request->account->full_name}}</span>
                                     </td>
                                     <td>
-                                        <span class="text-gray-dark text-bold">  {{$request->user->fullName}}</span>
+                                        <span class="text-gray-dark text-bold">  {{$request->user?$request->user->fullName:''}}</span>
                                     </td>
                                     <td>
                                         <span class="text-gray-dark text-bold">   {{$request->message}}</span>

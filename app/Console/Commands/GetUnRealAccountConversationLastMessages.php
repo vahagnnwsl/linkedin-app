@@ -4,24 +4,26 @@ namespace App\Console\Commands;
 
 
 use App\Jobs\GetAccountConversations;
+use App\Jobs\GetLastMessagesConversation;
 use App\Jobs\SearchByKey;
 
 use App\Jobs\SyncAccountConnectionsJob;
 use App\Jobs\SyncAccountConversations;
+use App\Models\User;
 use App\Repositories\AccountRepository;
 use App\Repositories\KeyRepository;
 
 use App\Repositories\ProxyRepository;
 use Illuminate\Console\Command;
 
-class GetAccountsConversations extends Command
+class GetUnRealAccountConversationLastMessages extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'command:GetAccountsConversations';
+    protected $signature = 'command:GetUnRealAccountConversationLastMessages';
 
     /**
      * The console command description.
@@ -53,11 +55,13 @@ class GetAccountsConversations extends Command
      */
     public function handle()
     {
-        $accounts = $this->accountsRepository->getAllRealAccounts();
+        $accounts = $this->accountsRepository->getAllUnRealAccounts();
 
         $accounts->map(function ($account) {
-            $proxy = $this->proxyRepository->inRandomOrderFirst();
-            GetAccountConversations::dispatch($account,$proxy);
+            $conversations = $account->conversations;
+            $conversations->map(function ($conversation) use ($account) {
+                GetLastMessagesConversation::dispatch($account, $conversation, User::first());
+            });
         });
 
         return 1;

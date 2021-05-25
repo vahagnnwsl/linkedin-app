@@ -15,37 +15,37 @@
         <div class="container-fluid">
             <div class="card">
                 <div class="card-header p-2">
-                    @can('users')
+                    @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))
+
                         <a class="btn btn-success btn-md float-right" href="{{route('users.create')}}">
                             <i class="fas fa-plus"></i>
                             Add
                         </a>
-                    @endcan
+
+                    @endif
                 </div>
                 <div class="card-body p-0" style="display: block;">
                     <table class="table table-striped projects">
                         <thead>
                         <tr>
-                            <th style="width: 1%">
-                                #
+                            <th>
+                                ID
                             </th>
 
-                            <th style="width: 20%">
+                            <th>
                                 Full name
                             </th>
-                            <th style="width: 15%">
+                            <th>
                                 Email
                             </th>
-                            <th style="width: 20%">
+                            <th>
                                 Role
                             </th>
-                            <th>
-                                Join
-                            </th>
-                            <th style="width: 8%" class="text-center">
+
+                            <th class="text-center">
                                 Status
                             </th>
-                            <th style="width: 20%">
+                            <th>
                             </th>
                         </tr>
                         </thead>
@@ -53,7 +53,7 @@
                         @foreach($users as $user)
                             <tr>
                                 <td>
-                                    #
+                                    {{$user->id}}
                                 </td>
 
                                 <td>
@@ -72,9 +72,7 @@
                                     </p>
                                 </td>
 
-                                <td>
-                                    {{$user['created_at']->format('Y-m-d')}}
-                                </td>
+
                                 <td class="project-state">
                                     @if($user['status'])
                                         <span class="badge badge-success">Active</span>
@@ -84,38 +82,28 @@
                                 </td>
                                 <td class="project-actions text-right">
 
+                                    <div class="btn-group btn-group-md">
 
-                                    @can('login_via_anther_user')
-                                        @if($user->id !== \Illuminate\Support\Facades\Auth::id())
-                                            <a class="btn btn-success btn-sm" href="{{route('users.login',$user->id)}}">
-                                                <i class="fas fa-sign-in-alt"></i>
-                                            </a>
-                                        @endif
-                                    @endcan
-
-                                    @can('users')
-                                        <a class="btn btn-primary btn-sm" href="{{route('users.edit',$user->id)}}"
-                                           title="Edit">
-                                            <i class="fas fa-user-edit"></i>
+                                        <a class="btn btn-success btn-sm" href="{{route('users.login',$user->id)}}"
+                                           title="Login as">
+                                            <i class="fas fa-sign-in-alt"></i>
                                         </a>
-                                    @endcan
 
+                                        @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))
 
+                                            <a class="btn btn-info btn-sm"
+                                               href="{{route('users.updatePasswordForm',$user->id)}}"
+                                               title="Change password">
+                                                <i class="fas fa-key"></i>
+                                            </a>
 
-                                    {{--                                    @can('users')--}}
-                                    {{--                                        <form method="POST" action="{{ route('users.destroy',  $user->id) }}"--}}
-                                    {{--                                              accept-charset="UTF-8"--}}
-                                    {{--                                              style="display:inline">--}}
-                                    {{--                                            {{ method_field('DELETE') }}--}}
-                                    {{--                                            {{ csrf_field() }}--}}
-                                    {{--                                            <button type="submit" class="btn btn-danger btn-sm"--}}
-                                    {{--                                                    title="Delete Permission"--}}
-                                    {{--                                                    onclick="return confirm(&quot;Confirm delete?&quot;)">--}}
-                                    {{--                                                <i class="fas fa-trash"> </i>--}}
-                                    {{--                                            </button>--}}
-                                    {{--                                        </form>--}}
-                                    {{--                                    @endcan--}}
+                                            <a class="btn btn-primary btn-sm" href="{{route('users.edit',$user->id)}}"
+                                               title="Edit">
+                                                <i class="fas fa-user-edit"></i>
+                                            </a>
 
+                                        @endif
+                                    </div>
                                 </td>
                             </tr>
 

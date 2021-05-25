@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Collections\ConversationCollection;
 use App\Http\Resources\Collections\MessageCollection;
 use App\Jobs\GetLastMessagesConversation;
 use App\Jobs\SyncLastMessagesForOneAccount;
@@ -10,6 +11,7 @@ use App\Repositories\ConversationRepository;
 use App\Repositories\MessageRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 
@@ -42,9 +44,14 @@ class ConversationController extends Controller
     public function getMessages(Request $request, int $id): JsonResponse
     {
 
-        $messages = $this->conversationRepository->getMessages($id, $request->get('start'));
+        $relatedAccountsIdes = Auth::user()->unRealAccounts()->pluck('id')->toArray();
 
-        return response()->json(['messages' => new MessageCollection(collect($messages)->sortBy('date'))]);
+        $messages = $this->conversationRepository->getMessages($id, $request->get('start'));
+        $conversation = $this->conversationRepository->getById($id);
+
+        $relatedConversations = new ConversationCollection($this->conversationRepository->getConnectionConversationsByConnectionAndAccount($conversation->connection_id, $relatedAccountsIdes));
+
+        return response()->json(['messages' => new MessageCollection(collect($messages)->sortBy('date')), 'relatedConversations' => $relatedConversations]);
     }
 
     /**

@@ -56,6 +56,9 @@ Vue.component('linkedin-chat', {
                          <h2>{{selectedConversation.connection.firstName}} {{selectedConversation.connection.lastName}}
                              <i class="fa fa-sync-alt float-right" style="cursor: pointer" @click="syncLastMessages(selectedConversation.id)" title="Sync lat messages"></i>
                          </h2>
+
+                        <span class="badge badge-secondary mr-2" style="cursor: pointer" v-for="rel in relativeConversation">{{rel.account.full_name}}</span>
+
                     </div>
                     <div class="card-body" style="position: relative">
                         <div class="direct-chat-messages" id="messages" style="min-height: 690px;overflow-y: scroll">
@@ -158,6 +161,7 @@ Vue.component('linkedin-chat', {
             },
             conversations: [],
             messages: [],
+            relativeConversation: [],
             start: 0,
             messageStart: 0,
             searchKey: '',
@@ -218,6 +222,7 @@ Vue.component('linkedin-chat', {
                 })
         },
         selectConversation: function (conversation) {
+            this.relativeConversation = [];
             this.messageStart = 0;
             this.messages = [];
             this.selectedConversation.id = conversation.id;
@@ -232,6 +237,8 @@ Vue.component('linkedin-chat', {
 
                     this.messages.unshift(...response.data.messages)
                     this.messageStart += 10;
+
+                    this.relativeConversation=response.data.relatedConversations;
                 })
         },
         scroll: function () {

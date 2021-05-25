@@ -55,4 +55,12 @@ class Conversation extends Model
         return $this->belongsTo(Connection::class);
     }
 
+    /**
+     * @return BelongsTo
+     */
+    public function account(): BelongsTo
+    {
+        return $this->belongsTo(Account::class);
+    }
+
 }

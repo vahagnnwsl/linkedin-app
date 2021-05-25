@@ -21,6 +21,7 @@ class ConversationResource extends JsonResource
             'id' => $this->id,
             'entityUrn' => $this->entityUrn,
             'connection' => $this->connection,
+            'account' => $this->account,
             'lastActivityAt' => $this->lastActivityAt,
             'lastActivityAt_diff' => $this->lastActivityAt->diffForHumans(),
         ];

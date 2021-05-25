@@ -51,7 +51,7 @@ class PM2Configs extends Command
         ];
 
 
-        $accounts = (new AccountRepository())->getAll();
+        $accounts = (new AccountRepository())->getAllRealAccounts();
 
         foreach ($accounts as $account) {
 

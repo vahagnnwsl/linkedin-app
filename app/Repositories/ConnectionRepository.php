@@ -2,10 +2,10 @@
 
 namespace App\Repositories;
 
-use App\Linkedin\Repositories\Auth;
 use App\Models\Connection;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ConnectionRepository extends Repository

@@ -78,13 +78,9 @@
                                 </td>
 
                                 <td>
-                                    @if($connection->accounts->isEmpty())
-                                        {{dump($connection->accounts)}}
-                                    @else
-                                        @foreach($connection->accounts as $account)
-                                            {{$account->full_name}} <br>
-                                        @endforeach
-                                    @endif
+                                    @foreach($connection->accounts as $account)
+                                        {{$account->full_name}} </br>
+                                    @endforeach
 
                                 </td>
 

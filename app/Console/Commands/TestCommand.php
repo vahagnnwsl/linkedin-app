@@ -6,6 +6,7 @@ namespace App\Console\Commands;
 use App\Linkedin\Helper;
 use App\Linkedin\Responses\Company;
 use App\Linkedin\Responses\Invitation;
+use App\Linkedin\Responses\Messages;
 use App\Linkedin\Responses\Response;
 use App\Models\Account;
 use App\Models\Connection;
@@ -75,11 +76,13 @@ class TestCommand extends Command
 //
 //        dd($res->getBody()->getContents());
 
-        $account = Account::where('login', 'shushbetskova@gmail.com')->first();
+        $account = Account::where('login', 'ghukasyan.05@gmail.com')->first();
 //        $proxy = Proxy::first();
 
+        $a = '2-MDQyMWI3YjUtNjBmYi00NmEwLWJhYTQtZDllMWNhYjhlNTc1XzAxMw==';
 
-        $res =  (new Invitation(Api::invitation($account->login, $account->password)->getSentInvitations()))();
+        $res =  (new Messages((array)Api::conversation($account->login, $account->password)->getConversationMessages($a,['createdBefore'=>1621957711974]),$a))();
+
 
 
         File::put(storage_path('d.json'), json_encode($res));

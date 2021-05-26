@@ -24,8 +24,6 @@ class MessageRepository extends Repository
     }
 
 
-
-
     /**
      * @param array $requestData
      * @param int $conversation_id
@@ -34,6 +32,7 @@ class MessageRepository extends Repository
      * @param string $account_entityUrn
      * @param int $status
      * @param int $event
+     * @param bool $is_parser
      */
 
     public function updateOrCreateCollection(array $requestData,
@@ -42,10 +41,12 @@ class MessageRepository extends Repository
                                              int $account_id,
                                              string $account_entityUrn,
                                              int $status = self::DRAFT_STATUS,
-                                             int $event = self::NOT_RECEIVE_EVENT): void
+                                             int $event = self::NOT_RECEIVE_EVENT,
+                                             bool $is_parser = false
+    ): void
     {
 
-        collect($requestData)->map(function ($item) use ($conversation_id, $user_id, $account_id, $account_entityUrn, $status, $event) {
+        collect($requestData)->map(function ($item) use ($conversation_id, $user_id, $account_id, $account_entityUrn, $status, $event, $is_parser) {
 
 
             if ($account_entityUrn === $item['user_entityUrn']) {
@@ -64,10 +65,14 @@ class MessageRepository extends Repository
             $item['status'] = $status;
             $item['event'] = $event;
 
+            if ($is_parser){
+                $this->model()::unsetEventDispatcher();
+            }
 
             $this->model()::firstOrCreate([
                 'entityUrn' => $item['entityUrn']
             ], Arr::except($item, 'user_entityUrn'));
+
 
             return true;
         });

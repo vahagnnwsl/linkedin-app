@@ -93,43 +93,6 @@ class Response
         ];
     }
 
-    /**
-     * @param array $data
-     * @param string $conversation_urn
-     * @return array
-     */
-    public static function messages(array $data, string $conversation_urn): array
-    {
-
-        if (!count($data['data']->included)) {
-            return [
-                'success' => false
-            ];
-        }
-
-        $data = collect($data['data']->included)->groupBy('$type');
-
-        $messagesData = $data[self::MESSAGE_TYPE];
-
-        $FROM_KEY = self::FROM_KEY;
-
-        $messages = $messagesData->map(function ($item) use ($FROM_KEY, $conversation_urn) {
-            return [
-                'text' => isset($item->eventContent) && isset($item->eventContent->attributedBody) ? $item->eventContent->attributedBody->text : null,
-                'attachments' => isset($item->eventContent) && isset($item->eventContent->attachments) ? $item->eventContent->attachments[0] : null,
-                'media' => isset($item->eventContent) && isset($item->eventContent->customContent) ? $item->eventContent->customContent->media->previewgif : null,
-                'user_entityUrn' => Helper::searchInString($item->{$FROM_KEY}, 'urn:li:fs_messagingMember:(' . $conversation_urn . ',', ')'),
-                'entityUrn' => Helper::searchInString($item->entityUrn, 'urn:li:fs_event:(' . $conversation_urn . ',', ')'),
-                'date' => Carbon::createFromTimestampMsUTC($item->createdAt)->toDateTimeString()
-            ];
-        });
-
-        return [
-            'success' => true,
-            'data' => $messages,
-            'lastActivityAt' => $messagesData->min('createdAt')
-        ];
-    }
 
     /**\
      * @param array $data

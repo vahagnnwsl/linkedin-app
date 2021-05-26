@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 
 use App\Jobs\GetAccountConversations;
+use App\Jobs\GetConversationMessages;
 use App\Jobs\GetLastMessagesConversation;
 use App\Jobs\SearchByKey;
 
@@ -16,14 +17,14 @@ use App\Repositories\KeyRepository;
 use App\Repositories\ProxyRepository;
 use Illuminate\Console\Command;
 
-class GetUnRealAccountConversationLastMessages extends Command
+class GetUnRealAccountConversationMessages extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'command:GetUnRealAccountConversationLastMessages';
+    protected $signature = 'command:GetUnRealAccountConversationMessages';
 
     /**
      * The console command description.
@@ -60,7 +61,7 @@ class GetUnRealAccountConversationLastMessages extends Command
         $accounts->map(function ($account) {
             $conversations = $account->conversations;
             $conversations->map(function ($conversation) use ($account) {
-                GetLastMessagesConversation::dispatch($account, $conversation, User::first());
+                GetConversationMessages::dispatch(User::first(),$account, $conversation );
             });
         });
 

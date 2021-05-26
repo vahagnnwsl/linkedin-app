@@ -2,51 +2,64 @@
 
 namespace App\Linkedin\Responses;
 
+use App\Linkedin\Constants;
+use App\Linkedin\DTO\AbstractDTO;
 use App\Linkedin\DTO\Message;
+use App\Linkedin\DTO\Profile;
 use App\Linkedin\Helper;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\File;
 
 
 class Messages
 {
-    const TYPE_KEY = '$type';
-    const FROM_KEY = '*from';
 
+    protected $data;
+    protected $conversation_urn;
+
+    const FROM_KEY = '*from';
     const MESSAGE_TYPE = 'com.linkedin.voyager.messaging.Event';
 
-    /**
-     * @var object
-     */
-    protected object $data;
-
-    /**
-     * @var Collection
-     */
-    protected Collection $elements;
-
-    /**
-     * @var string
-     */
-    protected string $conversation_urn;
-
-    /**
-     * Messages constructor.
-     * @param array $data
-     * @param string $conversation_urn
-     */
     public function __construct(array $data, string $conversation_urn)
     {
-        $this->data = collect($data['data']->included);
-
+        $this->data = $data;
         $this->conversation_urn = $conversation_urn;
     }
 
-    /**
-     * @return array
-     */
-    public function initializ(): array
-    {
 
+    public function __invoke(): array
+    {
+        $data = $this->data;
+        $conversation_urn = $this->conversation_urn;
+
+        if (!count($data['data']->included)) {
+            return [
+                'success' => false
+            ];
+        }
+
+        $data = collect($data['data']->included)->groupBy('$type');
+
+        $messagesData = $data[self::MESSAGE_TYPE];
+
+        $messages = $messagesData->map(function ($item) use ( $conversation_urn) {
+
+            return [
+                'text' => isset($item->eventContent) && isset($item->eventContent->attributedBody) ? $item->eventContent->attributedBody->text : null,
+                'attachments' => isset($item->eventContent) && isset($item->eventContent->attachments) ? $item->eventContent->attachments[0] : null,
+                'media' => isset($item->eventContent) && isset($item->eventContent->customContent) ? $item->eventContent->customContent->media->previewgif : null,
+                'user_entityUrn' => Helper::searchInString($item->{self::FROM_KEY}, 'urn:li:fs_messagingMember:(' . $conversation_urn . ',', ')'),
+                'entityUrn' => Helper::searchInString($item->entityUrn, 'urn:li:fs_event:(' . $conversation_urn . ',', ')'),
+                'date' => Carbon::createFromTimestampMsUTC($item->createdAt)->toDateTimeString()
+            ];
+        });
+
+        return [
+            'success' => true,
+            'data' => $messages->toArray(),
+            'lastActivityAt' => $messagesData->min('createdAt')
+        ];
     }
 }
+

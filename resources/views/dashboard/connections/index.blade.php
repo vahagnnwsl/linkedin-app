@@ -94,7 +94,7 @@
                                     <div class="btn-group">
 
                                         @if($userAccount)
-                                            @if($connection->canSendConnectionRequest() && !$connection->requestByAccount($userAccount->id)->first())
+                                            @if($connection->canSendConnectionRequest() )
                                                 <a class="btn btn-primary setConnectionRequest"
                                                    title="Sent Connection Request" href="javascript:void(0)"
                                                    data-connectionId="{{$connection->id}}">

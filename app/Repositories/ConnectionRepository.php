@@ -56,8 +56,12 @@ class ConnectionRepository extends Repository
 
     public function filter(array $requestData, string $orderBy = 'created_at', string $direction = 'desc')
     {
+        DB::enableQueryLog(); // Enable query log
 
-        return $this->model()::when(isset($requestData['key']), function ($q) use ($requestData) {
+// Your Eloquent query executed by using get()
+
+
+       $a =  $this->model()::when(isset($requestData['key']), function ($q) use ($requestData) {
             $q->where(function ($sub) use ($requestData) {
                 $sub->where('firstName', 'LIKE', "%" . $requestData['key'] . "%")
                     ->orWhere('lastName', 'LIKE', "%" . $requestData['key'] . "%")
@@ -90,8 +94,9 @@ class ConnectionRepository extends Repository
                 $subQuery_1->whereIn('keys.id', $requestData['keys_ids']);
             });
         })->with('accounts')->orderby('id', 'desc')->paginate(20);
+        dd(DB::getQueryLog());
 
-
+        return $a;
     }
 
     /**

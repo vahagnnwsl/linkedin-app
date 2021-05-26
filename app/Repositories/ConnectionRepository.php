@@ -56,7 +56,6 @@ class ConnectionRepository extends Repository
     public function filter(array $requestData, string $orderBy = 'created_at', string $direction = 'desc')
     {
 
-
         return $this->model()::when(isset($requestData['key']), function ($q) use ($requestData) {
             $q->where(function ($sub) use ($requestData) {
                 $sub->where('firstName', 'LIKE', "%" . $requestData['key'] . "%")
@@ -79,7 +78,7 @@ class ConnectionRepository extends Repository
                 });
 
             });
-        })->when(isset($requestData['keys_ids']) && count($requestData['keys_ids']),function ($q) use($requestData){
+        })->when(isset($requestData['keys_ids']) && count($requestData['keys_ids'])>1,function ($q) use($requestData){
             $q->whereHas('keys', function ($subQuery_1) use ($requestData) {
                 $subQuery_1->whereIn('keys.id', $requestData['keys_ids']);
             });

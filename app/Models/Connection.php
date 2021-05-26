@@ -56,18 +56,16 @@ class Connection extends Model
         return $this->belongsToMany(Key::class, 'connections_keys', 'connection_id', 'key_id');
     }
 
-    /**
-     * @return bool
-     */
-    public function canSendConnectionRequest(): bool
+
+    public function canSendConnectionRequest()
     {
         $countAccounts = $this->accounts()->count();
 
-        if ($countAccounts) {
-            return false;
+        if ((int)$countAccounts === 0) {
+            return 'no';
         }
 
-        return true;
+        return 'yes';
     }
 
     /**

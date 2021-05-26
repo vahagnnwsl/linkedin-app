@@ -78,7 +78,7 @@ class ConnectionRepository extends Repository
                 });
 
             });
-        })->when(isset($requestData['keys_ids']) && count($requestData['keys_ids'])>1,function ($q) use($requestData){
+        })->when(isset($requestData['keys_ids']) && count($requestData['keys_ids'])>0,function ($q) use($requestData){
             $q->whereHas('keys', function ($subQuery_1) use ($requestData) {
                 $subQuery_1->whereIn('keys.id', $requestData['keys_ids']);
             });

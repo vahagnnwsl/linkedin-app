@@ -58,20 +58,21 @@ class ConnectionController extends Controller
     {
         $filterAttributes = ['account', 'name'];
         $data = $request->all();
+        $enableKeysIdes = [];
 
-//        if (Auth::user()->hasRole('Hr')){
-//            $enableKeysQuery = Auth::user()->keys();
-//            $keys = $enableKeysQuery->get();
-//            $data['keys_ids'] = $data['keys_ids'] ?? $enableKeysQuery->pluck('id')->toArray();
-//
-//        }else{
-//
-//            $keys = $this->keyRepository->getAll();
-//
-//        }
+        if (Auth::user()->hasRole('Hr')) {
 
-        $keys = $this->keyRepository->getAll();
+            $keys = Auth::user()->keys;
 
+            $enableKeysIdes = Auth::user()->keys->pluck('id')->toArray();
+
+        } else {
+
+            $keys = $this->keyRepository->getAll();
+        }
+
+
+        $data['enableKeysIdes'] = $enableKeysIdes;
 
 
         $connections = $this->connectionRepository->filter($data, 'entityUrn');
@@ -112,9 +113,9 @@ class ConnectionController extends Controller
         $account = Auth::user()->account;
 
 
-        if ($account->getSendRequestCount() >= $account->limit_connection_request){
+        if ($account->getSendRequestCount() >= $account->limit_connection_request) {
             return response()->json([
-                'limitError'=>'Daily limit is consume'
+                'limitError' => 'Daily limit is consume'
             ]);
         }
 

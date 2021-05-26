@@ -30,4 +30,11 @@ class KeyRepository extends Repository
     {
         $this->getById($id)->accounts()->sync($accounts);
     }
+
+    /**
+     * @return mixed
+     */
+    public function query(){
+        return $this->model()::query();
+    }
 }

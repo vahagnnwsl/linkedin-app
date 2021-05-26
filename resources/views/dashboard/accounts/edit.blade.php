@@ -84,6 +84,7 @@
                                             @enderror
                                         </div>
 
+                                        @if($account->type === 1)
                                         <div class="form-group">
                                             <label for="limit_connection_request">Limit connection request *</label>
                                             <input type="number" min="1" id="limit_connection_request" class="form-control" name="limit_connection_request" value="{{$account->limit_connection_request}}">
@@ -104,6 +105,12 @@
                                       </span>
                                             @enderror
                                         </div>
+                                        @else
+                                            <input type="hidden"  name="limit_connection_request" value="1">
+                                            <input type="hidden"  name="limit_conversation" value="1">
+                                        @endif
+
+
                                         <div class="form-group">
                                             <label>Proxies *</label>
                                             <select multiple="multiple" class="select2 form-control w-100" required

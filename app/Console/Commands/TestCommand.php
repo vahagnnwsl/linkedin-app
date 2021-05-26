@@ -79,9 +79,9 @@ class TestCommand extends Command
         $account = Account::where('login', 'ghukasyan.05@gmail.com')->first();
 //        $proxy = Proxy::first();
 
-        $a = '2-MDQyMWI3YjUtNjBmYi00NmEwLWJhYTQtZDllMWNhYjhlNTc1XzAxMw==';
+        $a = '2-MmU4NzdjOTgtZTc4MS00NDYzLTg2MDQtMzk0OThhNjFiN2IwXzAxMw==';
 
-        $res =  (new Messages((array)Api::conversation($account->login, $account->password)->getConversationMessages($a,['createdBefore'=>1621957711974]),$a))();
+        $res =  (new Messages((array)Api::conversation($account->login, $account->password)->getConversationMessages($a),$a))();
 
 
 

@@ -96,6 +96,7 @@ class UserController extends Controller
     {
         $data = $request->validated();
 
+
         $this->userRepository->update($id, Arr::except($data, ['role_id', 'account_id', 'keys_ides', 'unreal_accounts_ides']));
 
         $this->userRepository->syncRelation($id, 'roles', [$data['role_id']]);
@@ -108,9 +109,8 @@ class UserController extends Controller
             $this->userRepository->syncRelation($id, 'accounts', [$data['account_id']]);
         }
 
-        if (isset($data['unreal_accounts_ides'])) {
-            $this->userRepository->syncRelation($id, 'unRealAccounts', $data['unreal_accounts_ides']);
-        }
+        $this->userRepository->syncRelation($id, 'unRealAccounts', $data['unreal_accounts_ides']??[]);
+
 
         $this->putFlashMessage(true, 'Successfully updated');
 

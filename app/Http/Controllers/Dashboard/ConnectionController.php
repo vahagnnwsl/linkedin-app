@@ -77,7 +77,6 @@ class ConnectionController extends Controller
 
         $connections = $this->connectionRepository->filter($data, 'id');
 
-        dd($connections);
         $userAccount = Auth::user()->account;
 
         return view('dashboard.connections.index', compact('connections', 'filterAttributes', 'keys', 'userAccount'));

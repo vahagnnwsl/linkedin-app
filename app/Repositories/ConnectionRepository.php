@@ -76,8 +76,14 @@ class ConnectionRepository extends Repository
                         $subQuery_1->where('accounts.id', Auth::user()->account->id);
                     });
                 });
-
             });
+        })->when(!count($requestData['enableKeysIdes']),function ($q) use ($requestData){
+              $q->when(Auth::user()->hasRole('Hr'),function ($subQuery){
+                  $subQuery->whereHas('accounts', function ($subQuery_1) {
+                      $subQuery_1->where('accounts.id', Auth::user()->account->id);
+                  });
+              });
+
         })->when(isset($requestData['keys_ids']) && count($requestData['keys_ids'])>0,function ($q) use($requestData){
             $q->whereHas('keys', function ($subQuery_1) use ($requestData) {
                 $subQuery_1->whereIn('keys.id', $requestData['keys_ids']);

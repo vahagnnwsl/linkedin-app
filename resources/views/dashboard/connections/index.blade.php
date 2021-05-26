@@ -60,7 +60,6 @@
                         </tr>
                         </thead>
                         <tbody>
-                        {{dd($connections)}}
                         @foreach($connections as $connection)
                             <tr>
                                 <td>

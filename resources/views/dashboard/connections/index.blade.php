@@ -60,6 +60,7 @@
                         </tr>
                         </thead>
                         <tbody>
+                        {{dd($connections)}}
                         @foreach($connections as $connection)
                             <tr>
                                 <td>
@@ -78,17 +79,9 @@
                                 </td>
 
                                 <td>
-{{--                                    @foreach($connection->accounts as $account)--}}
-{{--                                        {{$account->full_name}} </br>--}}
-{{--                                    @endforeach--}}
-
-                                    @if($connection->accounts->isEmpty())
-                                        {{dump($connection->accounts)}}
-                                    @else
-                                        @foreach($connection->accounts as $account)
-                                            {{$account->full_name}} <br>
-                                        @endforeach
-                                    @endif
+                                    @foreach($connection->accounts as $account)
+                                        {{$account->full_name}} </br>
+                                    @endforeach
 
                                 </td>
 

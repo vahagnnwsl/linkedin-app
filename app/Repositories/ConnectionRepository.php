@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ConnectionRepository extends Repository
 {
@@ -89,6 +90,8 @@ class ConnectionRepository extends Repository
                 $subQuery_1->whereIn('keys.id', $requestData['keys_ids']);
             });
         })->with('accounts')->orderby('id', 'desc')->paginate(20);
+
+
     }
 
     /**

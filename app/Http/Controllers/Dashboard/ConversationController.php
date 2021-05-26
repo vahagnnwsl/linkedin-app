@@ -44,12 +44,16 @@ class ConversationController extends Controller
     public function getMessages(Request $request, int $id): JsonResponse
     {
 
-        $relatedAccountsIdes = Auth::user()->unRealAccounts()->pluck('id')->toArray();
+        $relatedConversations = [];
 
         $messages = $this->conversationRepository->getMessages($id, $request->get('start'));
-        $conversation = $this->conversationRepository->getById($id);
 
-        $relatedConversations = new ConversationCollection($this->conversationRepository->getConnectionConversationsByConnectionAndAccount($conversation->connection_id, $relatedAccountsIdes));
+        if ($request->get('relative')) {
+            $relatedAccountsIdes = Auth::user()->unRealAccounts()->pluck('id')->toArray();
+            $conversation = $this->conversationRepository->getById($id);
+            $relatedConversations = new ConversationCollection($this->conversationRepository->getConnectionConversationsByConnectionAndAccount($conversation->connection_id, $relatedAccountsIdes));
+
+        }
 
         return response()->json(['messages' => new MessageCollection(collect($messages)->sortBy('date')), 'relatedConversations' => $relatedConversations]);
     }

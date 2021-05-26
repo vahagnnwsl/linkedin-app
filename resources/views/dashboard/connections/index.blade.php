@@ -78,14 +78,12 @@
                                 </td>
 
                                 <td>
-                                    @if($connection->accounts->isEmpty())
-                                        {{dump($connection->accounts)}}
-                                    @else
+
+
+
                                         @foreach($connection->accounts as $account)
                                             {{$account->full_name}} <br>
                                         @endforeach
-                                    @endif
-
                                 </td>
 
 
@@ -99,22 +97,31 @@
 
                                         @if($userAccount)
                                             @if($connection->canSendConnectionRequest() && !$connection->requestByAccount($userAccount->id)->first())
+
+
                                                 <a class="btn btn-primary setConnectionRequest"
                                                    title="Sent Connection Request" href="javascript:void(0)"
                                                    data-connectionId="{{$connection->id}}">
                                                     <i class="fa fa-plus-circle"></i>
                                                 </a>
+
+
                                             @endif
 
                                             @if($connection->requestByAccount($userAccount->id)->first())
+
+
                                                 <span class="badge badge-warning">Pending</span>
+
                                             @endif
 
                                             @if($connection->canWrite($userAccount->id))
+
                                                 <a class="btn btn-info sendMessage" href="javascript:void(0)"
                                                    data-connectionId="{{$connection->id}}">
                                                     <i class="fa fa-envelope"></i>
                                                 </a>
+
                                             @endif
                                         @endif
 

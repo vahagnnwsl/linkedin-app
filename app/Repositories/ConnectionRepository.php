@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Linkedin\Repositories\Auth;
 use App\Models\Connection;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
@@ -73,7 +74,7 @@ class ConnectionRepository extends Repository
                     });
                 })->orWhere(function ($subQuery) {
                     $subQuery->whereHas('accounts', function ($subQuery_1) {
-                        $subQuery_1->where('accounts.id', 1);
+                        $subQuery_1->where('accounts.id', Auth::user()->account->id);
                     });
                 });
 

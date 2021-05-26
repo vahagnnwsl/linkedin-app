@@ -88,7 +88,7 @@ class ConnectionRepository extends Repository
             $q->whereHas('keys', function ($subQuery_1) use ($requestData) {
                 $subQuery_1->whereIn('keys.id', $requestData['keys_ids']);
             });
-        })->orderby('id', 'desc')->paginate(20);
+        })->orderby('id', 'asc')->paginate(20);
     }
 
     /**

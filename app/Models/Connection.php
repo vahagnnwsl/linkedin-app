@@ -66,6 +66,7 @@ class Connection extends Model
         if ($countAccounts) {
             return false;
         }
+
         return true;
     }
 

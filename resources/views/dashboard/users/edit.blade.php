@@ -117,7 +117,7 @@
 
                                         </div>
 
-
+                                      @if($user->hasRole('Hr'))
                                         <div class="form-group">
                                             <label for="keys_ides">Keys </label>
                                             <select class="select2" style="width: 100%;" name="keys_ides[]" id="keys_ides" multiple="multiple">
@@ -132,6 +132,7 @@
                                             </span>
                                             @enderror
                                         </div>
+                                        @endif
                                         <div class="form-group row">
                                             <label for="inputRoles"
                                                    class="col-sm-2 col-form-label">Status</label>

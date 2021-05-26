@@ -57,15 +57,9 @@ class Connection extends Model
     }
 
 
-    public function canSendConnectionRequest()
+    public function canSendConnectionRequest(): int
     {
-        $countAccounts = $this->accounts()->count();
-
-        if ((int)$countAccounts === 0) {
-            return 'no';
-        }
-
-        return 'yes';
+        return$this->accounts()->count();
     }
 
     /**

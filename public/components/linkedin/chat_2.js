@@ -80,19 +80,19 @@ Vue.component('linkedin-history-chat', {
                                         <!--                                            <i class="fa fa-reply"></i>-->
                                         <!--                                        </span> -->
 
-                                        <span class="float-right text-danger" title="Destroy" style="cursor: pointer"
-                                              @click="destroy(message.id)"
-                                              :ref="'message_resend'+message.id">
-                                            <i class="fas fa-trash"></i>
-                                        </span>
+<!--                                        <span class="float-right text-danger" title="Destroy" style="cursor: pointer"-->
+<!--                                              @click="destroy(message.id)"-->
+<!--                                              :ref="'message_resend'+message.id">-->
+<!--                                            <i class="fas fa-trash"></i>-->
+<!--                                        </span>-->
 
-                                        <span class="float-right text-danger  mr-2" title="Resend"
-                                              style="cursor: pointer"
-                                              v-if="!message.status"
-                                              @click="resend(message.id)"
-                                              :ref="'message_resend'+message.id">
-                                            <i class="fa fa-reply"></i>
-                                        </span>
+<!--                                        <span class="float-right text-danger  mr-2" title="Resend"-->
+<!--                                              style="cursor: pointer"-->
+<!--                                              v-if="!message.status"-->
+<!--                                              @click="resend(message.id)"-->
+<!--                                              :ref="'message_resend'+message.id">-->
+<!--                                            <i class="fa fa-reply"></i>-->
+<!--                                        </span>-->
 
 
                                     </p>

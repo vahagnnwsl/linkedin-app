@@ -69,7 +69,7 @@ class MessageRepository extends Repository
                 $this->model()::unsetEventDispatcher();
             }
 
-            $this->model()::firstOrCreate([
+            $this->model()::updateOrCreate([
                 'entityUrn' => $item['entityUrn']
             ], Arr::except($item, 'user_entityUrn'));
 

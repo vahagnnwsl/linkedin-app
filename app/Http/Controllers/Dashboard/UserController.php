@@ -101,9 +101,7 @@ class UserController extends Controller
 
         $this->userRepository->syncRelation($id, 'roles', [$data['role_id']]);
 
-        if (isset($data['keys_ides'])) {
-            $this->userRepository->syncRelation($id, 'keys', $data['keys_ides']);
-        }
+        $this->userRepository->syncRelation($id, 'keys', $data['keys_ides']??[]);
 
         if (isset($data['account_id'])) {
             $this->userRepository->syncRelation($id, 'accounts', [$data['account_id']]);

@@ -55,13 +55,15 @@ class GetConnectionInfo extends Command
 
         $resp = Api::profile($account->login, $account->password, $proxy)->getProfile($account->entityUrn);
 
-        if ($resp['status']) {
+        if($connection){
+            if ($resp['status']) {
 
-            $this->connectionRepository->update($connection->id, [
-                'data' => $resp['data']->included,
-                'is_parsed' => $this->connectionRepository::$PARSED_STATUS,
-                'parsed_date' => Carbon::now()->toDateTimeString()
-            ]);
+                $this->connectionRepository->update($connection->id, [
+                    'data' => $resp['data']->included,
+                    'is_parsed' => $this->connectionRepository::$PARSED_STATUS,
+                    'parsed_date' => Carbon::now()->toDateTimeString()
+                ]);
+            }
         } else {
 
             $this->connectionRepository->updateAll(['is_parsed' => $this->connectionRepository::$UNPARSED_STATUS]);

@@ -89,7 +89,6 @@
                                     @foreach($connection->keys as $key)
                                         <span class="badge badge-secondary">#{{$key->name}}</span>
                                     @endforeach
-                                    {{$connection->accounts()->count()}}
                                 </td>
                                 <td>
                                     <div class="btn-group">

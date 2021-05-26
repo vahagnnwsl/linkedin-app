@@ -91,7 +91,7 @@
                                 <td>
                                     <div class="btn-group btn-group-md float-right">
 
-                                        @if($account->type === 1)
+{{--                                        @if($account->type === 1)--}}
                                             <a class="btn btn-default btn-sm"
                                                href="{{route('accounts.syncConversations',$account->id)}}"
                                                title="Sync Conversations">
@@ -110,7 +110,7 @@
                                                 <i class="fas fa-sync"></i>
                                             </a>
 
-                                        @endif
+{{--                                        @endif--}}
                                         <a class="btn btn-dark btn-sm"
                                            href="{{route('accounts.conversations',$account->id)}}"
                                            title="Conversations List">

@@ -75,7 +75,7 @@ class ConnectionController extends Controller
         $data['enableKeysIdes'] = $enableKeysIdes;
 
 
-        $connections = $this->connectionRepository->filter($data, 'entityUrn');
+        $connections = $this->connectionRepository->filter($data, 'id');
 
         $userAccount = Auth::user()->account;
 

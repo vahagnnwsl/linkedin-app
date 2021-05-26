@@ -79,7 +79,7 @@
 
                                     <td>
                                         @foreach($connection->accounts as $account)
-                                            {{$account->full_name}}  1 <br>
+                                            {{$account->full_name}} <br>
                                         @endforeach
                                     </td>
 

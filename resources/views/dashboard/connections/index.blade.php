@@ -89,12 +89,13 @@
                                     @foreach($connection->keys as $key)
                                         <span class="badge badge-secondary">#{{$key->name}}</span>
                                     @endforeach
+                                    {{$connection->canSendConnectionRequest()}}
                                 </td>
                                 <td>
                                     <div class="btn-group">
 
                                         @if($userAccount)
-                                            @if($connection->canSendConnectionRequest()=== 0)
+                                            @if($connection->canSendConnectionRequest()=== 0 &&  !$connection->requestByAccount($userAccount->id)->first())
                                                 <a class="btn btn-primary setConnectionRequest"
                                                    title="Sent Connection Request" href="javascript:void(0)"
                                                    data-connectionId="{{$connection->id}}">

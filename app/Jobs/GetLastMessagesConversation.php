@@ -49,7 +49,7 @@ class GetLastMessagesConversation implements ShouldQueue
         $response = (new Messages((array)Api::conversation($this->account->login, $this->account->password, $this->proxy)->getConversationMessages($this->conversation->entityUrn), $this->conversation->entityUrn))();
 
         if ($response['success']) {
-            $this->messageRepository->updateOrCreateCollection($response['data']->toArray(), $this->conversation->id, $this->user->id, $this->account->id, $this->account->entityUrn, $this->messageRepository::SENDED_STATUS, $this->messageRepository::RECEIVE_EVENT);
+            $this->messageRepository->updateOrCreateCollection($response['data']->toArray(), $this->conversation->id, $this->user->id, $this->account->id, $this->account->entityUrn, $this->messageRepository::SENDED_STATUS, $this->messageRepository::RECEIVE_EVENT,true);
         }
     }
 }

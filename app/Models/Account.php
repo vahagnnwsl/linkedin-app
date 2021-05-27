@@ -41,7 +41,7 @@ class Account extends Model
      */
     public function connections(): BelongsToMany
     {
-        return $this->belongsToMany(AaccountsConversationsLimit::class, 'account_connections', 'account_id', 'connection_id');
+        return $this->belongsToMany(Connection::class, 'account_connections', 'account_id', 'connection_id');
     }
 
     /**

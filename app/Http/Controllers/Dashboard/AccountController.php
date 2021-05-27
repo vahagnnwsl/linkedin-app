@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AccountRequest;
 use App\Http\Resources\Collections\ConversationCollection;
+use App\Jobs\AccountsLogin;
 use App\Jobs\GetAccountConversations;
 use App\Jobs\SyncAccountConnectionsJob;
 use App\Jobs\SyncAccountConversations;
@@ -172,7 +173,7 @@ class AccountController extends Controller
     {
         $account = $this->accountRepository->getById($id);
 
-        return view('dashboard.accounts.conversations',compact('account'));
+        return view('dashboard.accounts.conversations', compact('account'));
     }
 
     /**
@@ -197,5 +198,13 @@ class AccountController extends Controller
         $this->putFlashMessage(true, 'Your request on process');
 
         return redirect()->back();
+    }
+
+    public function login(int $type): RedirectResponse
+    {
+        AccountsLogin::dispatch($type);
+        $this->putFlashMessage(true, 'Your request on process');
+        return redirect()->back();
+
     }
 }

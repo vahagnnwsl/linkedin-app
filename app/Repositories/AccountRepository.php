@@ -133,6 +133,15 @@ class AccountRepository extends Repository
     }
 
     /**
+     * @param int $type
+     * @return mixed
+     */
+    public function getByType(int $type)
+    {
+        return $this->model()::where('type', $type)->get();
+    }
+
+    /**
      * @param $account_id
      * @param $connection_id
      */

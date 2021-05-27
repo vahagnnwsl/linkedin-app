@@ -15,11 +15,12 @@ class Api
     /**
      * @param string $login
      * @param string $password
-     * @return Auth|Repositories\Repository
+     * @param Proxy|null $proxy
+     * @return Auth
      */
-    public static function auth(string $login, string $password): Auth
+    public static function auth(string $login, string $password, Proxy $proxy = null): Auth
     {
-        return (new Auth())->setCredentials($login, $password);
+        return (new Auth())->setCredentials($login, $password,$proxy);
     }
 
     /**

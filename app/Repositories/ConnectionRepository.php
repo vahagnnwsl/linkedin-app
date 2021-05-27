@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Models\Connection;
+use App\Models\AaccountsConversationsLimit;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
@@ -26,7 +26,7 @@ class ConnectionRepository extends Repository
      */
     public function model(): string
     {
-        return Connection::class;
+        return AaccountsConversationsLimit::class;
     }
 
     /**

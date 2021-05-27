@@ -3,23 +3,18 @@
 namespace App\Http\Controllers\Api;
 
 use App\Events\NewMessage;
-use App\Events\SyncConversations;
+use App\Linkedin\Responses\NewMessage as NewMessageResponse;
 use App\Http\Controllers\Controller;
-use App\Models\ConnectionRequest;
 use App\Repositories\AccountRepository;
 use App\Repositories\ConnectionRepository;
 use App\Repositories\ConversationRepository;
 use App\Repositories\MessageRepository;
 use App\Http\Resources\MessageResource;
-use App\Linkedin\Responses\Response;
-use Carbon\Carbon;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Linkedin\Api;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
+
 
 class ConversationController extends Controller
 {
@@ -68,7 +63,7 @@ class ConversationController extends Controller
 
         $request = $request->all();
 
-        $data = Response::newMessageEvent($request['payload']['included'], $request['login']);
+        $data = (new NewMessageResponse($request['payload']['included'], $request['login']))();
 
         $account = $this->accountRepository->getByLogin($data['login']);
 
@@ -87,7 +82,7 @@ class ConversationController extends Controller
 
         $message['conversation_id'] = $conversation->id;
 
-        if (!$this->accountRepository->checkAccountExist($data['writer']['entityUrn'])) {
+        if ($writer['entityUrn'] !== $account->entityUrn) {
 
             $connection = $this->connectionRepository->updateOrCreate(['entityUrn' => $writer['entityUrn']], $writer);
 
@@ -106,9 +101,11 @@ class ConversationController extends Controller
 
         $message = $this->messageRepository->updateOrCreate(['entityUrn'=>$message['entityUrn']],$message);
 
+
          if ($account->entityUrn  !==  $writer['entityUrn']) {
-             event(new NewMessage((new MessageResource($message))->toArray([]), $account->entityUrn));
+
          }
+        event(new NewMessage((new MessageResource($message))->toArray([]), $account->entityUrn));
 
         return response()->json(['data' => $message]);
 

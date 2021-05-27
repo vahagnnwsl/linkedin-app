@@ -16,10 +16,17 @@
             <div class="card">
                 <div class="card-header p-2">
                     @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))
-                        <a class="btn btn-success btn-md float-right" href="{{route('accounts.create')}}">
-                            <i class="fas fa-plus"></i>
-                            Add
-                        </a>
+
+
+                        <div class="btn-group float-right">
+
+                            <a href="{{route('accounts.login',1)}}" class="btn btn-primary">Login all real</a>
+                            <a href="{{route('accounts.login',2)}}" class="btn btn-info">Login all unreal</a>
+                            <a class="btn btn-success btn-md float-right" href="{{route('accounts.create')}}">
+                                <i class="fas fa-plus"></i>
+                                Add
+                            </a>
+                        </div>
                     @endif
                 </div>
                 <div class="card-body p-0 table-responsive">

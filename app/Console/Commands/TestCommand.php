@@ -9,7 +9,7 @@ use App\Linkedin\Responses\Invitation;
 use App\Linkedin\Responses\Messages;
 use App\Linkedin\Responses\Response;
 use App\Models\Account;
-use App\Models\Connection;
+use App\Models\AaccountsConversationsLimit;
 use App\Models\Proxy;
 use App\Repositories\AccountRepository;
 use Carbon\Carbon;

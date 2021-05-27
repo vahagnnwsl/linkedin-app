@@ -8,6 +8,7 @@ use App\Http\Resources\MessageResource;
 use App\Jobs\SearchByKeyAndCompany;
 use App\Linkedin\Api;
 use App\Linkedin\Responses\Response;
+use App\Models\AccountConversationsLimit;
 use App\Repositories\ConversationRepository;
 use App\Repositories\KeyRepository;
 use App\Repositories\MessageRepository;
@@ -56,11 +57,32 @@ class MessageController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+
         $conversation = $this->conversationRepository->getById($request->get('conversation_id'));
 
         $text = $request->get('text');
 
         $account = Auth::user()->account;
+
+        $check = AccountConversationsLimit::whereDate('created_at', date('Y-m-d'))->where(
+            [
+                'account_id' => $account->id,
+                'conversation_id' => $conversation->id,
+            ]
+        )->first();
+
+        if ($account->getConversationCount() >= $account->limit_conversation && !$check) {
+            return response()->json([
+                'limitError' => 'Daily limit is consume'
+            ]);
+        }
+
+        if (!$check) {
+            AccountConversationsLimit::create([
+                'account_id' => $account->id,
+                'conversation_id' => $conversation->id,
+            ]);
+        }
 
         $data = [
             'conversation_id' => $conversation->id,
@@ -74,7 +96,7 @@ class MessageController extends Controller
 
         $proxy = $account->getRandomFirstProxy();
 
-        $response = Response::storeMessage(Api::conversation($account->login, $account->password,$proxy)->writeMessage($text, $conversation->entityUrn));
+        $response = Response::storeMessage(Api::conversation($account->login, $account->password, $proxy)->writeMessage($text, $conversation->entityUrn));
 
         if ($response) {
             $data['status'] = $this->messageRepository::SENDED_STATUS;
@@ -98,7 +120,7 @@ class MessageController extends Controller
         $message = $this->messageRepository->getById($id);
         $proxy = $account->getRandomFirstProxy();
 
-        $response = Response::storeMessage(Api::conversation($account->login, $account->password,$proxy)->writeMessage($message->text, $message->conversation->entityUrn));
+        $response = Response::storeMessage(Api::conversation($account->login, $account->password, $proxy)->writeMessage($message->text, $message->conversation->entityUrn));
 
         if ($response) {
 

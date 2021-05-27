@@ -45,7 +45,8 @@ class UnRealAccountsLogin extends Command
     {
 
         (new AccountRepository())->getAllUnRealAccounts()->map(function ($account) {
-            Api::auth($account->login, $account->password)->login();
+            $proxy = $account->getRandomFirstProxy();
+            Api::auth($account->login, $account->password, $proxy)->login();
         });
 
         return 1;

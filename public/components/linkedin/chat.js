@@ -268,6 +268,7 @@ Vue.component('linkedin-chat', {
                  _this.$refs['conversation_new_message' + message.conversation_id][0].style.display = 'block';
              }
 
+             console.log(message)
 
         })
 
@@ -363,11 +364,17 @@ Vue.component('linkedin-chat', {
                 text: this.form.message,
                 conversation_id: this.selectedConversation.id
             }).then((response) => {
-                this.messages.push(response.data.message);
-                this.mapConversationAndSetLastActivityAt(response.data.message.conversation_id,response.data.message.date);
-                this.sortConversations();
-                this.form.message = ''
+                if (response.data.limitError){
+                    toastr.error(response.data.limitError);
+                }else {
+                    this.messages.push(response.data.message);
+                    this.mapConversationAndSetLastActivityAt(response.data.message.conversation_id,response.data.message.date);
+                    this.sortConversations();
+                    this.form.message = ''
+                }
+
             }).catch(() => {
+
                 toastr.error('Something went wrong');
             })
         },

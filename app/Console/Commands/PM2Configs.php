@@ -8,7 +8,7 @@ use App\Http\Repositories\LinkedinMessageRepository;
 use App\Http\Repositories\UserRepository;
 use App\Linkedin\Helper;
 use App\Linkedin\Responses\Response;
-use App\Models\Connection;
+use App\Models\AaccountsConversationsLimit;
 use App\Repositories\AccountRepository;
 use Carbon\Carbon;
 use Illuminate\Console\Command;

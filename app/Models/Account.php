@@ -41,7 +41,7 @@ class Account extends Model
      */
     public function connections(): BelongsToMany
     {
-        return $this->belongsToMany(Connection::class, 'account_connections', 'account_id', 'connection_id');
+        return $this->belongsToMany(AaccountsConversationsLimit::class, 'account_connections', 'account_id', 'connection_id');
     }
 
     /**
@@ -75,6 +75,14 @@ class Account extends Model
     public function getSendRequestCount(): int
     {
         return $this->hasMany(ConnectionRequest::class)->whereDate('created_at',date('Y-m-d'))->count();
+    }
+
+    /**
+     * @return int
+     */
+    public function getConversationCount(): int
+    {
+        return $this->hasMany(AccountConversationsLimit::class)->whereDate('created_at',date('Y-m-d'))->count();
     }
 
 }

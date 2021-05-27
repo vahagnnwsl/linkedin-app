@@ -89,7 +89,7 @@ class AccountRepository extends Repository
      */
     public function checkConnectionRelationExist(int $id, int $connection_id): bool
     {
-        if ($this->getById($id)->connections()->where('id',$connection_id)->exists()) {
+        if ($this->getById($id)->connections()->where('connections.id',$connection_id)->exists()) {
             return true;
         }
 

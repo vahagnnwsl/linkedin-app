@@ -5,7 +5,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Failed jobs</h1>
+                    <h1>Error logs</h1>
                 </div>
 
             </div>
@@ -20,23 +20,25 @@
                         <table class="table table-striped projects">
 
                             <tbody>
-                            @foreach($jobs as $job)
+                            @foreach($logs as $log)
                                 <tr>
 
 
                                     <ul class="list-group mt-2">
-                                        <li class="list-group-item">  {{$job->uuid}}</li>
-                                        <li class="list-group-item">{{$job->failed_at}}</li>
-                                        <li class="list-group-item json" data-json="{{$job->payload}}">
+                                        <li class="list-group-item">{{$log->status}}</li>
+                                        <li class="list-group-item">{{$log->msg}}</li>
+                                        <li class="list-group-item">{{$log->request_url}}</li>
+                                        <li class="list-group-item json" data-json="{{$log->request_data}}">
+                                        <li class="list-group-item">{{$log->created_at}}</li>
 
-                                        </li>
+
                                     </ul>
                                 </tr>
                             @endforeach
                             </tbody>
                         </table>
                     </div>
-                    {!! $jobs->links('vendor.pagination') !!}
+                    {!! $logs->links('vendor.pagination') !!}
 
                 </div>
             </div>
@@ -46,12 +48,12 @@
 
 @endsection
 @push('js')
-     <script>
-         $.each($('.json'),function (){
+    <script>
+        $.each($('.json'),function (){
 
-             $(this).html(  '<pre>'+JSON.stringify($(this).attr('data-json'), null, 2)+'</pre>')
-         })
+            $(this).html(  '<pre>'+JSON.stringify($(this).attr('data-json'), null, 2)+'</pre>')
+        })
 
-     </script>
+    </script>
 
 @endpush

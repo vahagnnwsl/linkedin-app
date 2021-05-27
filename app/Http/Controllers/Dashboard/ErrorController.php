@@ -7,7 +7,9 @@ use App\Http\Requests\KeyRequest;
 use App\Jobs\LinkedinSearchByKey;
 use App\Jobs\LinkedinSearchByKeyAndCountry;
 use App\Jobs\SearchByKeyAndCompany;
+use App\Models\FailedJob;
 use App\Models\Job;
+use App\Models\Log;
 use App\Repositories\CountryRepository;
 use App\Repositories\KeyRepository;
 use Illuminate\Contracts\Foundation\Application;
@@ -19,27 +21,33 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 
 
-class JobController extends Controller
+class ErrorController extends Controller
 {
 
 
-    public function __construct()
+    /**
+     * @return Application|Factory|View
+     */
+    public function indexFailedJob()
     {
 
+
+        $jobs = FailedJob::paginate(15);
+
+        return view('dashboard.jobs.index', compact('jobs'));
     }
 
 
     /**
      * @return Application|Factory|View
      */
-    public function index(){
+    public function indexLogs()
+    {
 
 
-        $jobs = Job::paginate(15);
+        $logs = Log::paginate(15);
 
-        return view('dashboard.jobs.index',compact('jobs'));
+        return view('dashboard.logs.index', compact('logs'));
     }
-
-
 
 }

@@ -24,7 +24,25 @@
 
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))
+                    <li class="nav-item">
+                        <a href="{{route('failed-jobs.index')}}"
+                           class="nav-link {{request()->is('dashboard/failed-jobs*') ?'active':''}}">
+                            <i class=" fas fa-key nav-icon"></i>
+                            <p> Failed jobs</p>
+                        </a>
+                    </li>
+                @endif
 
+                @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))
+                    <li class="nav-item">
+                        <a href="{{route('logs.index')}}"
+                           class="nav-link {{request()->is('dashboard/logs*') ?'active':''}}">
+                            <i class=" fas fa-key nav-icon"></i>
+                            <p>Error logs</p>
+                        </a>
+                    </li>
+                @endif
 
                 @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))
                     <li class="nav-item">
@@ -114,17 +132,17 @@
                     </a>
                 </li>
 
-{{--                @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Hr'))--}}
-{{--                    @foreach(\Illuminate\Support\Facades\Auth::user()->unRealAccounts as $unRealAccount)--}}
-{{--                        <li class="nav-item">--}}
-{{--                            <a href="{{route('accounts.conversations',$unRealAccount->id)}}"--}}
-{{--                               class="nav-link {{request()->is('dashboard/accounts/'.$unRealAccount->id.'/conversations') ?'active':''}}">--}}
-{{--                                <i class="nav-icon fab fa-linkedin mr-2"></i>--}}
-{{--                                <p>{{$unRealAccount->full_name}}</p>--}}
-{{--                            </a>--}}
-{{--                        </li>--}}
-{{--                    @endforeach--}}
-{{--                @endif--}}
+                {{--                @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Hr'))--}}
+                {{--                    @foreach(\Illuminate\Support\Facades\Auth::user()->unRealAccounts as $unRealAccount)--}}
+                {{--                        <li class="nav-item">--}}
+                {{--                            <a href="{{route('accounts.conversations',$unRealAccount->id)}}"--}}
+                {{--                               class="nav-link {{request()->is('dashboard/accounts/'.$unRealAccount->id.'/conversations') ?'active':''}}">--}}
+                {{--                                <i class="nav-icon fab fa-linkedin mr-2"></i>--}}
+                {{--                                <p>{{$unRealAccount->full_name}}</p>--}}
+                {{--                            </a>--}}
+                {{--                        </li>--}}
+                {{--                    @endforeach--}}
+                {{--                @endif--}}
             </ul>
         </nav>
         <!-- /.sidebar-menu -->

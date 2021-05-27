@@ -30,29 +30,28 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
 
         Route::get('/', [App\Http\Controllers\Dashboard\AccountController::class, 'index'])->name('accounts.index');
 
-        Route::get('/create', [App\Http\Controllers\Dashboard\AccountController::class, 'create'])->name('accounts.create');
-        Route::get('/login/{type}', [App\Http\Controllers\Dashboard\AccountController::class, 'login'])->name('accounts.login');
-        Route::post('/store', [App\Http\Controllers\Dashboard\AccountController::class, 'store'])->name('accounts.store');
-        Route::get('/edit/{id}', [App\Http\Controllers\Dashboard\AccountController::class, 'edit'])->name('accounts.edit');
-        Route::put('/update/{id}', [App\Http\Controllers\Dashboard\AccountController::class, 'update'])->name('accounts.update');
-        Route::get('/{id}/conversations/sync', [App\Http\Controllers\Dashboard\AccountController::class, 'syncConversations'])->name('accounts.syncConversations');
-        Route::get('/{id}/connections/sync', [App\Http\Controllers\Dashboard\AccountController::class, 'syncConnections'])->name('accounts.syncConnections');
-        Route::get('/{id}/requests/sync', [App\Http\Controllers\Dashboard\AccountController::class, 'syncRequests'])->name('accounts.syncRequests');
+        Route::get('/create', [App\Http\Controllers\Dashboard\AccountController::class, 'create'])->name('accounts.create')->middleware('role:Admin');
+        Route::get('/login/{type}', [App\Http\Controllers\Dashboard\AccountController::class, 'login'])->name('accounts.login')->middleware(['role:Admin|Manager']);
+        Route::post('/store', [App\Http\Controllers\Dashboard\AccountController::class, 'store'])->name('accounts.store')->middleware('role:Admin');
+        Route::get('/edit/{id}', [App\Http\Controllers\Dashboard\AccountController::class, 'edit'])->name('accounts.edit')->middleware('role:Admin');
+        Route::put('/update/{id}', [App\Http\Controllers\Dashboard\AccountController::class, 'update'])->name('accounts.update')->middleware('role:Admin');
+        Route::get('/{id}/conversations/sync', [App\Http\Controllers\Dashboard\AccountController::class, 'syncConversations'])->name('accounts.syncConversations')->middleware(['role:Admin|Manager']);
+        Route::get('/{id}/connections/sync', [App\Http\Controllers\Dashboard\AccountController::class, 'syncConnections'])->name('accounts.syncConnections')->middleware(['role:Admin|Manager']);
+        Route::get('/{id}/requests/sync', [App\Http\Controllers\Dashboard\AccountController::class, 'syncRequests'])->name('accounts.syncRequests')->middleware(['role:Admin|Manager']);
         Route::get('/{id}/conversations', [App\Http\Controllers\Dashboard\AccountController::class, 'getConversations']);
-        Route::get('/{id}/conversations/history', [App\Http\Controllers\Dashboard\AccountController::class, 'conversations'])->name('accounts.conversations');
-        Route::get('/{id}/conversations/{conversation_id}/messages', [App\Http\Controllers\Dashboard\AccountController::class, 'conversationMessages'])->name('accounts.conversationMessages');
+        Route::get('/{id}/conversations/history', [App\Http\Controllers\Dashboard\AccountController::class, 'conversations'])->name('accounts.conversations')->middleware(['role:Admin|Manager']);
+        Route::get('/{id}/conversations/{conversation_id}/messages', [App\Http\Controllers\Dashboard\AccountController::class, 'conversationMessages'])->name('accounts.conversationMessages')->middleware(['role:Admin|Manager']);
 
     });
 
-    Route::group(['prefix' => 'keys'], function () {
+    Route::group(['prefix' => 'keys','middleware'=>'role:Admin'], function () {
         Route::get('/', [App\Http\Controllers\Dashboard\KeyController::class, 'index'])->name('keys.index');
         Route::post('/store', [App\Http\Controllers\Dashboard\KeyController::class, 'store'])->name('keys.store');
         Route::get('/{id}/edit', [App\Http\Controllers\Dashboard\KeyController::class, 'edit'])->name('keys.edit');
         Route::put('/{id}/update', [App\Http\Controllers\Dashboard\KeyController::class, 'update'])->name('keys.update');
-
     });
 
-    Route::group(['prefix' => 'proxies'], function () {
+    Route::group(['prefix' => 'proxies','middleware'=>'role:Admin'], function () {
         Route::get('/', [App\Http\Controllers\Dashboard\ProxyController::class, 'index'])->name('proxies.index');
         Route::post('/store', [App\Http\Controllers\Dashboard\ProxyController::class, 'store'])->name('proxies.store');
         Route::get('/{id}/edit', [App\Http\Controllers\Dashboard\ProxyController::class, 'edit'])->name('proxies.edit');
@@ -60,7 +59,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
 
     });
 
-    Route::group(['prefix' => 'users'], function () {
+    Route::group(['prefix' => 'users','middleware'=>'role:Admin'], function () {
 
         Route::get('/', [App\Http\Controllers\Dashboard\UserController::class, 'index'])->name('users.index');
         Route::get('/create', [App\Http\Controllers\Dashboard\UserController::class, 'create'])->name('users.create');
@@ -84,15 +83,19 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
 
     });
 
-    Route::group(['prefix' => 'connection-request'], function () {
+    Route::group(['prefix' => 'connection-request','middleware'=>'role:Admin'], function () {
         Route::get('/', [App\Http\Controllers\Dashboard\ConnectionRequestController::class, 'index'])->name('connectionRequest.index');
     });
 
-    Route::group(['prefix' => 'jobs'], function () {
-        Route::get('/', [App\Http\Controllers\Dashboard\JobController::class, 'index'])->name('jobs.index');
+    Route::group(['prefix' => 'failed-jobs','middleware'=>'role:Admin'], function () {
+        Route::get('/', [App\Http\Controllers\Dashboard\ErrorController::class, 'indexFailedJob'])->name('failed-jobs.index');
     });
 
-    Route::group(['prefix' => 'companies'], function () {
+    Route::group(['prefix' => 'logs','middleware'=>'role:Admin'], function () {
+        Route::get('/', [App\Http\Controllers\Dashboard\ErrorController::class, 'indexLogs'])->name('logs.index');
+    });
+
+    Route::group(['prefix' => 'companies','middleware'=>'role:Admin'], function () {
         Route::get('/', [App\Http\Controllers\Dashboard\CompanyController::class, 'index'])->name('companies.index');
         Route::get('/sync', [App\Http\Controllers\Dashboard\CompanyController::class, 'sync'])->name('companies.sync');
         Route::get('/{id}/connections', [App\Http\Controllers\Dashboard\CompanyController::class, 'getConnections'])->name('companies.connections');
@@ -119,7 +122,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
         Route::post('/linkedin',[App\Http\Controllers\Dashboard\SearchController::class, 'linkedin'])->name('search.linkedin');;
     });
 
-    Route::group(['prefix' => 'countries'], function () {
+    Route::group(['prefix' => 'countries','middleware'=>'role:Admin'], function () {
 
         Route::get('',[App\Http\Controllers\Dashboard\CountryController::class, 'index'])->name('countries.index');
         Route::post('/store',[App\Http\Controllers\Dashboard\CountryController::class, 'store'])->name('countries.store');

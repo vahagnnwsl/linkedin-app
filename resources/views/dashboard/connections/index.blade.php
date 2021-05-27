@@ -59,9 +59,7 @@
                             <th>
                                 Keys
                             </th>
-                            <th>
-                                Relative conversation
-                            </th>
+
                             <th>
                                 Actions
                             </th>
@@ -87,8 +85,49 @@
 
                                 <td>
                                     @foreach($connection->accounts as $account)
-                                    {{$account->full_name}} </br>
-                                    @endforeach
+
+                                        @if($account->type === 2)
+                                            <span class="text-info text-bold">
+                                               {{$account->full_name}}
+
+                                                @if(in_array($account->id,$relatedAccountsIdes) && $relConversation = (new \App\Repositories\ConversationRepository())->getConnectionConversationByConnectionAndAccount($connection->id,$account->id))
+                                                    @if($relConversation)
+                                                        <span class="badge badge-info getConversationMessages"
+                                                              style="cursor: pointer"
+                                                              data-conversdationId="{{$relConversation->id}}"
+                                                              title="{{$relConversation->account->full_name}}">
+                                                              <i class="fa fa-envelope"></i>
+                                                        </span>
+                                                    @endif
+                                                @endif
+                                           </span>
+
+                                        @else
+                                            <span class="text-blue text-bold">
+                                                @if($userAccount->id === $account->id)
+                                                    YOUR'S
+
+                                                    @if($selfConversation = (new \App\Repositories\ConversationRepository())->getConnectionConversationByConnectionAndAccount($connection->id,$account->id))
+
+                                                        <span class="badge badge-primary getConversationMessages"
+                                                              data-conversdationId="{{$selfConversation->id}}"
+                                                              title="{{$selfConversation->account->full_name}}">
+                                                                  <i class="fa fa-envelope"></i>
+                                                        </span>
+
+
+                                                    @endif
+                                                @else
+                                                    {{$account->full_name}}
+                                                @endif
+
+                                            </span>
+                                            @endif
+
+
+
+                                            </br>
+                                            @endforeach
 
                                 </td>
 
@@ -98,15 +137,7 @@
                                         <span class="badge badge-secondary">#{{$key->name}}</span>
                                     @endforeach
                                 </td>
-                                <td>
-                                    @foreach((new \App\Repositories\ConversationRepository())->getConnectionConversationsByConnectionAndAccount($connection->id, $relatedAccountsIdes) as $conversation)
 
-                                        <span  class="badge badge-primary getConversationMessages" data-conversdationId="{{$conversation->id}}"  title="{{$conversation->account->full_name}}">
-                                            <i class="fa fa-envelope"></i>
-                                        </span>
-
-                                    @endforeach
-                                </td>
                                 <td>
                                     <div class="btn-group">
 

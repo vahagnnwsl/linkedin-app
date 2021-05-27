@@ -58,7 +58,7 @@ class PM2Configs extends Command
             array_push($apps['apps'],
                 [
                     'name' => $account->login,
-                    'script' => './index.js',
+                    'script' => app_path('Linkedin/Node/index.js'),
                     'watch' => true,
                     'max_memory_restart' => '200M',
                     'env' => [

@@ -82,13 +82,13 @@ class ConversationRepository extends Repository
 
     /**
      * @param int $connection_id
-     * @param array $accounts_ids
+     * @param array $accounts_id
      * @return mixed
      */
-    public function getConnectionConversationsByConnectionAndAccount(int $connection_id, array $accounts_ids)
+    public function getConnectionConversationByConnectionAndAccount(int $connection_id, int $accounts_id)
     {
 
-        return $this->model()::where('connection_id', $connection_id)->whereIn('account_id', $accounts_ids)->get();
+        return $this->model()::where('connection_id', $connection_id)->where('account_id', $accounts_id)->first();
     }
 
 }

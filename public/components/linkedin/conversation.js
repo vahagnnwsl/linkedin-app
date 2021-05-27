@@ -78,6 +78,8 @@ Vue.component('linkedin-conversation', {
         $(document).on('getConversationMessages', function (e, id) {
             $('#conversationModal').modal('show')
             _this.conversation_id = id;
+            _this.start = 0;
+            _this.messages = [];
             _this.getConversationMessages()
         });
     },

@@ -89,42 +89,6 @@ abstract class Repository
     }
 
 
-//    /**
-//     * @param array $requestData
-//     * @param array $userKeysIdes
-//     * @param string $orderBy
-//     * @param string $direction
-//     * @return mixed
-//     */
-//    public function filter(array $requestData, array $userKeysIdes = [], string $orderBy = 'created_at', string $direction = 'desc')
-//    {
-//
-//        return $this->model()::when(isset($requestData['key']), function ($q) use ($requestData) {
-//            if ($q->getModel()->getTable() === 'connections') {
-//                return $q
-//                    ->where('firstName', 'LIKE', "%" . $requestData['key'] . "%")
-//                    ->orWhere('lastName', 'LIKE', "%" . $requestData['key'] . "%")
-//                    ->orWhere('occupation', 'LIKE', "%" . $requestData['key'] . "%");
-//            }
-//
-//            return $q->where('name', 'LIKE', "%" . $requestData['key'] . "%");
-//        })
-//            ->when(isset($requestData['accounts_ids']) && count($requestData['accounts_ids']), function ($q) use ($requestData) {
-//                return $q->whereHas('accounts', function ($subQuery) use ($requestData) {
-//                    return $subQuery->whereIn('accounts.id', $requestData['accounts_ids']);
-//                });
-//            })
-//            ->when(isset($requestData['keys_ids']) && count($requestData['keys_ids']), function ($q) use ($requestData) {
-//                return $q->whereHas('keys', function ($subQuery) use ($requestData) {
-//                    return $subQuery->whereIn('keys.id', $requestData['keys_ids']);
-//                });
-//            })->when(count($userKeysIdes), function ($q) use ($userKeysIdes) {
-////                return $q->whereHas('keys', function ($subQuery) use ($userKeysIdes) {
-////                    return $subQuery->whereIn('keys.id', $userKeysIdes);
-////                });
-//            })
-//            ->orderby($orderBy, $direction)->paginate(20);
-//    }
 
     /**
      * @param $joinedFields

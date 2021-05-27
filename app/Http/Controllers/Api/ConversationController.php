@@ -11,6 +11,7 @@ use App\Repositories\ConnectionRepository;
 use App\Repositories\ConversationRepository;
 use App\Repositories\MessageRepository;
 use App\Http\Resources\MessageResource;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -85,7 +86,7 @@ class ConversationController extends Controller
 
         if ($writer['entityUrn'] !== $account->entityUrn) {
             $writer['account_id'] = $account->id;
-            $writer['until_disabled'] = date('Y-m-d h:i:s', strtotime(Constants::UNTIL_DISABLED_DAY));
+            $writer['until_disabled'] =   Carbon::now()->addDays(Constants::UNTIL_DISABLED_DAY)->toDateTimeString();
 
             $connection = $this->connectionRepository->updateOrCreate(['entityUrn' => $writer['entityUrn']], $writer);
 

@@ -103,9 +103,9 @@ class ConversationController extends Controller
 
 
          if ($account->entityUrn  !==  $writer['entityUrn']) {
+             event(new NewMessage((new MessageResource($message))->toArray([]), $account->entityUrn));
 
          }
-        event(new NewMessage((new MessageResource($message))->toArray([]), $account->entityUrn));
 
         return response()->json(['data' => $message]);
 

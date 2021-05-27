@@ -14,6 +14,7 @@ class CreateAccountConnectionsTable extends Migration
     public function up()
     {
         Schema::create('account_connections', function (Blueprint $table) {
+            $table->bigIncrements('id');
             $table->unsignedBigInteger('account_id')->nullable();
             $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
             $table->unsignedBigInteger('connection_id')->nullable();

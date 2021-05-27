@@ -2,6 +2,7 @@
 @push('js')
     <script src="/components/connection/request.js"></script>
     <script src="/components/connection/message.js"></script>
+    <script src="/components/linkedin/conversation.js"></script>
 
     <script>
         $(document).on("click", ".setConnectionRequest", function () {
@@ -10,6 +11,10 @@
 
         $(document).on("click", ".sendMessage", function () {
             $(document).trigger('sendMessage', $(this).attr('data-connectionId'));
+        });
+
+        $(document).on("click", ".getConversationMessages", function () {
+            $(document).trigger('getConversationMessages', $(this).attr('data-conversdationId'));
         });
     </script>
 
@@ -55,6 +60,9 @@
                                 Keys
                             </th>
                             <th>
+                                Relative conversation
+                            </th>
+                            <th>
                                 Actions
                             </th>
                         </tr>
@@ -79,7 +87,7 @@
 
                                 <td>
                                     @foreach($connection->accounts as $account)
-                                        {{$account->full_name}} </br>
+                                    {{$account->full_name}} </br>
                                     @endforeach
 
                                 </td>
@@ -88,6 +96,15 @@
                                 <td>
                                     @foreach($connection->keys as $key)
                                         <span class="badge badge-secondary">#{{$key->name}}</span>
+                                    @endforeach
+                                </td>
+                                <td>
+                                    @foreach((new \App\Repositories\ConversationRepository())->getConnectionConversationsByConnectionAndAccount($connection->id, $relatedAccountsIdes) as $conversation)
+
+                                        <span  class="badge badge-primary getConversationMessages" data-conversdationId="{{$conversation->id}}"  title="{{$conversation->account->full_name}}">
+                                            <i class="fa fa-envelope"></i>
+                                        </span>
+
                                     @endforeach
                                 </td>
                                 <td>
@@ -129,6 +146,7 @@
 
                 <send-connection-request></send-connection-request>
                 <send-message></send-message>
+                <linkedin-conversation></linkedin-conversation>
 
             </div>
         </div>

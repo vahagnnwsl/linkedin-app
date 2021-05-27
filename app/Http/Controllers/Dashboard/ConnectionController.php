@@ -71,6 +71,7 @@ class ConnectionController extends Controller
             $keys = $this->keyRepository->getAll();
         }
 
+        $relatedAccountsIdes = Auth::user()->unRealAccounts()->pluck('id')->toArray();
 
         $data['enableKeysIdes'] = $enableKeysIdes;
 
@@ -79,7 +80,7 @@ class ConnectionController extends Controller
 
         $userAccount = Auth::user()->account;
 
-        return view('dashboard.connections.index', compact('connections', 'filterAttributes', 'keys', 'userAccount'));
+        return view('dashboard.connections.index', compact('connections', 'filterAttributes', 'keys', 'userAccount','relatedAccountsIdes'));
     }
 
 

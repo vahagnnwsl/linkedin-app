@@ -14,6 +14,7 @@ class CreateAccountsProxiesTable extends Migration
     public function up()
     {
         Schema::create('accounts_proxies', function (Blueprint $table) {
+            $table->bigIncrements('id');
             $table->unsignedBigInteger('proxy_id')->nullable();
             $table->foreign('proxy_id')->references('id')->on('proxies')->onDelete('cascade');
             $table->unsignedBigInteger('account_id')->nullable();

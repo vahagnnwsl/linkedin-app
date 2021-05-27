@@ -67,20 +67,6 @@ class Profile extends Repository
      */
     public function searchPeople(string $key,  string $country_id ,string $company_id = null,int $start = 0): array
     {
-//        $query_params = [
-//            'count' => 50,
-//            'filters' => [
-//                'resultType->PEOPLE',
-//                'geoUrn->'.$country_id,
-//            ],
-//            'origin' => 'GLOBAL_SEARCH_HEADER',
-//            "queryContext" => "List(spellCorrectionEnabled->true,relatedSearchesEnabled->true,kcardTypes->PROFILE)",
-//            'q' => 'all',
-//            'start' => $start,
-//            'keywords' => $key_word
-//        ];
-
-//        return $this->client->setHeaders($this->login)->get(Constants::API_URL . '/search/blended', $query_params);
 
         $companyStr ="";
 

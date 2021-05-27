@@ -14,6 +14,7 @@ class CreateUserKeysTable extends Migration
     public function up()
     {
         Schema::create('user_keys', function (Blueprint $table) {
+            $table->bigIncrements('id');
             $table->unsignedBigInteger('key_id')->nullable();
             $table->foreign('key_id')->references('id')->on('keys')->onDelete('cascade');
             $table->unsignedBigInteger('user_id')->nullable();

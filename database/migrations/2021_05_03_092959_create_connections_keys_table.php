@@ -14,6 +14,7 @@ class CreateConnectionsKeysTable extends Migration
     public function up()
     {
         Schema::create('connections_keys', function (Blueprint $table) {
+            $table->bigIncrements('id');
             $table->unsignedBigInteger('connection_id')->nullable();
             $table->foreign('connection_id')->references('id')->on('connections')->onDelete('cascade');
             $table->unsignedBigInteger('key_id')->nullable();

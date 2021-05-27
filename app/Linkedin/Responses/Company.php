@@ -3,13 +3,6 @@
 namespace App\Linkedin\Responses;
 
 use App\Linkedin\Constants;
-use App\Linkedin\DTO\AbstractDTO;
-use App\Linkedin\DTO\Message;
-use App\Linkedin\DTO\Profile;
-use App\Linkedin\Helper;
-use Carbon\Carbon;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\File;
 
 
 class Company

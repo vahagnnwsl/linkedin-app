@@ -58,12 +58,12 @@ class ConversationRepository extends Repository
      * @param string|null $key
      * @return mixed
      */
-    public function getByAccountId(int $account_id, int $start = 0, string $key = null)
+    public function getByAccountId(int $account_id, int $start = 0,string $key = null)
     {
 
-        return $this->model()::where('account_id', $account_id)->whereNotNull('connection_id')->when($key, function ($query) use ($key) {
-            return $query->whereHas('connection', function ($q) use ($key) {
-                return $q->where('connections.firstName', 'LIKE', "%$key%")->orWhere('connections.lastName', 'LIKE', "%$key%");
+        return $this->model()::where('account_id', $account_id)->whereNotNull('connection_id')->when($key,function ($query) use($key){
+            return $query->whereHas('connection',function ($q) use ($key){
+                return $q->where('connections.firstName','LIKE',"%$key%")->orWhere('connections.lastName','LIKE',"%$key%");
             });
         })->skip($start)->take(10)->orderByDesc('lastActivityAt')->get();
     }
@@ -82,7 +82,17 @@ class ConversationRepository extends Repository
 
     /**
      * @param int $connection_id
-     * @param array $accounts_id
+     * @param array $accounts_ids
+     * @return mixed
+     */
+    public function getConnectionConversationsByConnectionAndAccount(int $connection_id,array $accounts_ids){
+
+        return $this->model()::where('connection_id',$connection_id)->whereIn('account_id',$accounts_ids)->get();
+    }
+
+    /**
+     * @param int $connection_id
+     * @param int $accounts_id
      * @return mixed
      */
     public function getConnectionConversationByConnectionAndAccount(int $connection_id, int $accounts_id)

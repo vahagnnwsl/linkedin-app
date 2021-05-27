@@ -142,7 +142,7 @@
                                     <div class="btn-group">
 
                                         @if($userAccount)
-                                            @if($connection->accounts()->count()=== 0 &&  !$connection->requestByAccount($userAccount->id)->first())
+                                            @if((new \App\Repositories\ConnectionRepository())->canSendConnectionRequest($userAccount->id,$connection->id) && !$connection->canWrite($userAccount->id) && !$connection->requestByAccount($userAccount->id)->first())
                                                 <a class="btn btn-primary setConnectionRequest"
                                                    title="Sent Connection Request" href="javascript:void(0)"
                                                    data-connectionId="{{$connection->id}}">

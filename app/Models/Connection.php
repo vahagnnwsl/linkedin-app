@@ -6,6 +6,7 @@ use App\Repositories\ConnectionRequestRepository;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Connection extends Model
@@ -57,9 +58,12 @@ class Connection extends Model
     }
 
 
-    public function canSendConnectionRequest(): int
+    /**
+     * @return HasMany
+     */
+    public function conversations(): HasMany
     {
-        return$this->accounts()->count();
+        return $this->hasMany(Conversation::class,'connection_id');
     }
 
     /**
@@ -68,7 +72,7 @@ class Connection extends Model
      */
     public function requestByAccount(int $id): HasOne
     {
-       return $this->hasOne(ConnectionRequest::class,'connection_id','id')->where(['account_id'=>$id,'status'=>ConnectionRequestRepository::$PENDING_STATUS]);
+        return $this->hasOne(ConnectionRequest::class, 'connection_id', 'id')->where(['account_id' => $id, 'status' => ConnectionRequestRepository::$PENDING_STATUS]);
     }
 
     /**

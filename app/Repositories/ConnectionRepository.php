@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\AaccountsConversationsLimit;
 use App\Models\Connection;
+use App\Models\Message;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
@@ -14,12 +15,14 @@ class ConnectionRepository extends Repository
 {
 
     protected $companyRepository;
+    protected $messageRepository;
     public static $PARSED_STATUS = 1;
     public static $UNPARSED_STATUS = 0;
 
     public function __construct()
     {
         $this->companyRepository = new CompanyRepository();
+        $this->messageRepository = new MessageRepository();
     }
 
     /**
@@ -65,7 +68,7 @@ class ConnectionRepository extends Repository
                     ->orWhere('occupation', 'LIKE', "%" . $requestData['key'] . "%");
             });
 
-        })->when(count($requestData['enableKeysIdes']),function ($q) use ($requestData){
+        })->when(count($requestData['enableKeysIdes']), function ($q) use ($requestData) {
 
             $q->where(function ($q) use ($requestData) {
 
@@ -79,14 +82,14 @@ class ConnectionRepository extends Repository
                     });
                 });
             });
-        })->when(!count($requestData['enableKeysIdes']),function ($q) use ($requestData){
-              $q->when(Auth::user()->hasRole('Hr'),function ($subQuery){
-                  $subQuery->whereHas('accounts', function ($subQuery_1) {
-                      $subQuery_1->where('accounts.id', Auth::user()->account->id);
-                  });
-              });
+        })->when(!count($requestData['enableKeysIdes']), function ($q) use ($requestData) {
+            $q->when(Auth::user()->hasRole('Hr'), function ($subQuery) {
+                $subQuery->whereHas('accounts', function ($subQuery_1) {
+                    $subQuery_1->where('accounts.id', Auth::user()->account->id);
+                });
+            });
 
-        })->when(isset($requestData['keys_ids']) && count($requestData['keys_ids'])>0,function ($q) use($requestData){
+        })->when(isset($requestData['keys_ids']) && count($requestData['keys_ids']) > 0, function ($q) use ($requestData) {
             $q->whereHas('keys', function ($subQuery_1) use ($requestData) {
                 $subQuery_1->whereIn('keys.id', $requestData['keys_ids']);
             });
@@ -166,5 +169,38 @@ class ConnectionRepository extends Repository
                 }
             }
         });
+    }
+
+    /**
+     * @param int $account_id
+     * @param int $connection_id
+     */
+    public function canSendConnectionRequest(int $account_id, int $connection_id)
+    {
+
+        $conversationIds = $this->getById($connection_id)->conversations()->pluck('id')->toArray();
+
+
+        if (count($conversationIds)) {
+
+            $message = Message::whereIn('conversation_id', $conversationIds)->orderByDesc('date')->first();
+
+            if ($message){
+                $from = date('Y-m-d h:i:s', strtotime($message->date));
+                $to = date('Y-m-d h:i:s');
+
+                $nodays = (strtotime($to) - strtotime($from)) / (60 * 60 * 24); //it will count no. of days
+
+                if ($nodays >= 10) {
+
+                    return true;
+                }
+
+                return false;
+            }
+
+        }
+
+        return true;
     }
 }

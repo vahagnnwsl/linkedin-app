@@ -56,7 +56,7 @@ Vue.component('linkedin-conversation', {
                         </div>
 
                     </div>
-                    <button v-if="messages.length" @click="relativeConversationMessages()"
+                    <button v-if="messages.length" @click="getConversationMessages()"
                             class="btn btn-default"
                             style="float: right" title="load more messages"><i class="fa fa-arrow-circle-down"></i>
                     </button>

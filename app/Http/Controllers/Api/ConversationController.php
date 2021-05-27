@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Events\NewMessage;
+use App\Linkedin\Constants;
 use App\Linkedin\Responses\NewMessage as NewMessageResponse;
 use App\Http\Controllers\Controller;
 use App\Repositories\AccountRepository;
@@ -83,6 +84,8 @@ class ConversationController extends Controller
         $message['conversation_id'] = $conversation->id;
 
         if ($writer['entityUrn'] !== $account->entityUrn) {
+            $writer['account_id'] = $account->id;
+            $writer['until_disabled'] = date('Y-m-d h:i:s', strtotime(Constants::UNTIL_DISABLED_DAY));
 
             $connection = $this->connectionRepository->updateOrCreate(['entityUrn' => $writer['entityUrn']], $writer);
 

@@ -11,6 +11,7 @@ class Constants
     const SESSIONS_PATH = '/storage/linkedin/sessions/';
     const DEFAULT_AVATAR = '/dist/img/lin_def_image.svg';
     const REQUEST_HEADERS_TYPE = 'REQUEST_HEADERS';
+    const UNTIL_DISABLED_DAY = 10;
 
     /**
      * @var array|string[]

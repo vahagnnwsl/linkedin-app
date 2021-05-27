@@ -22,7 +22,9 @@ class Connection extends Model
         'image',
         'data',
         'is_parsed',
-        'parsed_date'
+        'parsed_date',
+        'account_id',
+        'until_disabled',
     ];
 
     /**
@@ -30,6 +32,7 @@ class Connection extends Model
      */
     protected $casts = [
         'data' => 'array',
+        'until_disabled' => 'datetime:Y-m-d H:m',
     ];
 
 

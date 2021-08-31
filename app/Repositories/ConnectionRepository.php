@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 
 class ConnectionRepository extends Repository
@@ -108,6 +109,9 @@ class ConnectionRepository extends Repository
      */
     public function updateOrCreateSelThoughCollection(array $data, int $account_id, int $key_id = 0, bool $conDistance = false, bool $conCompany = false, bool $conConversation = false)
     {
+
+        File::put(storage_path('a.json'),json_encode($data));
+
 
         collect($data)->map(function ($item) use ($account_id, $conConversation, $conDistance, $key_id, $conCompany) {
 

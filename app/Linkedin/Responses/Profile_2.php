@@ -54,13 +54,14 @@ class Profile_2
 
             $data = $profiles['com.linkedin.voyager.dash.search.EntityResultViewModel'];
 
+
             $data = collect($data)->map(function ($item) {
 
                 $a = [
                     'occupation' => $item->primarySubtitle->text ?? '',
                     'firstName' => explode(' ', $item->title->text)[0] ?? '',
                     'lastName' => explode(' ', $item->title->text)[1] ?? '',
-                    'entityUrn' => Helper::searchInString($item->entityUrn, 'fsd_profile:', ',SEARCH_SRP)'),
+                    'entityUrn' => Helper::searchInString($item->entityUrn, 'fsd_profile:', ',SEARCH_SRP'),
                     'distance' => $item->entityCustomTrackingInfo->memberDistance,
                 ];
 

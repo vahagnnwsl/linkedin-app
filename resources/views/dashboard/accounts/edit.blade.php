@@ -116,7 +116,7 @@
                                             <select multiple="multiple" class="select2 form-control w-100" required
                                                     data-placeholder="Select something" id="proxies_id" name="proxies_id[]">
                                                 @foreach($proxies as $item)
-                                                    <option value="{{$item['id']}}" @if(in_array($item['id'],$account->proxies()->pluck('id')->toArray())) selected @endif>{{$item['text']}}</option>
+                                                    <option value="{{$item['id']}}" @if(in_array($item['id'],$account->proxies()->pluck('proxies.id')->toArray())) selected @endif>{{$item['text']}}</option>
                                                 @endforeach
                                             </select>
                                         </div>

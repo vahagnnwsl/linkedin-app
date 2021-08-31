@@ -71,7 +71,8 @@ class ConnectionController extends Controller
             $keys = $this->keyRepository->getAll();
         }
 
-        $relatedAccountsIdes = Auth::user()->unRealAccounts()->pluck('id')->toArray();
+
+        $relatedAccountsIdes = Auth::user()->unRealAccounts()->pluck('accounts.id')->toArray();
 
         $data['enableKeysIdes'] = $enableKeysIdes;
 

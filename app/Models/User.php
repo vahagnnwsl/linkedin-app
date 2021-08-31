@@ -73,13 +73,6 @@ class User extends Authenticatable
     }
 
 
-    /**
-     * @return BelongsToMany
-     */
-    public function interlocutors(): BelongsToMany
-    {
-        return $this->belongsToMany(Interlocutor::class, 'user_interlocutors', 'user_id', 'interlocutor_id');
-    }
 
     /**
      * @return BelongsToMany

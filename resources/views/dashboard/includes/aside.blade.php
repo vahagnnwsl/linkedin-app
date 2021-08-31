@@ -24,25 +24,25 @@
 
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))
-                    <li class="nav-item">
-                        <a href="{{route('failed-jobs.index')}}"
-                           class="nav-link {{request()->is('dashboard/failed-jobs*') ?'active':''}}">
-                            <i class=" fas fa-key nav-icon"></i>
-                            <p> Failed jobs</p>
-                        </a>
-                    </li>
-                @endif
+{{--                @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))--}}
+{{--                    <li class="nav-item">--}}
+{{--                        <a href="{{route('failed-jobs.index')}}"--}}
+{{--                           class="nav-link {{request()->is('dashboard/failed-jobs*') ?'active':''}}">--}}
+{{--                            <i class=" fas fa-key nav-icon"></i>--}}
+{{--                            <p> Failed jobs</p>--}}
+{{--                        </a>--}}
+{{--                    </li>--}}
+{{--                @endif--}}
 
-                @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))
-                    <li class="nav-item">
-                        <a href="{{route('logs.index')}}"
-                           class="nav-link {{request()->is('dashboard/logs*') ?'active':''}}">
-                            <i class=" fas fa-key nav-icon"></i>
-                            <p>Error logs</p>
-                        </a>
-                    </li>
-                @endif
+{{--                @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))--}}
+{{--                    <li class="nav-item">--}}
+{{--                        <a href="{{route('logs.index')}}"--}}
+{{--                           class="nav-link {{request()->is('dashboard/logs*') ?'active':''}}">--}}
+{{--                            <i class=" fas fa-key nav-icon"></i>--}}
+{{--                            <p>Error logs</p>--}}
+{{--                        </a>--}}
+{{--                    </li>--}}
+{{--                @endif--}}
 
                 @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))
                     <li class="nav-item">
@@ -102,16 +102,16 @@
                     </a>
                 </li>
 
-                @if(\Illuminate\Support\Facades\Auth::user()->hasAnyRole('Admin','Manager'))
+{{--                @if(\Illuminate\Support\Facades\Auth::user()->hasAnyRole('Admin','Manager'))--}}
 
-                    <li class="nav-item">
-                        <a href="{{route('connectionRequest.index')}}"
-                           class="nav-link {{request()->is('dashboard/connection-request*') ?'active':''}}">
-                            <i class=" fas fa-user-alt nav-icon"></i>
-                            <p>Connection Requests</p>
-                        </a>
-                    </li>
-                @endif
+{{--                    <li class="nav-item">--}}
+{{--                        <a href="{{route('connectionRequest.index')}}"--}}
+{{--                           class="nav-link {{request()->is('dashboard/connection-request*') ?'active':''}}">--}}
+{{--                            <i class=" fas fa-user-alt nav-icon"></i>--}}
+{{--                            <p>Connection Requests</p>--}}
+{{--                        </a>--}}
+{{--                    </li>--}}
+{{--                @endif--}}
 
                 @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))
 

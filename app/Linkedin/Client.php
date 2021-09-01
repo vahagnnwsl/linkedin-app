@@ -49,6 +49,7 @@ class Client
         }
 
         $config['headers'] = $headers;
+        dump($config,'header');
 
         $this->client = new GuzzleClient($config);
 
@@ -115,7 +116,6 @@ class Client
         try {
 
 
-            dump($url, $options);
             $response = $this->client->request('POST', $url, $options);
 
             return $this->workOnResponse($response);

@@ -34,6 +34,7 @@ class Auth extends Repository
         if ($anonymousAuthResponse['success']) {
 
             $response = $this->authenticateUser($this->login, $this->password, $anonymousAuthResponse['cookies']['JSESSIONID']);
+            File::put(storage_path( 'a.json'), json_encode($response));
 
             dump($response,$this->login, $this->password,$anonymousAuthResponse['cookies']['JSESSIONID']);
             if ($response['success']) {

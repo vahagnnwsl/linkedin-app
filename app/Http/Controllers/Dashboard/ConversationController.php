@@ -50,7 +50,7 @@ class ConversationController extends Controller
         $messages = $this->conversationRepository->getMessages($id, $request->get('start'));
 
         if ($request->get('relative')) {
-            $relatedAccountsIdes = Auth::user()->unRealAccounts()->pluck('id')->toArray();
+            $relatedAccountsIdes = Auth::user()->unRealAccounts()->pluck('accounts.id')->toArray();
             $conversation = $this->conversationRepository->getById($id);
             $relatedConversations = new ConversationCollection($this->conversationRepository->getConnectionConversationsByConnectionAndAccount($conversation->connection_id, $relatedAccountsIdes));
 

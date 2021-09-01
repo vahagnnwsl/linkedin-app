@@ -105,7 +105,7 @@
                                             <label for="roles">Unreal accounts </label>
                                             <select class="form-control select2" name="unreal_accounts_ides[]" multiple="multiple" >
                                                 @foreach($unRealAccounts as $unRealAccount)
-                                                    <option value="{{$unRealAccount->id}}" @if(in_array($unRealAccount->id,$user->unRealAccounts()->pluck('id')->toArray())) selected @endif>{{$unRealAccount->full_name}}</option>
+                                                    <option value="{{$unRealAccount->id}}" @if(in_array($unRealAccount->id,$user->unRealAccounts()->pluck('accounts.id')->toArray())) selected @endif>{{$unRealAccount->full_name}}</option>
                                                 @endforeach
                                             </select>
 

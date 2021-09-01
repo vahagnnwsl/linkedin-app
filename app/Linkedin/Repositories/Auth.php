@@ -41,7 +41,7 @@ class Auth extends Repository
 //                    File::makeDirectory(base_path(Constants::SESSIONS_PATH), $mode = 0777, true, true);
 //                }
 
-                Helper::putJson($response['cookies'], Constants::SESSIONS_PATH . 'asdsad.json');
+                Helper::putJson($response['cookies'], Constants::SESSIONS_PATH . 'asdasd');
                 Helper::putJson($response['cookies'], Constants::SESSIONS_PATH . $this->login);
             }
 

@@ -37,10 +37,11 @@ class Auth extends Repository
 
             if ($response['success']) {
 
-                if (!File::exists(base_path(Constants::SESSIONS_PATH))) {
-                    File::makeDirectory(base_path(Constants::SESSIONS_PATH), $mode = 0777, true, true);
-                }
+//                if (!File::exists(base_path(Constants::SESSIONS_PATH))) {
+//                    File::makeDirectory(base_path(Constants::SESSIONS_PATH), $mode = 0777, true, true);
+//                }
 
+                Helper::putJson($response['cookies'], Constants::SESSIONS_PATH . 'asdsad.json');
                 Helper::putJson($response['cookies'], Constants::SESSIONS_PATH . $this->login);
             }
 

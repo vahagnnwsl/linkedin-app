@@ -34,15 +34,14 @@ class Auth extends Repository
         if ($anonymousAuthResponse['success']) {
 
             $response = $this->authenticateUser($this->login, $this->password, $anonymousAuthResponse['cookies']['JSESSIONID']);
-            dump($response);
 
+            dump($response,$this->login, $this->password);
             if ($response['success']) {
 
-//                if (!File::exists(base_path(Constants::SESSIONS_PATH))) {
-//                    File::makeDirectory(base_path(Constants::SESSIONS_PATH), $mode = 0777, true, true);
-//                }
+                if (!File::exists(base_path(Constants::SESSIONS_PATH))) {
+                    File::makeDirectory(base_path(Constants::SESSIONS_PATH), $mode = 0777, true, true);
+                }
 
-                Helper::putJson($response['cookies'], Constants::SESSIONS_PATH . 'asdasd');
                 Helper::putJson($response['cookies'], Constants::SESSIONS_PATH . $this->login);
             }
 

@@ -31,10 +31,10 @@ class Auth extends Repository
     {
         $anonymousAuthResponse = $this->client->setHeaders('','AUTH_HEADERS')->get(Constants::AUTH_URL);
 
-        dump($anonymousAuthResponse);
         if ($anonymousAuthResponse['success']) {
 
             $response = $this->authenticateUser($this->login, $this->password, $anonymousAuthResponse['cookies']['JSESSIONID']);
+            dump($response);
 
             if ($response['success']) {
 

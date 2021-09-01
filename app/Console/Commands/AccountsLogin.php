@@ -47,7 +47,7 @@ class AccountsLogin extends Command
         (new AccountRepository())->getAllRealAccounts()->map(function ($account) {
 
             $proxy = $account->getRandomFirstProxy();
-            Api::auth($account->login, $account->password)->login();
+            Api::auth($account->login, $account->password,$proxy)->login();
 
         });
 

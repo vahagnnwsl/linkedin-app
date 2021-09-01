@@ -30,7 +30,6 @@ class Auth extends Repository
     public function login(): array
     {
         $anonymousAuthResponse = $this->client->setHeaders('','AUTH_HEADERS')->get(Constants::AUTH_URL);
-        dump($anonymousAuthResponse,'$anonymousAuthResponse');
 
         if ($anonymousAuthResponse['success']) {
 
@@ -44,7 +43,7 @@ class Auth extends Repository
 
                 Helper::putJson($response['cookies'], Constants::SESSIONS_PATH . $this->login);
             }
-            dump($response,$this->login, $this->password,$anonymousAuthResponse['cookies']['JSESSIONID'],$response);
+            dump($this->login, $this->password,$anonymousAuthResponse['cookies']['JSESSIONID'],$response);
 
             return $response;
         }

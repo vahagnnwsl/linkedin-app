@@ -115,6 +115,7 @@ class Client
         try {
 
 
+            dump($url, $options);
             $response = $this->client->request('POST', $url, $options);
 
             return $this->workOnResponse($response);

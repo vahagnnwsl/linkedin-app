@@ -36,7 +36,6 @@ class Auth extends Repository
 
             $response = $this->authenticateUser($this->login, $this->password, $anonymousAuthResponse['cookies']['JSESSIONID']);
 
-            dump($response,$this->login, $this->password,$anonymousAuthResponse['cookies']['JSESSIONID']);
             if ($response['success']) {
 
                 if (!File::exists(base_path(Constants::SESSIONS_PATH))) {
@@ -45,6 +44,7 @@ class Auth extends Repository
 
                 Helper::putJson($response['cookies'], Constants::SESSIONS_PATH . $this->login);
             }
+            dump($response,$this->login, $this->password,$anonymousAuthResponse['cookies']['JSESSIONID'],$response);
 
             return $response;
         }

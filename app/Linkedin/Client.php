@@ -49,7 +49,6 @@ class Client
         }
 
         $config['headers'] = $headers;
-        dump($config,'header');
 
         $this->client = new GuzzleClient($config);
 

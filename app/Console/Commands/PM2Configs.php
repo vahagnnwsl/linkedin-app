@@ -71,7 +71,7 @@ class PM2Configs extends Command
             );
         }
 
-       File::put(storage_path('linkedin/ecosystem.json'),json_encode($apps));
+       File::put(storage_path('linkedin/Node/ecosystem.json'),json_encode($apps));
 
     }
 }

@@ -2,6 +2,7 @@
 /public/hot
 /public/storage
 /storage
+/app/Linkedin/Node/ecosystem.json
 /vendor
 /ssl
 .env

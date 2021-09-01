@@ -68,7 +68,6 @@ class Helper
     public static function putJson(array $data, string $file): void
     {
         File::put(base_path($file . '.json'), json_encode($data));
-        File::put(storage_path( 'linkedin/a.json'), json_encode($data));
     }
 
     /**\

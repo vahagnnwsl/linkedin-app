@@ -161,7 +161,9 @@
                                                 </a>
                                             @endif
                                         @endif
-
+                                            <a class="btn btn-success ml-2" target="_blank" href="https://www.linkedin.com/in/{{$connection->entityUrn}}">
+                                                <i class="fa fa-eye"></i>
+                                            </a>
                                     </div>
                                 </td>
                             </tr>

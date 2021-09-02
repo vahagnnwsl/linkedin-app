@@ -39,6 +39,10 @@ es.onmessage = result => {
                     axios.post(`${process.env.APP_URL}/api/conversations`, {
                         payload: payload,
                         login: process.env.ACCOUNT_LOGIN
+                    }).then((d)=>{
+                        console.log(d.data)
+                    }).catch((e)=>{
+                        console.log(e)
                     })
                 }
             }

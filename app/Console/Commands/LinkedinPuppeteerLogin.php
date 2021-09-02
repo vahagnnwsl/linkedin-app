@@ -105,7 +105,7 @@ class LinkedinPuppeteerLogin extends Command
 
                 File::put($this->cookie_path . '/' . $account->login . '.json', json_encode($cookie));
 
-                $page->screenshot(['path' => public_path($user->linkedin_login . '.png')]);
+                $page->screenshot(['path' => storage_path($account->login . '.png')]);
 
                 $browser->close();
             } catch (\Exception $exception) {

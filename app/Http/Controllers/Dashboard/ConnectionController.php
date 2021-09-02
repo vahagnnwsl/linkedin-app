@@ -99,7 +99,7 @@ class ConnectionController extends Controller
         $data = Api::profile($account->login, $account->password)->getProfile($connection->entityUrn);
         $data = Connection::parse($data);
 
-        $this->connectionRepository->update($id, ['data' => $data]);
+        $connection = $this->connectionRepository->update($id, ['data' => $data]);
 
 
         return response()->json($connection);

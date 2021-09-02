@@ -270,6 +270,8 @@
                         }
                         $('#infoModal').modal('show')
 
+                    },error:function () {
+                        toastr.error('Something went wrong');
                     },
                     complete: function(data) {
                         $(document).trigger('loader.update', false);

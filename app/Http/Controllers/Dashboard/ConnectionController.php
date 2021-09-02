@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Linkedin\Api;
+use App\Linkedin\Responses\Connection;
 use App\Linkedin\Responses\Response;
 use App\Repositories\AccountRepository;
 use App\Repositories\ConnectionRepository;
@@ -87,22 +88,22 @@ class ConnectionController extends Controller
 
     /**
      * @param int $id
-     * @return RedirectResponse
+     * @return JsonResponse
      */
-    public function getInfo(int $id): RedirectResponse
+    public function getInfo(int $id)
     {
-
         $account = Auth::user()->account;
 
         $connection = $this->connectionRepository->getById($id);
 
-        $data = Api::profile($account->login, $account->password)->getProfile($connection->publicIdentifier);
+        $data = Api::profile($account->login, $account->password)->getProfile($connection->entityUrn);
+        $data = Connection::parse($data);
 
         $this->connectionRepository->update($id, ['data' => $data]);
 
-        $this->putFlashMessage(true, 'Successfully updated');
 
-        return redirect()->back();
+        return response()->json($connection);
+
     }
 
     /**

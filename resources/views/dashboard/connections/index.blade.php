@@ -125,7 +125,6 @@
                                             @endif
 
 
-
                                             </br>
                                             @endforeach
 
@@ -161,9 +160,13 @@
                                                 </a>
                                             @endif
                                         @endif
-                                            <a class="btn btn-success ml-2" target="_blank" href="https://www.linkedin.com/in/{{$connection->entityUrn}}">
-                                                <i class="fa fa-eye"></i>
-                                            </a>
+                                        <a class="btn btn-success ml-2"  target="_blank"
+                                           href="https://www.linkedin.com/in/{{$connection->entityUrn}}">
+                                            <i class="fa fa-eye"></i>
+                                        </a>
+                                        <a class="btn btn-warning ml-2 getInfo" data-root="{{route('connections.getInfo',$connection->id)}}">
+                                            <i class="fa fa-info"></i>
+                                        </a>
                                     </div>
                                 </td>
                             </tr>
@@ -183,8 +186,100 @@
 
             </div>
         </div>
+        <div class="modal" id="infoModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
 
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="info-modal-title">Modal Heading</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+
+                    <div class="modal-body">
+
+                        <div class="row">
+                            <h5 class="mb-2  ml-1">Skills</h5>
+                            <div class="col-12" id="skills"></div>
+                        </div>
+                        <hr/>
+                        <div class="row">
+                            <h5 class="mb-2 ml-1">Educations</h5>
+                            <div class="col-12" id="educations"></div>
+                        </div>
+                        <hr/>
+                        <div class="row">
+                            <h5 class="mb-2  ml-1">Positions</h5>
+                            <div class="col-12" id="positions"></div>
+                        </div>
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
     </section>
 @endsection
 
 
+@push('js')
+    <script>
+        $(document).ready(function (){
+            $('.getInfo').click(function () {
+                var root = $(this).attr('data-root');
+                $.ajax({
+                    type: "GET",
+                    url: root,
+                    beforeSend:function (){
+                        $('#positions').html('')
+                        $('#skills').html('')
+                        $('#educations').html('')
+
+                        $(document).trigger('loader.update', true);
+                    },
+                    success: function (data){
+                        $('#info-modal-title').text( data.firstName +' '+  data.lastName);
+                        if(data.data){
+                            if(data.data.skills){
+                                let skills = '';
+                                for(let i in data.data.skills){
+                                    skills+='<span class="btn btn-outline-primary p-1 mr-2">'+data.data.skills[i]+'</span>'
+                                }
+                                $('#skills').html(skills)
+                            }
+
+                            if(data.data.positions){
+                                let positions = '';
+                                for(let i in data.data.positions){
+                                    positions+='<div class="card p-2"><h5 class="card-title  mb-2">'+data.data.positions[i].title+'</h5><h6 class="card-subtitle mb-2 text-muted">'+data.data.positions[i].companyName+'</h6></div>'
+                                }
+                                $('#positions').html(positions)
+                            }
+
+                            if(data.data.educations){
+                                let educations = '';
+                                for(let i in data.data.educations){
+                                    educations+='<div class="card p-2"><h5 class="card-title  mb-2">'+data.data.educations[i].schoolName+'</h5><h6 class="card-subtitle mb-2 text-muted">'+data.data.educations[i].degreeName+'</h6></div>'
+                                }
+                                $('#educations').html(educations)
+                            }
+                        }
+                        $('#infoModal').modal('show')
+
+                    },
+                    complete: function(data) {
+                        $(document).trigger('loader.update', false);
+                    }
+                });
+
+
+                console.log(root)
+            })
+        })
+
+    </script>
+@endpush

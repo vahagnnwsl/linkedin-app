@@ -154,15 +154,15 @@
                                             @endif
 
                                             @if($connection->canWrite($userAccount->id))
-                                                <a class="btn btn-info sendMessage" href="javascript:void(0)"
+                                                <a class="btn btn-success sendMessage" href="javascript:void(0)"
                                                    data-connectionId="{{$connection->id}}">
                                                     <i class="fa fa-envelope"></i>
                                                 </a>
                                             @endif
                                         @endif
-                                        <a class="btn btn-success ml-2"  target="_blank"
+                                        <a class="btn btn-info ml-2"  target="_blank"
                                            href="https://www.linkedin.com/in/{{$connection->entityUrn}}">
-                                            <i class="fa fa-eye"></i>
+                                            <i class="nav-icon fab fa-linkedin"></i>
                                         </a>
                                         <a class="btn btn-warning ml-2 getInfo" data-root="{{route('connections.getInfo',$connection->id)}}">
                                             <i class="fa fa-info"></i>

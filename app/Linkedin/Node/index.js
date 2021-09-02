@@ -2,7 +2,6 @@ const key = 'com.linkedin.realtimefrontend.DecoratedEvent';
 const EventSource = require('eventsource');
 const axios = require('axios');
 const cookie = JSON.parse(process.env.COOKIE);
-const fs = require('fs');
 
 const eventSourceInitDict = {
     headers: {
@@ -20,7 +19,7 @@ const eventSourceInitDict = {
         'x-restli-protocol-version': '2.0.0'
     }
 };
-console.log(5544)
+console.log(eventSourceInitDict)
 
 var es = new EventSource('https://realtime.www.linkedin.com/realtime/connect', eventSourceInitDict);
 

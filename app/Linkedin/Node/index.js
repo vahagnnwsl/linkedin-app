@@ -20,13 +20,14 @@ const eventSourceInitDict = {
         'x-restli-protocol-version': '2.0.0'
     }
 };
+console.log(5544)
+
 var es = new EventSource('https://realtime.www.linkedin.com/realtime/connect', eventSourceInitDict);
 
 es.onmessage = result => {
     const data = JSON.parse(result.data);
 
     if (data.hasOwnProperty(key)) {
-        console.log(data)
 
         var eventContent = data[key];
 

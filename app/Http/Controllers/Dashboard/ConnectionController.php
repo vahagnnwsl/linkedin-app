@@ -95,9 +95,13 @@ class ConnectionController extends Controller
         $account = Auth::user()->account;
 
         $connection = $this->connectionRepository->getById($id);
+        $positions = Api::profile($account->login, $account->password)->getProfile($connection->entityUrn);
+        $skills = Api::profile($account->login, $account->password)->getProfileSkills($connection->entityUrn);
 
-        $data = Api::profile($account->login, $account->password)->getProfile($connection->entityUrn);
-        $data = Connection::parse($data);
+        $data = [
+            'skills'=> Connection::parse($skills,'skills'),
+            'positions'=> Connection::parse($positions,'positions'),
+        ];
 
         $this->connectionRepository->update($id, ['data' => $data]);
 

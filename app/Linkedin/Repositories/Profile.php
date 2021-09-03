@@ -59,6 +59,15 @@ class Profile extends Repository
     }
 
     /**
+     * @param string $public_identifier
+     * @return array
+     */
+    public function getProfileSkills(string $public_identifier): array
+    {
+        return $this->client->setHeaders($this->login)->get(Constants::API_URL . '/identity/profiles/' . $public_identifier . '/skillCategory?includeHiddenEndorsers=true');
+    }
+
+    /**
      * @param string $key
      * @param string $country_id
      * @param string|null $company_id

@@ -203,11 +203,7 @@
                             <div class="col-12" id="skills"></div>
                         </div>
                         <hr/>
-                        <div class="row">
-                            <h5 class="mb-2 ml-1">Educations</h5>
-                            <div class="col-12" id="educations"></div>
-                        </div>
-                        <hr/>
+
                         <div class="row">
                             <h5 class="mb-2  ml-1">Positions</h5>
                             <div class="col-12" id="positions"></div>
@@ -255,18 +251,16 @@
                             if(data.data.positions){
                                 let positions = '';
                                 for(let i in data.data.positions){
-                                    positions+='<div class="card p-2"><h5 class="card-title  mb-2">'+data.data.positions[i].title+'</h5><h6 class="card-subtitle mb-2 text-muted">'+data.data.positions[i].companyName+'</h6></div>'
+                                    positions+='<div class="card p-2">' +
+                                        '<h5 class="card-title  mb-2" style="color: saddlebrown">'+data.data.positions[i].title+'</h5>' +
+                                        '<h6 class="card-subtitle mb-2 "  style="font-size: 12px;color: sandybrown">'+data.data.positions[i].companyName+'</h6>' +
+                                        '<h6 class="card-subtitle mb-2 text-muted" style="font-size: 12px;">'+data.data.positions[i].timePeriod.start+' -  '+data.data.positions[i].timePeriod.end+'</h6>' +
+                                        '</div>'
                                 }
                                 $('#positions').html(positions)
                             }
 
-                            if(data.data.educations){
-                                let educations = '';
-                                for(let i in data.data.educations){
-                                    educations+='<div class="card p-2"><h5 class="card-title  mb-2">'+data.data.educations[i].schoolName+'</h5><h6 class="card-subtitle mb-2 text-muted">'+data.data.educations[i].degreeName+'</h6></div>'
-                                }
-                                $('#educations').html(educations)
-                            }
+
                         }
                         $('#infoModal').modal('show')
 

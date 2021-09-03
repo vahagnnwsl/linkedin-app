@@ -14,38 +14,35 @@ class Connection
     const POSITION_KEY = 'com.linkedin.voyager.identity.profile.Position';
 
 
-    public static function parse(array $data)
+    public static function parse(array $data,$parse = null)
     {
-        $educations = [];
-        $skills = [];
-        $positions = [];
+        $resp = [];
+
 
         if ($data['success']) {
             $options = $data['data']->included;
             $options = collect($options)->groupBy('$type');
 
-            foreach ($options as $key => $option){
-                if ($key === self::EDUCATION_KEY){
-                    $educations = $option->map(function ($education) {
+            foreach ($options as $key => $option) {
 
-                        return [
-                            'schoolName'=>$education->schoolName,
-                            'degreeName'=>$education->degreeName,
-                        ];
-                    })->toArray();
-                }
 
-                if ($key === self::SKILL_KEY){
-                    $skills = $option->map(function ($skill) {
+
+                if ($key === self::SKILL_KEY && $parse === 'skills') {
+                    $resp = $option->map(function ($skill) {
                         return $skill->name;
                     })->toArray();
                 }
 
-                if ($key === self::POSITION_KEY){
-                    $positions = $option->map(function ($position) {
+                if ($key === self::POSITION_KEY && $parse === 'positions') {
+                    $resp = $option->map(function ($position) {
                         return [
-                            'title'=>$position->title,
-                            'companyName'=>$position->companyName,
+                            'title' => $position->title,
+                            'companyName' => $position->companyName,
+                            'companyUrn'=> $position->companyUrn,
+                            'timePeriod' => [
+                                'start' => $position->timePeriod && isset($position->timePeriod->startDate) ? $position->timePeriod->startDate->month . '/' . $position->timePeriod->startDate->year : null,
+                                'end' => $position->timePeriod && isset($position->timePeriod->endDate) ? $position->timePeriod->endDate->month . '/' . $position->timePeriod->endDate->year : null
+                            ]
                         ];
                     })->toArray();
                 }
@@ -53,11 +50,7 @@ class Connection
 
         }
 
-        return [
-            'positions'=>$positions,
-            'skills'=>$skills,
-            'educations'=>$educations,
-        ];
+        return $resp;
     }
 }
 

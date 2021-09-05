@@ -11,7 +11,7 @@ class Skill extends Model
     /**
      * @var string[]
      */
-    protected array $fillable = [
+    protected  $fillable = [
         'name',
     ];
 }

@@ -6,7 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Country extends Model
 {
-    protected array $fillable = [
+    /**
+     * @var string[]
+     */
+    protected  $fillable = [
         'name',
         'entityUrn'
     ];

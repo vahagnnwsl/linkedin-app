@@ -11,7 +11,7 @@ class Proxy extends Model
     /**
      * @var string[]
      */
-    protected array $fillable = [
+    protected  $fillable = [
         'login',
         'password',
         'ip',

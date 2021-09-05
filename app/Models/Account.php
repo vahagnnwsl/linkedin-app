@@ -13,9 +13,9 @@ class Account extends Model
     use HasFactory;
 
     /**
-     * @var array|string[]
+     * @var string[]
      */
-    protected array $fillable = [
+    protected  $fillable = [
         'entityUrn',
         'password',
         'login',

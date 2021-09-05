@@ -13,7 +13,7 @@ class ConnectionRequest extends Model
     /**
      * @var string[]
      */
-    protected array $fillable = [
+    protected $fillable = [
         'account_id',
         'connection_id',
         'user_id',

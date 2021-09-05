@@ -17,7 +17,7 @@ class Connection extends Model
     /**
      * @var array|string[]
      */
-    protected array $fillable = [
+    protected $fillable = [
         'entityUrn',
         'firstName',
         'lastName',

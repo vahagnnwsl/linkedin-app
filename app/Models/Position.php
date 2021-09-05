@@ -14,7 +14,7 @@ class Position extends Model
     /**
      * @var string[]
      */
-    protected array $fillable = [
+    protected  $fillable = [
         'name',
         'connection_id',
         'company_id',
@@ -27,7 +27,7 @@ class Position extends Model
     protected $attributes = ['duration'];
 
 //Make it available in the json response
-    protected array $appends = ['duration'];
+    protected  $appends = ['duration'];
 
     public function getDurationAttribute(): string
     {

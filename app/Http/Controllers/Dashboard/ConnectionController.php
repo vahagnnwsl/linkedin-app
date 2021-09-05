@@ -203,8 +203,19 @@ class ConnectionController extends Controller
     public function getSkills(): RedirectResponse
     {
         $account = Auth::user()->account;
+        GetConnectionsSkills::dispatch($account);
+        $this->putFlashMessage(true, 'Successfully run job');
+
+        return redirect()->back();
+    }
+
+    /**
+     * @return RedirectResponse
+     */
+    public function getPositions(): RedirectResponse
+    {
+        $account = Auth::user()->account;
         GetConnectionsPositions::dispatch($account);
-//        GetConnectionsSkills::dispatch($account);
         $this->putFlashMessage(true, 'Successfully run job');
 
         return redirect()->back();

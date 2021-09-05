@@ -47,6 +47,9 @@
                         <a href="{{route('connections.getSkills')}}" class="btn btn-outline-info">
                             Get Each Skills
                         </a>
+                        <a href="{{route('connections.getPositions')}}" class="btn btn-outline-info">
+                            Get Each Positions
+                        </a>
                     </div>
                 </div>
                 <div class="card-body p-0">

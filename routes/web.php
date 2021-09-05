@@ -80,6 +80,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
         Route::post('/{id}/sendInvitation', [App\Http\Controllers\Dashboard\ConnectionController::class, 'sendInvitation']);
         Route::get('/{id}/messages', [App\Http\Controllers\Dashboard\ConnectionController::class, 'getMessages']);
         Route::post('/{id}/createConversation', [App\Http\Controllers\Dashboard\ConnectionController::class, 'createConversation']);
+        Route::get('/getSkills', [App\Http\Controllers\Dashboard\ConnectionController::class, 'getSkills'])->name('connections.getSkills');;
 
     });
 

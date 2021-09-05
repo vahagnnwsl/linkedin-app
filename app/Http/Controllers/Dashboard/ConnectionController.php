@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\Connections\GetConnectionsPositions;
+use App\Jobs\Connections\GetConnectionsSkills;
 use App\Linkedin\Api;
+use App\Linkedin\Repositories\Profile;
 use App\Linkedin\Responses\Connection;
 use App\Linkedin\Responses\Response;
 use App\Repositories\AccountRepository;
@@ -20,19 +23,20 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ConnectionController extends Controller
 {
 
-    protected $connectionRepository;
+    protected ConnectionRepository $connectionRepository;
 
-    protected $accountRepository;
+    protected AccountRepository $accountRepository;
 
-    protected $keyRepository;
+    protected KeyRepository $keyRepository;
 
-    protected $conversationRepository;
+    protected ConversationRepository $conversationRepository;
 
-    protected $connectionRequestRepository;
+    protected ConnectionRequestRepository $connectionRequestRepository;
 
     /**
      * ConnectionController constructor.
@@ -82,7 +86,7 @@ class ConnectionController extends Controller
 
         $userAccount = Auth::user()->account;
 
-        return view('dashboard.connections.index', compact('connections', 'filterAttributes', 'keys', 'userAccount','relatedAccountsIdes'));
+        return view('dashboard.connections.index', compact('connections', 'filterAttributes', 'keys', 'userAccount', 'relatedAccountsIdes'));
     }
 
 
@@ -90,24 +94,19 @@ class ConnectionController extends Controller
      * @param int $id
      * @return JsonResponse
      */
-    public function getInfo(int $id)
+    public function getInfo(int $id): JsonResponse
     {
-        $account = Auth::user()->account;
 
         $connection = $this->connectionRepository->getById($id);
-        $positions = Api::profile($account->login, $account->password)->getProfile($connection->entityUrn);
-        $skills = Api::profile($account->login, $account->password)->getProfileSkills($connection->entityUrn);
+        $connection->load('positions');
+        $connection->load('positions.company');
+        $connection->load('skills');
 
-        $data = [
-            'skills'=> Connection::parse($skills,'skills'),
-            'positions'=> Connection::parse($positions,'positions'),
-        ];
-
-        $this->connectionRepository->update($id, ['data' => $data]);
-
-        $connection->data = $data;
-        return response()->json($connection);
-
+        return response()->json([
+            'fullName' => $connection->fullName,
+            'positions' => $connection->positions,
+            'skills' => $connection->skills
+        ]);
     }
 
     /**
@@ -196,6 +195,19 @@ class ConnectionController extends Controller
         }
 
         return response()->json([], 411);
+    }
+
+    /**
+     * @return RedirectResponse
+     */
+    public function getSkills(): RedirectResponse
+    {
+        $account = Auth::user()->account;
+        GetConnectionsPositions::dispatch($account);
+//        GetConnectionsSkills::dispatch($account);
+        $this->putFlashMessage(true, 'Successfully run job');
+
+        return redirect()->back();
     }
 
 }

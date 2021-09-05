@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Key extends Model
 {
 
-    protected $fillable = [
+    protected array $fillable = [
         'name',
         'status',
         'proxy_id',

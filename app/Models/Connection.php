@@ -13,7 +13,11 @@ class Connection extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
+
+    /**
+     * @var array|string[]
+     */
+    protected array $fillable = [
         'entityUrn',
         'firstName',
         'lastName',
@@ -26,15 +30,6 @@ class Connection extends Model
         'account_id',
         'until_disabled',
     ];
-
-    /**
-     * @var string[]
-     */
-    protected $casts = [
-        'data' => 'array',
-        'until_disabled' => 'datetime:Y-m-d H:m',
-    ];
-
 
     /**
      * @return string
@@ -66,7 +61,7 @@ class Connection extends Model
      */
     public function conversations(): HasMany
     {
-        return $this->hasMany(Conversation::class,'connection_id');
+        return $this->hasMany(Conversation::class, 'connection_id');
     }
 
     /**
@@ -90,6 +85,23 @@ class Connection extends Model
         }
 
         return false;
+    }
+
+
+    /**
+     * @return BelongsToMany
+     */
+    public function skills(): BelongsToMany
+    {
+        return $this->belongsToMany(Skill::class, 'connection_skills')->withPivot('like_count');;
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function positions(): HasMany
+    {
+        return $this->hasMany(Position::class)->orderBy('positions.start_date','DESC');
     }
 
 }

@@ -15,7 +15,7 @@ class Conversation extends Model
     /**
      * @var string[]
      */
-    protected $fillable = [
+    protected array $fillable = [
         'account_id',
         'connection_id',
         'entityUrn',

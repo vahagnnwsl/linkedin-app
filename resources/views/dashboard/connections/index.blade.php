@@ -2,6 +2,7 @@
 @push('js')
     <script src="/components/connection/request.js"></script>
     <script src="/components/connection/message.js"></script>
+    <script src="/components/connection/info.js"></script>
     <script src="/components/linkedin/conversation.js"></script>
 
     <script>
@@ -15,6 +16,10 @@
 
         $(document).on("click", ".getConversationMessages", function () {
             $(document).trigger('getConversationMessages', $(this).attr('data-conversdationId'));
+        });
+
+        $(document).on("click", ".getInfo", function () {
+            $(document).trigger('getConnectionInfo', $(this).attr('data-connectionId'));
         });
     </script>
 
@@ -36,6 +41,14 @@
         <div class="container-fluid">
             <div class="card">
                 @include('dashboard.connections.filter')
+
+                <div class="card-body text-right">
+                    <div class="btn-group">
+                        <a href="{{route('connections.getSkills')}}" class="btn btn-outline-info">
+                            Get Each Skills
+                        </a>
+                    </div>
+                </div>
                 <div class="card-body p-0">
                     <table class="table table-striped ">
                         <thead>
@@ -141,13 +154,13 @@
                                     <div class="btn-group">
 
                                         @if($userAccount)
-                                            @if((!$connection->account_i || $connection->account_id !== $userAccount->id) && (!$connection->until_disabled || date('Y-m-d') > $connection->until_disabled->format('Y-m-d'))   &&  !$connection->canWrite($userAccount->id) && !$connection->requestByAccount($userAccount->id)->first())
-                                                <a class="btn btn-primary setConnectionRequest"
-                                                   title="Sent Connection Request" href="javascript:void(0)"
-                                                   data-connectionId="{{$connection->id}}">
-                                                    <i class="fa fa-plus-circle"></i>
-                                                </a>
-                                            @endif
+{{--                                            @if((!$connection->account_i || $connection->account_id !== $userAccount->id) && (!$connection->until_disabled || date('Y-m-d') > $connection->until_disabled->format('Y-m-d'))   &&  !$connection->canWrite($userAccount->id) && !$connection->requestByAccount($userAccount->id)->first())--}}
+{{--                                                <a class="btn btn-primary setConnectionRequest"--}}
+{{--                                                   title="Sent Connection Request" href="javascript:void(0)"--}}
+{{--                                                   data-connectionId="{{$connection->id}}">--}}
+{{--                                                    <i class="fa fa-plus-circle"></i>--}}
+{{--                                                </a>--}}
+{{--                                            @endif--}}
 
                                             @if($connection->requestByAccount($userAccount->id)->first())
                                                 <span class="badge badge-warning">Pending</span>
@@ -164,7 +177,7 @@
                                            href="https://www.linkedin.com/in/{{$connection->entityUrn}}">
                                             <i class="nav-icon fab fa-linkedin"></i>
                                         </a>
-                                        <a class="btn btn-warning ml-2 getInfo" data-root="{{route('connections.getInfo',$connection->id)}}">
+                                        <a class="btn btn-warning ml-2 getInfo" data-connectionId="{{$connection->id}}"  href="javascript:void(0)">
                                             <i class="fa fa-info"></i>
                                         </a>
                                     </div>
@@ -183,6 +196,7 @@
                 <send-connection-request></send-connection-request>
                 <send-message></send-message>
                 <linkedin-conversation></linkedin-conversation>
+                <connection-info></connection-info>
 
             </div>
         </div>
@@ -225,7 +239,7 @@
 @push('js')
     <script>
         $(document).ready(function (){
-            $('.getInfo').click(function () {
+            $('.3').click(function () {
                 var root = $(this).attr('data-root');
                 $.ajax({
                     type: "GET",
@@ -271,11 +285,7 @@
                         $(document).trigger('loader.update', false);
                     }
                 });
-
-
-                console.log(root)
-            })
-        })
-
+            });
+        });
     </script>
 @endpush

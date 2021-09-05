@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Country extends Model
 {
-    protected $fillable = [
+    protected array $fillable = [
         'name',
         'entityUrn'
     ];

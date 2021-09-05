@@ -11,11 +11,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class FailedJob extends Model
 {
 
-
-
-
-
-
     public function getPayloadAttribute($value)
     {
         return $this->pp(json_decode($value,'JSON_PRETTY_PRINT'));

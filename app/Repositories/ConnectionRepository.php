@@ -5,12 +5,12 @@ namespace App\Repositories;
 use App\Models\AaccountsConversationsLimit;
 use App\Models\Connection;
 use App\Models\Message;
+use App\Models\Position;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Log;
 
 class ConnectionRepository extends Repository
 {
@@ -109,10 +109,6 @@ class ConnectionRepository extends Repository
      */
     public function updateOrCreateSelThoughCollection(array $data, int $account_id, int $key_id = 0, bool $conDistance = false, bool $conCompany = false, bool $conConversation = false)
     {
-
-        File::put(storage_path('a.json'),json_encode($data));
-
-
         collect($data)->map(function ($item) use ($account_id, $conConversation, $conDistance, $key_id, $conCompany) {
 
             $storeData = Arr::except($item['connection'], 'secondaryTitle');
@@ -189,7 +185,7 @@ class ConnectionRepository extends Repository
 
             $message = Message::whereIn('conversation_id', $conversationIds)->orderByDesc('date')->first();
 
-            if ($message){
+            if ($message) {
                 $from = date('Y-m-d h:i:s', strtotime($message->date));
                 $to = date('Y-m-d h:i:s');
 
@@ -206,5 +202,38 @@ class ConnectionRepository extends Repository
         }
 
         return true;
+    }
+
+
+    /**
+     * @param $id
+     * @param $skill_id
+     * @param int $like_count
+     * @return bool
+     */
+    public function addSkill($id, $skill_id, int $like_count = 0): bool
+    {
+        return DB::table('connection_skills')->insert([
+            'connection_id' => $id,
+            'skill_id' => $skill_id,
+            'like_count' => $like_count,
+        ]);
+    }
+
+
+    /**
+     * @param $connectionId
+     * @param null $companyId
+     * @param $data
+     * @return mixed
+     */
+    public function addPosition($connectionId, $data, $companyId = null): Position
+    {
+        return Position::create(array_merge(Arr::except($data, ['companyUrn', 'companyName']),
+            [
+                'connection_id' => $connectionId,
+                'company_id' => $companyId
+            ]
+        ));
     }
 }

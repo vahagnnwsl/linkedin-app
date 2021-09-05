@@ -10,7 +10,7 @@ class Company extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
+    protected array $fillable = [
         'entityUrn',
         'name',
         'image',

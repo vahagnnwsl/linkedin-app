@@ -19,6 +19,7 @@ class Position extends Model
         'connection_id',
         'company_id',
         'start_date',
+        'description',
         'end_date',
         'sort',
         'is_current',

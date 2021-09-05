@@ -98,6 +98,10 @@ class ConnectionController extends Controller
      */
     public function getInfo(int $id): JsonResponse
     {
+//
+//        $account = Auth::user()->account;
+//        $positions = Api::profile($account->login, $account->password)->getProfile('ACoAACKvpZ0B_D57F3IJRPfyBnZoFsshG69_rrg');
+//        dd(Connection::parse($positions, 'positions'));
 
         $connection = $this->connectionRepository->getById($id);
         $connection->load('positions');

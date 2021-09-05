@@ -14,7 +14,7 @@ class Position extends Model
     /**
      * @var string[]
      */
-    protected  $fillable = [
+    protected $fillable = [
         'name',
         'connection_id',
         'company_id',
@@ -25,28 +25,31 @@ class Position extends Model
     ];
 
 
-//Make it available in the json response
-    protected  $appends = ['duration'];
+    protected $appends = ['duration'];
 
     public function getDurationAttribute(): string
     {
 
-        $to = Carbon::createFromFormat('Y-m-d H:s:i', $this->getAttribute('start_date'));
-        $from =  $this->getAttribute('end_date') ? $this->getAttribute('end_date'): Carbon::now();
-        $from = Carbon::createFromFormat('Y-m-d H:s:i', $from);
+        if ($this->getAttribute('start_date')) {
 
-        $diff = $to->diff($from);
+            $to = Carbon::createFromFormat('Y-m-d H:s:i', $this->getAttribute('start_date'));
+            $from = $this->getAttribute('end_date') ? $this->getAttribute('end_date') : Carbon::now();
+            $from = Carbon::createFromFormat('Y-m-d H:s:i', $from);
 
-        $str = '';
+            $diff = $to->diff($from);
 
-        if ($diff->y) {
-            $str .= $diff->y . ' years ';
+            $str = '';
+
+            if ($diff->y) {
+                $str .= $diff->y . ' years ';
+            }
+            if ($diff->m) {
+                $str .= $diff->m . ' months';
+
+            }
+            return $str;
         }
-        if ($diff->m) {
-            $str .= $diff->m . ' months';
-
-        }
-        return $str;
+        return '';
     }
 
 

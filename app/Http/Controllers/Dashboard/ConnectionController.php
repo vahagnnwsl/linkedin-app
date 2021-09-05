@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\Connections\GetConnectionPositions;
+use App\Jobs\Connections\GetConnectionSkills;
 use App\Jobs\Connections\GetConnectionsPositions;
 use App\Jobs\Connections\GetConnectionsSkills;
 use App\Linkedin\Api;
@@ -221,4 +223,19 @@ class ConnectionController extends Controller
         return redirect()->back();
     }
 
+
+    /**
+     * @param int $id
+     * @return RedirectResponse
+     */
+    public function getSkillsAndPositions(int $id): RedirectResponse
+    {
+        $account = Auth::user()->account;
+        $connection = $this->connectionRepository->getById($id);
+        GetConnectionPositions::dispatch($account, $connection);
+        GetConnectionSkills::dispatch($account, $connection);
+        $this->putFlashMessage(true, 'Successfully run job');
+        return redirect()->back();
+
+    }
 }

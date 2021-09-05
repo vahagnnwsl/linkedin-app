@@ -46,8 +46,8 @@ class Connection
 
                     $resp = $option->map(function ($position) {
 
-                        $startDate = $position->timePeriod && isset($position->timePeriod->startDate) ? Carbon::createFromDate($position->timePeriod->startDate->year, $position->timePeriod->startDate->month, 1) : null;
-                        $endDate = $position->timePeriod && isset($position->timePeriod->endDate) ? Carbon::createFromDate($position->timePeriod->endDate->year, $position->timePeriod->endDate->month, 1) : null;
+                        $startDate = $position->timePeriod && isset($position->timePeriod->startDate) && isset($position->timePeriod->startDate->month) ? Carbon::createFromDate($position->timePeriod->startDate->year, $position->timePeriod->startDate->month, 1) : null;
+                        $endDate = $position->timePeriod && isset($position->timePeriod->endDate) && $startDate? Carbon::createFromDate($position->timePeriod->endDate->year, $position->timePeriod->endDate->month, 1) : null;
                         $companyUrn = explode('urn:li:fs_miniCompany:', $position->companyUrn);
                         return [
                             'name' => $position->title,

@@ -34,7 +34,6 @@ class GetConnectionsPositions implements ShouldQueue
 
         $connections->map(function ($connection) {
             GetConnectionPositions::dispatch($this->account, $connection);
-            sleep(1);
         });
     }
 }

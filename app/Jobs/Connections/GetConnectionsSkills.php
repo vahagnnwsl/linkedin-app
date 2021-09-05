@@ -34,7 +34,6 @@ class GetConnectionsSkills implements ShouldQueue
 
         $connections->map(function ($connection) {
             GetConnectionSkills::dispatch($this->account, $connection);
-            sleep(1);
         });
     }
 }

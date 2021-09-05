@@ -56,6 +56,8 @@ Vue.component('connection-info', {
 
         $(document).on('getConnectionInfo', function (e, id) {
             _this.connection_id = id;
+            _this.positions = [];
+            _this.skills = [];
             _this.getInfo(id);
         });
 

@@ -1,22 +1,15 @@
 <?php
 
-namespace App\Jobs;
+namespace App\Jobs\Keys;
 
-use App\Linkedin\Api;
-use App\Linkedin\Responses\Profile_2;
-use App\Linkedin\Responses\Response;
+
 use App\Models\Key;
-use App\Repositories\AccountRepository;
-use App\Repositories\ConnectionRepository;
-use App\Repositories\CountryRepository;
-use App\Repositories\KeyRepository;
 use App\Services\ConnectionService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\File;
 
 class SearchByKey implements ShouldQueue
 {
@@ -25,10 +18,10 @@ class SearchByKey implements ShouldQueue
     /**
      * @var Key
      */
-    protected $key;
+    protected Key $key;
 
 
-    protected $connectionService;
+    protected ConnectionService $connectionService;
 
 
     /**

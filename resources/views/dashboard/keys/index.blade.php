@@ -79,9 +79,13 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <a class="btn btn-primary btn-sm" href="{{route('keys.edit',$key->id)}}"
+                                        <a class="btn btn-info btn-sm" href="{{route('keys.edit',$key->id)}}"
                                            title="Edit">
                                             <i class="fas fa-user-edit"></i>
+                                        </a>
+                                        <a class="btn btn-warning btn-sm" href="{{route('keys.search',$key->id)}}"
+                                           title="Run Job">
+                                            <i class="fas fa-running"></i>
                                         </a>
                                     </td>
                                 </tr>

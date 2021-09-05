@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\KeyRequest;
+use App\Jobs\Keys\SearchByKey;
 use App\Jobs\LinkedinSearchByKey;
 use App\Jobs\LinkedinSearchByKeyAndCountry;
 use App\Jobs\SearchByKeyAndCompany;
@@ -66,7 +67,7 @@ class KeyController extends Controller
 
         $keys = $this->keyRepository->paginate();
         $countries = $this->countryRepository->getAll();
-        $accounts = $this->accountRepository->selectForSelect2('full_name', ['status' => 1,'type'=>$this->accountRepository::$TYPE_REAL]);
+        $accounts = $this->accountRepository->selectForSelect2('full_name', ['status' => 1, 'type' => $this->accountRepository::$TYPE_REAL]);
 
         return view('dashboard.keys.index', compact('keys', 'countries', 'accounts'));
     }
@@ -101,7 +102,7 @@ class KeyController extends Controller
 
         $countries = $this->countryRepository->getAll();
 
-        $accounts = $this->accountRepository->selectForSelect2('full_name', ['status' => 1,'type'=>$this->accountRepository::$TYPE_REAL]);
+        $accounts = $this->accountRepository->selectForSelect2('full_name', ['status' => 1, 'type' => $this->accountRepository::$TYPE_REAL]);
 
 
         return view('dashboard.keys.edit', compact('key', 'countries', 'accounts'));
@@ -127,5 +128,17 @@ class KeyController extends Controller
         return redirect()->back();
     }
 
+    /**
+     * @param int $id
+     * @return RedirectResponse
+     */
+    public function search(int $id): RedirectResponse
+    {
+        $key = $this->keyRepository->getById($id);
+        SearchByKey::dispatch($key);
+        $this->putFlashMessage(true, 'Successfully run job');
+        return redirect()->back();
+
+    }
 
 }

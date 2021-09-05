@@ -11,6 +11,7 @@ use App\Models\Proxy;
 use App\Repositories\CompanyRepository;
 use App\Repositories\SkillRepository;
 use App\Repositories\ConnectionRepository;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -73,6 +74,7 @@ class GetConnectionPositions implements ShouldQueue
 
                     $this->connectionRepository->addPosition($this->linkedinUser->id, $item, $companyId);
                 }, $positions);
+                $this->linkedinUser->update(['position_parsed_date' => Carbon::now()->toDateTimeString()]);
                 DB::commit();
             } catch (\Exception $exception) {
                 \Illuminate\Support\Facades\Log::error($exception->getMessage());

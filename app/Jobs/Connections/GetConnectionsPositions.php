@@ -30,7 +30,7 @@ class GetConnectionsPositions implements ShouldQueue
 
     public function handle()
     {
-        $connections = $this->connectionRepository->getAll();
+        $connections = $this->connectionRepository->getAvailableRecordForParsingPositions();
 
         $connections->map(function ($connection) {
             GetConnectionPositions::dispatch($this->account, $connection);

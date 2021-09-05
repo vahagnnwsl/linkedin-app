@@ -6,10 +6,10 @@ namespace App\Jobs\Connections;
 use App\Linkedin\Api;
 use App\Models\Account;
 use App\Models\Connection;
-use App\Models\Log;
 use App\Models\Proxy;
 use App\Repositories\SkillRepository;
 use App\Repositories\ConnectionRepository;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -62,11 +62,12 @@ class GetConnectionSkills implements ShouldQueue
                         [
                             'name' => $item['name']
                         ]);
-                    $this->connectionRepository->addSkill($this->linkedinUser->id,$skill->id,$item['likes_count']);
-                },$skills);
+                    $this->connectionRepository->addSkill($this->linkedinUser->id, $skill->id, $item['likes_count']);
+                }, $skills);
+                $this->linkedinUser->update(['skill_parsed_date' => Carbon::now()->toDateTimeString()]);
                 DB::commit();
             } catch (\Exception $exception) {
-                  \Illuminate\Support\Facades\Log::error($exception->getMessage());
+                \Illuminate\Support\Facades\Log::error($exception->getMessage());
                 DB::rollback();
             }
         }

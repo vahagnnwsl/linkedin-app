@@ -30,7 +30,7 @@ class GetConnectionsSkills implements ShouldQueue
 
     public function handle()
     {
-        $connections = $this->connectionRepository->getAll();
+        $connections = $this->connectionRepository->getAvailableRecordForParsingSkills();
 
         $connections->map(function ($connection) {
             GetConnectionSkills::dispatch($this->account, $connection);

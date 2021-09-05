@@ -15,7 +15,8 @@ class AddField2ToConnectionsTable extends Migration
     {
         Schema::table('connections', function (Blueprint $table) {
             $table->tinyInteger('is_parsed')->default(0);
-            $table->dateTime('parsed_date')->nullable();
+            $table->dateTime('skill_parsed_date')->nullable();
+            $table->dateTime('position_parsed_date')->nullable();
         });
     }
 

@@ -49,8 +49,7 @@ class CompanyRepository extends Repository
      */
     public function getByName($name)
     {
-        Log::channel('que_log')->info($name);
         return $this->model()::where('name', $name)->first();
-
     }
+
 }

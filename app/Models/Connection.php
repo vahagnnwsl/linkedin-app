@@ -26,7 +26,8 @@ class Connection extends Model
         'image',
         'data',
         'is_parsed',
-        'parsed_date',
+        'skill_parsed_date',
+        'position_parsed_date',
         'account_id',
         'until_disabled',
     ];

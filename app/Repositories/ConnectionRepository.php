@@ -7,6 +7,7 @@ use App\Models\Connection;
 use App\Models\Message;
 use App\Models\Position;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -235,5 +236,23 @@ class ConnectionRepository extends Repository
                 'company_id' => $companyId
             ]
         ));
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getAvailableRecordForParsingSkills(): Collection
+    {
+        $currentDay = Carbon::now()->format('d');
+        return $this->model()::whereDay('skill_parsed_date', '!=', $currentDay)->orWhere('skill_parsed_date', null)->get();
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getAvailableRecordForParsingPositions(): Collection
+    {
+        $currentDay = Carbon::now()->format('d');
+        return $this->model()::whereDay('position_parsed_date', '!=', $currentDay)->orWhere('position_parsed_date', null)->get();
     }
 }

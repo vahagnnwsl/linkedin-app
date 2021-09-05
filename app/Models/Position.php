@@ -24,7 +24,6 @@ class Position extends Model
         'is_current',
     ];
 
-    protected $attributes = ['duration'];
 
 //Make it available in the json response
     protected  $appends = ['duration'];
@@ -55,7 +54,6 @@ class Position extends Model
      * @var string[]
      */
     protected $casts = [
-        'data' => 'array',
         'start_date' => 'datetime:F  Y',
         'end_date' => 'datetime:F Y',
     ];

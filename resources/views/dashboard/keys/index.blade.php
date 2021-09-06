@@ -83,9 +83,18 @@
                                            title="Edit">
                                             <i class="fas fa-user-edit"></i>
                                         </a>
-                                        <a class="btn btn-warning btn-sm" href="{{route('keys.search',$key->id)}}"
+                                        <a class="btn btn-warning btn-sm"
+                                           onclick="return confirm(&quot;Run job?&quot;)"
+                                           href="{{route('keys.search',$key->id)}}"
                                            title="Run Job">
                                             <i class="fas fa-running"></i>
+                                        </a>
+                                        <a class="btn btn-danger btn-sm"
+                                           onclick="return confirm(&quot;Run job?&quot;)"
+                                           href="{{route('keys.searchByCompanies',$key->id)}}"
+                                           title="Run Job with companies">
+                                            <i class="fas fa-running"></i>
+                                            <i class="fas fa-award"></i>
                                         </a>
                                     </td>
                                 </tr>

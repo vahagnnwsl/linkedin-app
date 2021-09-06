@@ -49,6 +49,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
         Route::post('/store', [App\Http\Controllers\Dashboard\KeyController::class, 'store'])->name('keys.store');
         Route::get('/{id}/edit', [App\Http\Controllers\Dashboard\KeyController::class, 'edit'])->name('keys.edit');
         Route::get('/{id}/search', [App\Http\Controllers\Dashboard\KeyController::class, 'search'])->name('keys.search');
+        Route::get('/{id}/searchByCompanies', [App\Http\Controllers\Dashboard\KeyController::class, 'searchByCompanies'])->name('keys.searchByCompanies');
         Route::put('/{id}/update', [App\Http\Controllers\Dashboard\KeyController::class, 'update'])->name('keys.update');
     });
 

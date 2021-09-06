@@ -84,7 +84,7 @@ class ConnectionService
                 $params['conConversation'] ?? false
             );
             $start += 10;
-            sleep($params['sleep'] ?? 5);
+            sleep($params['sleep'] ?? 2);
 
             $this->recursiveSearch($key, $proxy, $account, $country, $params, $start);
         }

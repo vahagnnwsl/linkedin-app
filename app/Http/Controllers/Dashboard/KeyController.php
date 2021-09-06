@@ -141,4 +141,15 @@ class KeyController extends Controller
 
     }
 
+    /**
+     * @param int $id
+     * @return RedirectResponse
+     */
+    public function searchByCompanies(int $id): RedirectResponse
+    {
+        $key = $this->keyRepository->getById($id);
+        SearchByKey::dispatch($key);
+        $this->putFlashMessage(true, 'Successfully run job');
+        return redirect()->back();
+    }
 }

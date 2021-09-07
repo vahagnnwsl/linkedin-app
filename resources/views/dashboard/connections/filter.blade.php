@@ -18,17 +18,15 @@
     <div class="card-body" style="display: block;" data-select2-id="31">
         <form method="GET" action="{{url(request()->path())}}">
             <div class="row">
-{{--                <div class="col-md-4">--}}
-{{--                    <label for="accounts_ids">Accounts</label>--}}
-{{--                    <select multiple="multiple" class="select2 form-control" data-placeholder="Select something" id="accounts_ids" name="accounts_ids[]">--}}
-{{--                    @foreach($accounts as $account)--}}
-{{--                        <option--}}
-{{--                            @if(request()->get('accounts_ids') && count(request()->get('accounts_ids')) && in_array($account['id'],request()->get('accounts_ids'))) selected--}}
-{{--                            @endif value="{{$account['id']}}">{{$account['text']}}</option>--}}
-{{--                        @endforeach--}}
-{{--                        </select>--}}
-
-{{--                </div>--}}
+                <div class="col-md-4">
+                    <label for="keys_ids">Companies</label>
+                    <select multiple="multiple" class="select2Company form-control" data-placeholder="Select something" id="companies"
+                            name="companies[]">
+                        @foreach($companies as $company)
+                             <option value="{{$company->id}}" selected>{{$company->text}}</option>
+                        @endforeach
+                    </select>
+                </div>
 
                 <div class="col-md-4">
                     <label for="keys_ids">Keys</label>
@@ -42,9 +40,34 @@
                 </div>
 
                 <div class="col-md-4">
+                    <label for="categories">Categories</label>
+                    <select multiple="multiple" class="select2 form-control" data-placeholder="Select something" id="categories" name="categories[]">
+                        @foreach($categories as $category)
+                            <option
+                                @if(request()->get('categories') && count(request()->get('categories')) && in_array($category->id,request()->get('categories'))) selected
+                                @endif value="{{$category->id}}">{{$category->name}}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-md-8">
                     <label for="keys_ids">Keyword</label>
                      <input type="text" class="form-control" name="key" placeholder="Type keyword" value="{{request()->get('key')}}">
-
+                    <div class="form-group pl-2">
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input type="checkbox" class="form-check-input" value="skills" name="search_in[]"
+                                       @if(request()->get('search_in') && count(request()->get('search_in')) && in_array('skills',request()->get('search_in'))) checked @endif>Skills
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input type="checkbox" class="form-check-input" value="last_position" name="search_in[]"
+                                       @if(request()->get('search_in') && count(request()->get('search_in')) && in_array('last_position',request()->get('search_in'))) checked @endif
+                                >Last position
+                            </label>
+                        </div>
+                    </div>
                 </div>
 
 
@@ -55,8 +78,6 @@
                         <button type="submit" class="btn btn-info float-right"><i class="fa fa-search"></i></button>
 
                     </div>
-
-
                 </div>
             </div>
         </form>
@@ -76,6 +97,28 @@
 
             $('.select2').select2({
                 multiple: true,
+            })
+
+            $('.select2Company').select2({
+                multiple: true,
+                ajax: {
+                    url: '/dashboard/companies',
+                    data: function (params) {
+                        var query = {
+                            search: params.term,
+                            type: 'public'
+                        }
+
+                        // Query parameters will be ?search=[term]&type=public
+                        return query;
+                    },
+                    processResults: function (data) {
+                        // Transforms the top-level key of the response object from 'items' to 'results'
+                        return {
+                            results: data
+                        };
+                    }
+                }
             })
 
         });

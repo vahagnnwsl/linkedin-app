@@ -3,6 +3,7 @@
 
 namespace App\Repositories;
 
+use App\Models\Status;
 use Illuminate\Support\Facades\DB;
 
 abstract class Repository
@@ -48,7 +49,7 @@ abstract class Repository
      */
     public function update(int $id, array $data)
     {
-      return  $this->model()::whereId($id)->update($data);
+        return $this->model()::whereId($id)->update($data);
     }
 
     /**
@@ -86,7 +87,6 @@ abstract class Repository
     {
         return $this->model()::querey();
     }
-
 
 
     /**

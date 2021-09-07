@@ -1,4 +1,5 @@
 @extends('dashboard.layouts')
+
 @push('js')
     <script src="/components/connection/request.js"></script>
     <script src="/components/connection/message.js"></script>
@@ -181,6 +182,10 @@
                                                href="{{route('connections.getSkillsAndPositions',$connection->id)}}">
                                                 <span class="text-bold text-black-50">Get skills/positions</span>
                                             </a>
+                                                <a class="dropdown-item"
+                                                   href="{{route('connections.edit',$connection->id)}}">
+                                                    <span class="text-bold text-black-50">Edit</span>
+                                                </a>
                                         </div>
                                     </div>
                                 </td>

@@ -38,7 +38,7 @@ class CompanyController extends Controller
      * @param CompanyRepository $companyRepository
      * @param CountryRepository $countryRepository
      */
-    public function __construct(CompanyRepository $companyRepository,CountryRepository $countryRepository)
+    public function __construct(CompanyRepository $companyRepository, CountryRepository $countryRepository)
     {
         $this->companyRepository = $companyRepository;
         $this->countryRepository = $countryRepository;
@@ -50,11 +50,14 @@ class CompanyController extends Controller
      */
     public function index(Request $request)
     {
+        if ($request->ajax()) {
+            return $this->companyRepository->searchByName($request->get('search'));
+        }
         $companies = $this->companyRepository->paginate();
 
         $countries = $this->countryRepository->getAll();
 
-        return view('dashboard.companies.index', compact('companies','countries'));
+        return view('dashboard.companies.index', compact('companies', 'countries'));
     }
 
     /**

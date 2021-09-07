@@ -78,6 +78,8 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
 
         Route::get('/', [App\Http\Controllers\Dashboard\ConnectionController::class, 'index'])->name('connections.index');
         Route::get('/{id}/getInfo', [App\Http\Controllers\Dashboard\ConnectionController::class, 'getInfo'])->name('connections.getInfo');
+        Route::get('/{id}/edit', [App\Http\Controllers\Dashboard\ConnectionController::class, 'edit'])->name('connections.edit');
+        Route::post('/{id}/statuses', [App\Http\Controllers\Dashboard\ConnectionController::class, 'addStatus'])->name('connections.addStatus');
         Route::get('/{id}/trackingId', [App\Http\Controllers\Dashboard\ConnectionController::class, 'getTrackingId']);
         Route::post('/{id}/sendInvitation', [App\Http\Controllers\Dashboard\ConnectionController::class, 'sendInvitation']);
         Route::get('/{id}/messages', [App\Http\Controllers\Dashboard\ConnectionController::class, 'getMessages']);
@@ -98,6 +100,13 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
 
     Route::group(['prefix' => 'logs','middleware'=>'role:Admin'], function () {
         Route::get('/', [App\Http\Controllers\Dashboard\ErrorController::class, 'indexLogs'])->name('logs.index');
+    });
+
+    Route::group(['prefix' => 'categories','middleware'=>'role:Admin'], function () {
+        Route::get('/', [App\Http\Controllers\Dashboard\CategoryController::class, 'index'])->name('categories.index');
+        Route::get('/create', [App\Http\Controllers\Dashboard\CategoryController::class, 'create'])->name('categories.create');
+        Route::post('/store', [App\Http\Controllers\Dashboard\CategoryController::class, 'store'])->name('categories.store');
+        Route::delete('/{id}/delete', [App\Http\Controllers\Dashboard\CategoryController::class, 'destroy'])->name('categories.destroy');
     });
 
     Route::group(['prefix' => 'companies','middleware'=>'role:Admin'], function () {

@@ -105,4 +105,12 @@ class Connection extends Model
         return $this->hasMany(Position::class)->orderBy('positions.start_date','DESC');
     }
 
+    /**
+     * @return HasMany
+     */
+    public function statuses(): HasMany
+    {
+        return $this->hasMany(Status::class)->orderBy('statuses.created_at','DESC');
+    }
+
 }

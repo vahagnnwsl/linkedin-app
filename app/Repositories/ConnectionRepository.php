@@ -3,9 +3,11 @@
 namespace App\Repositories;
 
 use App\Models\AaccountsConversationsLimit;
+use App\Models\Category;
 use App\Models\Connection;
 use App\Models\Message;
 use App\Models\Position;
+use App\Models\Status;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
@@ -68,32 +70,28 @@ class ConnectionRepository extends Repository
                 $sub->where('firstName', 'LIKE', "%" . $requestData['key'] . "%")
                     ->orWhere('lastName', 'LIKE', "%" . $requestData['key'] . "%")
                     ->orWhere('occupation', 'LIKE', "%" . $requestData['key'] . "%");
-            });
-
-        })->when(count($requestData['enableKeysIdes']), function ($q) use ($requestData) {
-
-            $q->where(function ($q) use ($requestData) {
-
-                $q->where(function ($sub) use ($requestData) {
-                    $sub->whereHas('keys', function ($subQuery_1) use ($requestData) {
-                        $subQuery_1->whereIn('keys.id', $requestData['enableKeysIdes']);
+            })->orWhere(function ($sub) use($requestData){
+                $sub->when(isset($requestData['search_in']) && count($requestData['search_in']) > 0 && in_array('skills',$requestData['search_in']) , function ($q) use ($requestData) {
+                    $q->whereHas('skills', function ($subQuery_1) use ($requestData) {
+                        $subQuery_1->where('skills.name','LIKE', '%'.$requestData['key'].'%');
                     });
-                })->orWhere(function ($subQuery) {
-                    $subQuery->whereHas('accounts', function ($subQuery_1) {
-                        $subQuery_1->where('accounts.id', Auth::user()->account->id);
+                })->when(isset($requestData['search_in']) && count($requestData['search_in']) > 0 && in_array('last_position',$requestData['search_in']) , function ($q) use ($requestData) {
+                    $q->whereHas('statuses', function ($subQuery_1) use ($requestData) {
+                        $subQuery_1->where('statuses.comment','LIKE', '%'.$requestData['key'].'%')->where('is_last',1);
                     });
                 });
             });
-        })->when(!count($requestData['enableKeysIdes']), function ($q) use ($requestData) {
-            $q->when(Auth::user()->hasRole('Hr'), function ($subQuery) {
-                $subQuery->whereHas('accounts', function ($subQuery_1) {
-                    $subQuery_1->where('accounts.id', Auth::user()->account->id);
-                });
-            });
-
         })->when(isset($requestData['keys_ids']) && count($requestData['keys_ids']) > 0, function ($q) use ($requestData) {
             $q->whereHas('keys', function ($subQuery_1) use ($requestData) {
                 $subQuery_1->whereIn('keys.id', $requestData['keys_ids']);
+            });
+        })->when(isset($requestData['categories']) && count($requestData['categories']) > 0, function ($q) use ($requestData) {
+            $q->whereHas('statuses', function ($subQuery_1) use ($requestData) {
+                $subQuery_1->whereIn('statuses.category_id', $requestData['categories']);
+            });
+        })->when(isset($requestData['companies']) && count($requestData['companies']) > 0, function ($q) use ($requestData) {
+            $q->whereHas('positions', function ($subQuery_1) use ($requestData) {
+                $subQuery_1->whereIn('positions.company_id', $requestData['companies']);
             });
         })->with('accounts')->orderby('id', 'desc')->paginate(20);
 
@@ -254,5 +252,26 @@ class ConnectionRepository extends Repository
     {
         $currentDay = Carbon::now()->format('d');
         return $this->model()::whereDay('position_parsed_date', '!=', $currentDay)->orWhere('position_parsed_date', null)->get();
+    }
+
+    /**
+     * @param array $data
+     * @param int $connection_id
+     * @return Status
+     */
+    public function addStatus(array $data, int $connection_id): Status
+    {
+        Status::where('connection_id', $connection_id)->update(['is_last' => 0]);
+        $data['connection_id'] = $connection_id;
+        $data['is_last'] = 1;
+        return Status::create($data);
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getCategories(): Collection
+    {
+        return Category::get();
     }
 }

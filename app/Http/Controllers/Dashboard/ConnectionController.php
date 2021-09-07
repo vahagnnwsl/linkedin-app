@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StatusRequest;
 use App\Jobs\Connections\GetConnectionPositions;
 use App\Jobs\Connections\GetConnectionSkills;
 use App\Jobs\Connections\GetConnectionsPositions;
@@ -12,6 +13,8 @@ use App\Linkedin\Repositories\Profile;
 use App\Linkedin\Responses\Connection;
 use App\Linkedin\Responses\Response;
 use App\Repositories\AccountRepository;
+use App\Repositories\CategoryRepository;
+use App\Repositories\CompanyRepository;
 use App\Repositories\ConnectionRepository;
 use App\Repositories\ConnectionRequestRepository;
 use App\Repositories\ConversationRepository;
@@ -40,6 +43,10 @@ class ConnectionController extends Controller
 
     protected ConnectionRequestRepository $connectionRequestRepository;
 
+    protected CategoryRepository $categoryRepository;
+
+    protected CompanyRepository $companyRepository;
+
     /**
      * ConnectionController constructor.
      * @param ConnectionRepository $connectionRepository
@@ -47,15 +54,26 @@ class ConnectionController extends Controller
      * @param KeyRepository $keyRepository
      * @param ConnectionRequestRepository $connectionRequestRepository
      * @param ConversationRepository $conversationRepository
+     * @param CategoryRepository $categoryRepository
+     * @param CompanyRepository $companyRepository
      */
 
-    public function __construct(ConnectionRepository $connectionRepository, AccountRepository $accountRepository, KeyRepository $keyRepository, ConnectionRequestRepository $connectionRequestRepository, ConversationRepository $conversationRepository)
+    public function __construct(ConnectionRepository        $connectionRepository,
+                                AccountRepository           $accountRepository,
+                                KeyRepository               $keyRepository,
+                                ConnectionRequestRepository $connectionRequestRepository,
+                                ConversationRepository      $conversationRepository,
+                                CategoryRepository          $categoryRepository,
+                                CompanyRepository           $companyRepository
+    )
     {
         $this->connectionRepository = $connectionRepository;
         $this->accountRepository = $accountRepository;
         $this->keyRepository = $keyRepository;
         $this->connectionRequestRepository = $connectionRequestRepository;
         $this->conversationRepository = $conversationRepository;
+        $this->categoryRepository = $categoryRepository;
+        $this->companyRepository = $companyRepository;
     }
 
     /**
@@ -66,29 +84,42 @@ class ConnectionController extends Controller
         $filterAttributes = ['account', 'name'];
         $data = $request->all();
         $enableKeysIdes = [];
+        $keys = $this->keyRepository->getAll();
 
-        if (Auth::user()->hasRole('Hr')) {
-
-            $keys = Auth::user()->keys;
-
-            $enableKeysIdes = Auth::user()->keys->pluck('id')->toArray();
-
-        } else {
-
-            $keys = $this->keyRepository->getAll();
-        }
-
+        dump($data);
 
         $relatedAccountsIdes = Auth::user()->unRealAccounts()->pluck('accounts.id')->toArray();
 
         $data['enableKeysIdes'] = $enableKeysIdes;
 
+        $companies = [];
+
+        if ($request->has('companies')){
+            $companies = $this->companyRepository->getByIds($request->get('companies'));
+        }
 
         $connections = $this->connectionRepository->filter($data, 'id');
+        $categories = $this->connectionRepository->getCategories();
 
         $userAccount = Auth::user()->account;
 
-        return view('dashboard.connections.index', compact('connections', 'filterAttributes', 'keys', 'userAccount', 'relatedAccountsIdes'));
+        return view('dashboard.connections.index', compact('connections','categories', 'filterAttributes', 'keys', 'userAccount', 'relatedAccountsIdes','companies'));
+    }
+
+    /**
+     * @param int $id
+     */
+    public function edit(int $id)
+    {
+        $connection = $this->connectionRepository->getById($id);
+        $connection->load('positions');
+        $connection->load('positions.company');
+        $connection->load('skills');
+        $connection->load('statuses');
+        $connection->load('statuses.category');
+        $categories = $this->categoryRepository->getAll();
+
+        return view('dashboard.connections.edit', compact('connection', 'categories'));
     }
 
 
@@ -241,5 +272,17 @@ class ConnectionController extends Controller
         $this->putFlashMessage(true, 'Successfully run job');
         return redirect()->back();
 
+    }
+
+    /**
+     * @param StatusRequest $statusRequest
+     * @param int $id
+     * @return RedirectResponse
+     */
+    public function addStatus(StatusRequest $statusRequest, int $id): RedirectResponse
+    {
+        $this->connectionRepository->addStatus($statusRequest->validated(), $id);
+        $this->putFlashMessage(true, 'Successfully added');
+        return redirect()->back();
     }
 }

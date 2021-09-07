@@ -73,6 +73,16 @@
                         </a>
                     </li>
                 @endif
+                @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))
+                    <li class="nav-item">
+                        <a href="{{route('categories.index')}}"
+                           class="nav-link {{request()->is('dashboard/categories*') ?'active':''}}">
+                            <i class=" fas fa-key nav-icon"></i>
+                            <p>Categories</p>
+                        </a>
+                    </li>
+                @endif
+
 
                 @if(\Illuminate\Support\Facades\Auth::user()->hasAnyRole('Admin','Manager'))
                     <li class="nav-item">

@@ -67,9 +67,9 @@ class ConnectionRepository extends Repository
 
         return $this->model()::when(isset($requestData['key']), function ($q) use ($requestData) {
             $q->where(function ($sub) use ($requestData) {
-                $sub->where('firstName', 'LIKE', "%" . $requestData['key'] . "%")
-                    ->orWhere('lastName', 'LIKE', "%" . $requestData['key'] . "%")
-                    ->orWhere('occupation', 'LIKE', "%" . $requestData['key'] . "%");
+                $sub->when(isset($requestData['search_in']) && count($requestData['search_in']) > 0 && in_array('occupation',$requestData['search_in']) , function ($q) use ($requestData) {
+                    $q->where('occupation', 'LIKE', "%" . $requestData['key'] . "%");
+                });
             })->orWhere(function ($sub) use($requestData){
                 $sub->when(isset($requestData['search_in']) && count($requestData['search_in']) > 0 && in_array('skills',$requestData['search_in']) , function ($q) use ($requestData) {
                     $q->whereHas('skills', function ($subQuery_1) use ($requestData) {
@@ -77,9 +77,15 @@ class ConnectionRepository extends Repository
                     });
                 });
             })->orWhere(function ($sub) use($requestData){
-                $sub->when(isset($requestData['search_in']) && count($requestData['search_in']) > 0 && in_array('last_position',$requestData['search_in']) , function ($q) use ($requestData) {
+                $sub->when(isset($requestData['search_in']) && count($requestData['search_in']) > 0 && in_array('last_status',$requestData['search_in']) , function ($q) use ($requestData) {
                     $q->whereHas('statuses', function ($subQuery_1) use ($requestData) {
                         $subQuery_1->where('statuses.comment','LIKE', '%'.$requestData['key'].'%')->where('is_last',1);
+                    });
+                });
+            })->orWhere(function ($sub) use($requestData){
+                $sub->when(isset($requestData['search_in']) && count($requestData['search_in']) > 0 && in_array('statuses',$requestData['search_in']) , function ($q) use ($requestData) {
+                    $q->whereHas('statuses', function ($subQuery_1) use ($requestData) {
+                        $subQuery_1->where('statuses.comment','LIKE', '%'.$requestData['key'].'%');
                     });
                 });
             });
@@ -89,12 +95,15 @@ class ConnectionRepository extends Repository
             });
         })->when(isset($requestData['categories']) && count($requestData['categories']) > 0, function ($q) use ($requestData) {
             $q->whereHas('statuses', function ($subQuery_1) use ($requestData) {
-                $subQuery_1->whereIn('statuses.category_id', $requestData['categories']);
+                $ids = $requestData['categories'];
+                $subQuery_1->whereIn('statuses.category_id', DB::table('categories')->select('id')->whereIn('id',$ids)->orWhereIn('parent_id',$ids)->pluck('id'));
             });
         })->when(isset($requestData['companies']) && count($requestData['companies']) > 0, function ($q) use ($requestData) {
             $q->whereHas('positions', function ($subQuery_1) use ($requestData) {
                 $subQuery_1->whereIn('positions.company_id', $requestData['companies']);
             });
+        })->when(isset($requestData['name']), function ($q) use ($requestData) {
+            $q->where('firstName', 'LIKE', "%" . $requestData['name'] . "%")->orWhere('lastName','LIKE',"%" . $requestData['name'] . "%");
         })->with('accounts')->orderby('id', 'desc')->paginate(20);
 
 

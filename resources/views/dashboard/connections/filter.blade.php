@@ -41,36 +41,57 @@
 
                 <div class="col-md-4">
                     <label for="categories">Categories</label>
-                    <select multiple="multiple" class="select2 form-control" data-placeholder="Select something" id="categories" name="categories[]">
+                    <select multiple="multiple" class="select2Category form-control" data-placeholder="Select something" id="categories" name="categories[]">
                         @foreach($categories as $category)
                             <option
                                 @if(request()->get('categories') && count(request()->get('categories')) && in_array($category->id,request()->get('categories'))) selected
-                                @endif value="{{$category->id}}">{{$category->name}}</option>
+                                @endif value="{{$category->id}}"
+                                data-badge=""
+
+                            >{{$category->name}}</option>
                         @endforeach
                     </select>
                 </div>
-
-                <div class="col-md-8">
+                <div class="col-md-12">
+                    <hr/>
+                </div>
+                <div class="col-md-4">
                     <label for="keys_ids">Keyword</label>
                      <input type="text" class="form-control" name="key" placeholder="Type keyword" value="{{request()->get('key')}}">
                     <div class="form-group pl-2">
                         <div class="form-check">
-                            <label class="form-check-label">
-                                <input type="checkbox" class="form-check-input" value="skills" name="search_in[]"
+                            <label class="form-check-label" style="cursor: pointer">
+                                <input type="checkbox" class="form-check-input" value="skills" name="search_in[]" id="skills"
                                        @if(request()->get('search_in') && count(request()->get('search_in')) && in_array('skills',request()->get('search_in'))) checked @endif>Skills
                             </label>
                         </div>
                         <div class="form-check">
-                            <label class="form-check-label">
-                                <input type="checkbox" class="form-check-input" value="last_position" name="search_in[]"
-                                       @if(request()->get('search_in') && count(request()->get('search_in')) && in_array('last_position',request()->get('search_in'))) checked @endif
-                                >Last position
+                            <label class="form-check-label" style="cursor: pointer">
+                                <input type="checkbox" class="form-check-input" value="last_status" name="search_in[]"
+                                       @if(request()->get('search_in') && count(request()->get('search_in')) && in_array('last_status',request()->get('search_in'))) checked @endif
+                                >Last status
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label" style="cursor: pointer">
+                                <input type="checkbox" class="form-check-input" value="statuses" name="search_in[]"
+                                       @if(request()->get('search_in') && count(request()->get('search_in')) && in_array('statuses',request()->get('search_in'))) checked @endif
+                                >All status
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label" style="cursor: pointer">
+                                <input type="checkbox" class="form-check-input" value="occupation" name="search_in[]"
+                                       @if(request()->get('search_in') && count(request()->get('search_in')) && in_array('occupation',request()->get('search_in'))) checked @endif
+                                >Occupation
                             </label>
                         </div>
                     </div>
                 </div>
-
-
+                <div class="col-md-4">
+                    <label for="keys_ids">Name</label>
+                    <input type="text" class="form-control" name="name" placeholder="Type name" value="{{request()->get('name')}}">
+                </div>
 
                 <div class="col-md-12 mt-2">
                     <div class="btn-group btn-group-sm float-right">
@@ -97,6 +118,15 @@
 
             $('.select2').select2({
                 multiple: true,
+            })
+
+            $('.select2Category').select2({
+                multiple: true,
+                closeOnSelect : false,
+                placeholder : "Placeholder",
+                allowHtml: true,
+                allowClear: true,
+                tags: true //
             })
 
             $('.select2Company').select2({

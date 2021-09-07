@@ -103,7 +103,12 @@ class ConnectionRepository extends Repository
                 $subQuery_1->whereIn('positions.company_id', $requestData['companies']);
             });
         })->when(isset($requestData['name']), function ($q) use ($requestData) {
-            $q->where('firstName', 'LIKE', "%" . $requestData['name'] . "%")->orWhere('lastName','LIKE',"%" . $requestData['name'] . "%");
+            $name = $requestData['name'];
+            $q->where('firstName', 'LIKE', "%" . $requestData['name'] . "%")
+                ->orWhere('lastName','LIKE',"%" . $requestData['name'] . "%")
+                ->orWhere( DB::raw(' CONCAT(firstName," ", lastName)'), 'LIKE',"%" . $requestData['name'] . "%")
+                ->orWhere( DB::raw(' CONCAT(lastName," ", firstName)'), 'LIKE',"%" . $requestData['name'] . "%")
+            ;
         })->with('accounts')->orderby('id', 'desc')->paginate(20);
 
 

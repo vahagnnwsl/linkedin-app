@@ -45,10 +45,16 @@
 
                 <div class="card-body text-right">
                     <div class="btn-group">
-                        <a href="{{route('connections.getSkills')}}" class="btn btn-outline-info">
+                        <a href="{{route('connections.getSkills')}}"
+                           class="btn btn-outline-info"
+                           onclick="return confirm(&quot;Run job?&quot;)"
+                        >
                             Get Each Skills
                         </a>
-                        <a href="{{route('connections.getPositions')}}" class="btn btn-outline-info">
+                        <a href="{{route('connections.getPositions')}}" class="btn btn-outline-info"
+                           onclick="return confirm(&quot;Run job?&quot;)"
+
+                        >
                             Get Each Positions
                         </a>
                     </div>
@@ -182,10 +188,10 @@
                                                href="{{route('connections.getSkillsAndPositions',$connection->id)}}">
                                                 <span class="text-bold text-black-50">Get skills/positions</span>
                                             </a>
-                                                <a class="dropdown-item"
-                                                   href="{{route('connections.edit',$connection->id)}}">
-                                                    <span class="text-bold text-black-50">Edit</span>
-                                                </a>
+                                            <a class="dropdown-item"
+                                               href="{{route('connections.edit',$connection->id)}}">
+                                                <span class="text-bold text-black-50">Edit</span>
+                                            </a>
                                         </div>
                                     </div>
                                 </td>

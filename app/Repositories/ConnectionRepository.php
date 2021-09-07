@@ -75,7 +75,9 @@ class ConnectionRepository extends Repository
                     $q->whereHas('skills', function ($subQuery_1) use ($requestData) {
                         $subQuery_1->where('skills.name','LIKE', '%'.$requestData['key'].'%');
                     });
-                })->when(isset($requestData['search_in']) && count($requestData['search_in']) > 0 && in_array('last_position',$requestData['search_in']) , function ($q) use ($requestData) {
+                });
+            })->orWhere(function ($sub) use($requestData){
+                $sub->when(isset($requestData['search_in']) && count($requestData['search_in']) > 0 && in_array('last_position',$requestData['search_in']) , function ($q) use ($requestData) {
                     $q->whereHas('statuses', function ($subQuery_1) use ($requestData) {
                         $subQuery_1->where('statuses.comment','LIKE', '%'.$requestData['key'].'%')->where('is_last',1);
                     });

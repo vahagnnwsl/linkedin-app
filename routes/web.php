@@ -107,6 +107,8 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
         Route::get('/create', [App\Http\Controllers\Dashboard\CategoryController::class, 'create'])->name('categories.create');
         Route::post('/store', [App\Http\Controllers\Dashboard\CategoryController::class, 'store'])->name('categories.store');
         Route::delete('/{id}/delete', [App\Http\Controllers\Dashboard\CategoryController::class, 'destroy'])->name('categories.destroy');
+        Route::get('/{id}/edit', [App\Http\Controllers\Dashboard\CategoryController::class, 'edit'])->name('categories.edit');
+        Route::put('/{id}/update', [App\Http\Controllers\Dashboard\CategoryController::class, 'update'])->name('categories.update');
     });
 
     Route::group(['prefix' => 'companies','middleware'=>'role:Admin'], function () {

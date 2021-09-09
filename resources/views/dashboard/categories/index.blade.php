@@ -56,6 +56,10 @@
                                     {{$category->parent()->exists()?$category->parent->name:''}}
                                 </td>
                                 <td class="text-right">
+                                    <a class="btn btn-info btn-sm" href="{{route('categories.edit',$category->id)}}"
+                                       title="Edit">
+                                        <i class="fas fa-user-edit"></i>
+                                    </a>
                                     <form method="POST"
                                           action="{{ route('categories.destroy',  $category->id) }}"
                                           accept-charset="UTF-8"

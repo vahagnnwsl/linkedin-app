@@ -23,6 +23,7 @@ class Position extends Model
         'end_date',
         'sort',
         'is_current',
+        'duration'
     ];
 
 

@@ -32,6 +32,18 @@ class CategoryRepository extends Repository
         return $this->model()::whereNotNull('parent_id')->get();
     }
 
+    /**
+     * @param array $data
+     * @param int $id
+     */
+    public function update(int $id, array $data): void
+    {
+        $category = $this->getById($id);
+        if ($category->children()->exists() && $data['parent_id']) {
+            $category->children()->update(['parent_id' => null]);
+        }
+        $category->update($data);
+    }
 
 
     /**

@@ -49,6 +49,18 @@ class CategoryController extends Controller
 
 
     /**
+     * @param int $id
+     * @return View
+     */
+    public function edit(int $id): View
+    {
+        $categories = $this->categoryRepository->parents();
+        $category = $this->categoryRepository->getById($id);
+        return view('dashboard.categories.edit', compact('categories', 'category'));
+    }
+
+
+    /**
      * @param CategoryRequest $categoryRequest
      * @return RedirectResponse
      */
@@ -56,6 +68,19 @@ class CategoryController extends Controller
     {
         $this->categoryRepository->store($categoryRequest->validated());
         $this->putFlashMessage(true, 'Successfully created');
+
+        return redirect()->route('categories.index');
+    }
+
+    /**
+     * @param CategoryRequest $categoryRequest
+     * @param int $id
+     * @return RedirectResponse
+     */
+    public function update(CategoryRequest $categoryRequest, int $id): RedirectResponse
+    {
+        $this->categoryRepository->update($id, $categoryRequest->validated());
+        $this->putFlashMessage(true, 'Successfully updated');
 
         return redirect()->route('categories.index');
     }

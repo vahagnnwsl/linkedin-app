@@ -111,13 +111,7 @@
                         <label for="formControlRange">Experience</label>
                         <input name="experience" type="range" value="{{request()->get('experience')??0}}" class="form-control-range" id="formControlRange" onInput="$('#rangeval').html($(this).val()+' years')" min="0" max="10" step="0.5" >
                         <span id="rangeval">{{request()->get('experience')?request()->get('experience').' years':''}}<!-- Default value --></span>
-                        <div class="form-check">
-                            <label class="form-check-label" style="cursor: pointer">
-                                <input type="checkbox" class="form-check-input" value="yes" name="note_skills"
-                                       @if(request()->get('note_skills')) checked @endif
-                                >Note skill
-                            </label>
-                        </div>
+
                     </div>
                 </div>
                 <div class="col-md-12 mt-2">

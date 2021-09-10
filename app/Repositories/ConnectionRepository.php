@@ -102,7 +102,7 @@ class ConnectionRepository extends Repository
                     });
                 });
             })->orWhere(function ($sub) use ($requestData) {
-                $sub->when(isset($requestData['search_in']) && count($requestData['search_in']) > 0 && in_array('positions', $requestData['search_in']), function ($q) use ($requestData) {
+                $sub->when(!isset($requestData['experience']) && isset($requestData['search_in']) && count($requestData['search_in']) > 0 && in_array('positions', $requestData['search_in']), function ($q) use ($requestData) {
                     $q->whereHas('positions', function ($subQuery_1) use ($requestData) {
                         $subQuery_1->where('positions.name', 'LIKE', '%' . $requestData['key'] . '%')
                             ->orWhere(function ($s_q) use ($requestData) {
@@ -133,10 +133,23 @@ class ConnectionRepository extends Repository
                 ->orWhere('lastName', 'LIKE', "%" . $requestData['name'] . "%")
                 ->orWhere(DB::raw(' CONCAT(firstName," ", lastName)'), 'LIKE', "%" . $requestData['name'] . "%")
                 ->orWhere(DB::raw(' CONCAT(lastName," ", firstName)'), 'LIKE', "%" . $requestData['name'] . "%");
-        })->when(isset($requestData['experience']) && $requestData['experience'] > 0 && !isset($requestData['key']), function ($q) use ($requestData) {
-            $q->whereHas('positions', function ($subQuery_1) use ($requestData) {
-                $subQuery_1->select(DB::raw('SUM(duration)'))->having(DB::raw('SUM(duration)'), '>=', $requestData['experience'] * 12);
+        })->when(isset($requestData['experience']) && $requestData['experience'] > 0 , function ($q) use ($requestData) {
+            $q->when(isset($requestData['key']),function ($ss_q) use ($requestData){
+                $ss_q->whereHas('positions', function ($subQuery_1) use ($requestData) {
+                    $subQuery_1->where('positions.name', 'LIKE', '%' . $requestData['key'] . '%')
+                        ->orWhere(function ($s_q) use ($requestData) {
+                            $s_q->whereHas('company', function ($s_q_c) use ($requestData) {
+                                $s_q_c->where('companies.name', 'LIKE', '%' . $requestData['key'] . '%');
+                            });
+                        })->select(DB::raw('SUM(duration)'))->having(DB::raw('SUM(duration)'), '>=', $requestData['experience'] * 12);
+                });
             });
+            $q->when(!isset($requestData['key']),function ($ss_q) use ($requestData){
+                $ss_q->whereHas('positions', function ($subQuery_1) use ($requestData) {
+                    $subQuery_1->select(DB::raw('SUM(duration)'))->having(DB::raw('SUM(duration)'), '>=', $requestData['experience'] * 12);
+                });
+            });
+
         })->when(isset($requestData['include_ac_connections']) && $requestData['include_ac_connections'] === 'no', function ($q) use ($requestData) {
             $q->doesnthave('accounts');
         })->orderby('id', 'desc')->paginate(20);

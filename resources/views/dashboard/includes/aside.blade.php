@@ -24,15 +24,15 @@
 
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-{{--                @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))--}}
-{{--                    <li class="nav-item">--}}
-{{--                        <a href="{{route('failed-jobs.index')}}"--}}
-{{--                           class="nav-link {{request()->is('dashboard/failed-jobs*') ?'active':''}}">--}}
-{{--                            <i class=" fas fa-key nav-icon"></i>--}}
-{{--                            <p> Failed jobs</p>--}}
-{{--                        </a>--}}
-{{--                    </li>--}}
-{{--                @endif--}}
+                @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))
+                    <li class="nav-item">
+                        <a href="{{route('jobs.index')}}"
+                           class="nav-link {{request()->is('dashboard/jobs*') ?'active':''}}">
+                            <i class=" fas fa-key nav-icon"></i>
+                            <p>Jobs</p>
+                        </a>
+                    </li>
+                @endif
 
 {{--                @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))--}}
 {{--                    <li class="nav-item">--}}

@@ -5,7 +5,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Failed jobs</h1>
+                    <h1>Jobs</h1>
                 </div>
 
             </div>
@@ -14,29 +14,45 @@
     <section class="content">
         <div class="container-fluid">
             <div class="card">
+                 <div class="card-header">
+                     <div class="btn-group">
+                         <a href="?type=process" class="btn btn-primary">In process</a>
+                         <a href="?type=failed" class="btn btn-danger">Failed</a>
+                     </div>
 
+                 </div>
                 <div class="card-body p-2">
                     <div class="table-responsive mailbox-messages">
                         <table class="table table-striped projects">
 
                             <tbody>
                             @foreach($jobs as $job)
-                                <tr>
+                                @if($type ==='process')
 
+                                  <tr>
+                                      <ul class="list-group mt-2">
+                                          <li class="list-group-item">  {{$job->id}}</li>
+                                          <li class="list-group-item json" data-json="{{$job->payload}}"></li>
+                                      </ul>
+                                  </tr>
+                                @else
+                                    <tr>
+                                        <ul class="list-group mt-2">
+                                            <li class="list-group-item">  {{$job->uuid}}</li>
+                                            <li class="list-group-item">{{$job->failed_at}}</li>
+                                            <li class="list-group-item json" data-json="{{$job->payload}}">
+                                            <li class="list-group-item json" data-json="{{$job->exception}}">
 
-                                    <ul class="list-group mt-2">
-                                        <li class="list-group-item">  {{$job->uuid}}</li>
-                                        <li class="list-group-item">{{$job->failed_at}}</li>
-                                        <li class="list-group-item json" data-json="{{$job->payload}}">
+                                            </li>
+                                        </ul>
+                                    </tr>
+                                @endif
 
-                                        </li>
-                                    </ul>
-                                </tr>
                             @endforeach
                             </tbody>
                         </table>
                     </div>
-                    {!! $jobs->links('vendor.pagination') !!}
+                    {!! $jobs->appends($_GET)->links('vendor.pagination') !!}
 
                 </div>
             </div>

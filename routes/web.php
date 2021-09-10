@@ -138,6 +138,11 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
         Route::post('/linkedin',[App\Http\Controllers\Dashboard\SearchController::class, 'linkedin'])->name('search.linkedin');;
     });
 
+    Route::group(['prefix' => 'jobs'], function () {
+        Route::get('',[App\Http\Controllers\Dashboard\JobController::class, 'index'])->name('jobs.index');
+    });
+
+
     Route::group(['prefix' => 'countries','middleware'=>'role:Admin'], function () {
 
         Route::get('',[App\Http\Controllers\Dashboard\CountryController::class, 'index'])->name('countries.index');

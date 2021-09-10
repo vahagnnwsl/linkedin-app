@@ -104,17 +104,18 @@ class ConnectionRepository extends Repository
             })->orWhere(function ($sub) use ($requestData) {
                 $sub->when(isset($requestData['search_in']) && count($requestData['search_in']) > 0 && in_array('positions', $requestData['search_in']), function ($q) use ($requestData) {
                     $q->whereHas('positions', function ($subQuery_1) use ($requestData) {
-                        $subQuery_1->where('positions.name', 'LIKE', '%' . $requestData['key'] . '%')->orWhere(function ($s_q) use ($requestData) {
+                        $subQuery_1->where('positions.name', 'LIKE', '%' . $requestData['key'] . '%')
+                            ->orWhere(function ($s_q) use ($requestData) {
                             $s_q->whereHas('company', function ($s_q_c) use ($requestData) {
                                 $s_q_c->where('companies.name', 'LIKE', '%' . $requestData['key'] . '%')
-                                    ->orWhere(function ($qq) use ($requestData){
-                                    $qq->whereHas('keys',function ($c_k) use ($requestData) {
-                                        $c_k->where('keys.name', 'LIKE', '%' . $requestData['key'] . '%');
+                                    ->orWhere(function ($qqq) use($requestData){
+                                    $qqq->whereHas('keys',function ($dbq) use($requestData){
+                                        $dbq->where('keys.name', 'LIKE', '%' . $requestData['key'] . '%');
                                     });
                                 });
                             });
                         })->when(isset($requestData['experience']) && $requestData['experience']>0, function ($s_q) use ($requestData) {
-                            $s_q->select(DB::raw('SUM(duration)'))->having(DB::raw('SUM(duration)'), '>=', $requestData['experience'] * 12)->orWher;
+                            $s_q->select(DB::raw('SUM(duration)'))->having(DB::raw('SUM(duration)'), '>=', $requestData['experience'] * 12);
                         });
                     });
                 });

@@ -106,19 +106,12 @@ class ConnectionRepository extends Repository
                     $q->whereHas('positions', function ($subQuery_1) use ($requestData) {
                         $subQuery_1->where('positions.name', 'LIKE', '%' . $requestData['key'] . '%')
                             ->orWhere(function ($s_q) use ($requestData) {
-                                $s_q->whereHas('company', function ($s_q_c) use ($requestData) {
-                                    $s_q_c->where('companies.name', 'LIKE', '%' . $requestData['key'] . '%')
-                                        ->orWhere(function ($qqq) use ($requestData) {
-                                            $qqq->whereHas('keys', function ($dbq) use ($requestData) {
-                                                $dbq->where('keys.name', 'LIKE', '%' . $requestData['key'] . '%');
-                                            });
-                                        });
-                                });
-                            })->orWhere(function ($s_q) use ($requestData) {
-                                $s_q->when(isset($requestData['experience']) && $requestData['experience'] > 0, function ($s_qq) use ($requestData) {
-                                    $s_qq->select(DB::raw('SUM(duration)'))->having(DB::raw('SUM(duration)'), '>=', $requestData['experience'] * 12);
-                                });
+                            $s_q->whereHas('company', function ($s_q_c) use ($requestData) {
+                                $s_q_c->where('companies.name', 'LIKE', '%' . $requestData['key'] . '%');
                             });
+                        })->when(isset($requestData['experience']) && $requestData['experience']>0, function ($s_q) use ($requestData) {
+                            $s_q->select(DB::raw('SUM(duration)'))->having(DB::raw('SUM(duration)'), '>=', $requestData['experience'] * 12);
+                        });
                     });
                 });
             });

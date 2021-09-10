@@ -111,10 +111,17 @@
                         <label for="formControlRange">Experience</label>
                         <input name="experience" type="range" value="{{request()->get('experience')??0}}" class="form-control-range" id="formControlRange" onInput="$('#rangeval').html($(this).val()+' years')" min="0" max="10" step="0.5" >
                         <span id="rangeval">{{request()->get('experience')?request()->get('experience').' years':''}}<!-- Default value --></span>
-
                     </div>
                 </div>
+
                 <div class="col-md-12 mt-2">
+                    <div class="form-group form-check text-info" >
+                        <label class="form-check-label" style="cursor: pointer">
+                            <input
+                                @if(request()->get('include_ac_connections') && request()->get('include_ac_connections') === 'no') checked @endif
+                                class="form-check-input" type="checkbox" value="no" name="include_ac_connections"> Not include account connections
+                        </label>
+                    </div>
                     <div class="btn-group btn-group-sm float-right">
                         <a href="{{url(request()->path())}}" class="btn btn-default float-right mr-1">Clear</a>
                         <button type="submit" class="btn btn-info float-right"><i class="fa fa-search"></i></button>

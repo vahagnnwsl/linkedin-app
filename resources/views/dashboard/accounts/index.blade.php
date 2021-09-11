@@ -96,7 +96,7 @@
                                 <td>{{$account->lastActivityAt}}</td>
 
                                 <td>
-                                    <div class="dropdown dropleft">
+                                    <div class="dropdown dropdown">
                                         <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
                                             <i class="fa fa-universal-access"></i>
                                         </a>

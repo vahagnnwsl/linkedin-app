@@ -29,7 +29,7 @@
                         </div>
                     @endif
                 </div>
-                <div class="card-body p-0 table-responsive">
+                <div class="card-body p-0 table-responsive" style="min-height: 400px">
                     <table class="table table-striped ">
                         <thead>
                         <tr>
@@ -96,7 +96,7 @@
                                 <td>{{$account->lastActivityAt}}</td>
 
                                 <td>
-                                    <div class="dropdown dropdown">
+                                    <div class="dropdown dropleft">
                                         <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
                                             <i class="fa fa-universal-access"></i>
                                         </a>

@@ -62,7 +62,7 @@ class PM2Configs extends Command
                     'watch' => true,
                     'max_memory_restart' => '200M',
                     'env' => [
-                        'COOKIE' => $account->cookie_socket_str,
+                        'COOKIE' => $account->cookie_socket,
                         'ACCOUNT_LOGIN' => $account->login,
                         'ACCOUNT_ID' => $account->id,
                         'APP_URL' => env('APP_URL')

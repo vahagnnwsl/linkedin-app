@@ -2,6 +2,7 @@
 
 namespace App\Linkedin;
 
+use App\Models\Account;
 use App\Models\Log;
 use App\Models\Proxy;
 use GuzzleHttp\Client as GuzzleClient;
@@ -39,9 +40,9 @@ class Client
         $headers = [];
 
         if ($cookie_name) {
-            $cookie = Helper::getCookie($cookie_name);
-            $headers = Arr::add($headers, 'csrf-token', $cookie->JSESSIONID);
-            $headers = Arr::add($headers, 'cookie', Helper::cookieToString($cookie));
+            $cookie = Account::whereLogin($cookie_name)->first();
+            $headers = Arr::add($headers, 'csrf-token', $cookie->cookie_web['JSESSIONID']);
+            $headers = Arr::add($headers, 'cookie', Helper::cookieToString(collect($cookie->cookie_web)));
         }
 
         foreach (Constants::$$header_type as $key => $val) {

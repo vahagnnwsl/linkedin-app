@@ -25,9 +25,16 @@ class Account extends Model
         'type',
         'limit_connection_request',
         'limit_conversation',
+        'cookie_str',
+        'cookie_web',
+        'cookie_socket',
+        'cookie_socket_str',
     ];
 
-
+    protected $casts = [
+        'cookie_web' => 'json',
+        'cookie_socket' => 'json',
+    ];
     /**
      * @return BelongsToMany
      */

@@ -13,6 +13,5 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
 Route::post('/conversations', [App\Http\Controllers\Api\ConversationController::class,'store']);
 Route::put('/accounts/{id}', [App\Http\Controllers\Api\AccountController::class,'update']);

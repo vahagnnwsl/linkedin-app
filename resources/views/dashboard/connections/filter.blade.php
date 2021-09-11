@@ -59,44 +59,48 @@
                     <label for="keys_ids">Keyword</label>
                      <input type="text" class="form-control" name="key" placeholder="Type keyword" value="{{request()->get('key')}}">
                     <div class="form-group pl-2">
-                        <div class="form-check">
-                            <label class="form-check-label" style="cursor: pointer">
-                                <input type="checkbox" class="form-check-input" value="skills" name="search_in[]" id="skills"
-                                       @if(request()->get('search_in') && count(request()->get('search_in')) && in_array('skills',request()->get('search_in'))) checked @endif>Skills
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <label class="form-check-label" style="cursor: pointer">
-                                <input type="checkbox" class="form-check-input" value="last_status" name="search_in[]"
-                                       @if(request()->get('search_in') && count(request()->get('search_in')) && in_array('last_status',request()->get('search_in'))) checked @endif
-                                >Last status
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <label class="form-check-label" style="cursor: pointer">
-                                <input type="checkbox" class="form-check-input" value="statuses" name="search_in[]"
-                                       @if(request()->get('search_in') && count(request()->get('search_in')) && in_array('statuses',request()->get('search_in'))) checked @endif
-                                >All status
-                            </label>
-                        </div>
-                        <div class="form-check">
+
+                        <div class="form-check mt-2">
                             <label class="form-check-label" style="cursor: pointer">
                                 <input type="checkbox" class="form-check-input" value="occupation" name="search_in[]"
                                        @if(request()->get('search_in') && count(request()->get('search_in')) && in_array('occupation',request()->get('search_in'))) checked @endif
                                 >Occupation
                             </label>
                         </div>
+
                         <div class="form-check">
                             <label class="form-check-label" style="cursor: pointer">
-                                <input type="checkbox" class="form-check-input" value="last_positions" name="search_in[]"
-                                       @if(request()->get('search_in') && count(request()->get('search_in')) && in_array('last_positions',request()->get('search_in'))) checked @endif
+                                <input type="checkbox" class="form-check-input" value="skills" name="search_in[]" id="skills"
+                                       @if(request()->get('search_in') && count(request()->get('search_in')) && in_array('skills',request()->get('search_in'))) checked @endif>Skills
+                            </label>
+                        </div>
+                        <hr/>
+                        <div class="form-check">
+                            <label class="form-check-label" style="cursor: pointer">
+                                <input type="radio" class="form-check-input" value="last" name="statuses"
+                                       @if(request()->get('search_in') && request()->get('statuses') === 'last') checked @endif
+                                >Last status
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label" style="cursor: pointer">
+                                <input type="radio" class="form-check-input" value="all" name="statuses"
+                                       @if(request()->get('search_in') && request()->get('statuses') === 'all') checked @endif
+                                >All status
+                            </label>
+                        </div>
+                        <hr/>
+                        <div class="form-check">
+                            <label class="form-check-label" style="cursor: pointer">
+                                <input type="radio" class="form-check-input" value="last" name="positions"
+                                       @if(request()->get('positions') &&  request()->get('positions') === 'last') checked @endif
                                 >Last positions
                             </label>
                         </div>
                         <div class="form-check">
                             <label class="form-check-label" style="cursor: pointer">
-                                <input type="checkbox" class="form-check-input" value="positions" name="search_in[]"
-                                       @if(request()->get('search_in') && count(request()->get('search_in')) && in_array('positions',request()->get('search_in'))) checked @endif
+                                <input type="radio" class="form-check-input" value="all" name="positions"
+                                       @if(request()->get('positions') && request()->get('positions') === 'all') checked @endif
                                 >All positions
                             </label>
                         </div>

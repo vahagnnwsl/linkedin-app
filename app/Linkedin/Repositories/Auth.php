@@ -35,7 +35,6 @@ class Auth extends Repository
 
             $response = $this->authenticateUser($this->login, $this->password, $anonymousAuthResponse['cookies']['JSESSIONID']);
 
-            dump($response);
             if ($response['success']) {
 
                 if (!File::exists(base_path(Constants::SESSIONS_PATH))) {

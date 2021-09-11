@@ -65,93 +65,62 @@ class ConnectionRepository extends Repository
     public function filter(array $requestData, string $orderBy = 'created_at', string $direction = 'desc')
     {
 
-        return $this->model()::when(isset($requestData['key']), function ($q) use ($requestData) {
-            $q->where(function ($sub) use ($requestData) {
-                $sub->when(isset($requestData['search_in']) && count($requestData['search_in']) > 0 && in_array('occupation', $requestData['search_in']), function ($q) use ($requestData) {
-                    $q->where('occupation', 'LIKE', "%" . $requestData['key'] . "%");
+        return $this->model()::when(isset($requestData['key']), function ($query) use ($requestData) {
+            $query->when(isset($requestData['search_in']) && count($requestData['search_in']) > 0 && in_array('occupation', $requestData['search_in']), function ($q) use ($requestData) {
+                $q->where('occupation', 'LIKE', "%" . $requestData['key'] . "%");
+            })->orWhere(function ($subQuery) use ($requestData) {
+                $subQuery->when(isset($requestData['search_in']) && count($requestData['search_in']) > 0 && in_array('skills', $requestData['search_in']), function ($q) use ($requestData) {
+
+                    $q->whereHas('skills', function ($subQ) use ($requestData) {
+                        $subQ->where('skills.name', 'LIKE', '%' . $requestData['key'] . '%');
+                    });
                 });
-            })->orWhere(function ($sub) use ($requestData) {
-                $sub->when(isset($requestData['search_in']) && count($requestData['search_in']) > 0 && in_array('skills', $requestData['search_in']), function ($q) use ($requestData) {
-                    $q->whereHas('skills', function ($subQuery_1) use ($requestData) {
-                        $subQuery_1->where('skills.name', 'LIKE', '%' . $requestData['key'] . '%');
+            })->orWhere(function ($subQuery) use ($requestData) {
+                $subQuery->when(isset($requestData['statuses']), function ($q) use ($requestData) {
+                    $q->whereHas('statuses', function ($subQ) use ($requestData) {
+                        $type = $requestData['statuses'] === 'all' ? [0, 1] : [1];
+                        $subQ->where('statuses.comment', 'LIKE', '%' . $requestData['key'] . '%')->whereIn('is_last', $type);
                     });
                 });
             })->orWhere(function ($sub) use ($requestData) {
-                $sub->when(isset($requestData['search_in']) && count($requestData['search_in']) > 0 && in_array('last_status', $requestData['search_in']), function ($q) use ($requestData) {
-                    $q->whereHas('statuses', function ($subQuery_1) use ($requestData) {
-                        $subQuery_1->where('statuses.comment', 'LIKE', '%' . $requestData['key'] . '%')->where('is_last', 1);
-                    });
-                });
-            })->orWhere(function ($sub) use ($requestData) {
-                $sub->when(isset($requestData['search_in']) && count($requestData['search_in']) > 0 && in_array('statuses', $requestData['search_in']), function ($q) use ($requestData) {
-                    $q->whereHas('statuses', function ($subQuery_1) use ($requestData) {
-                        $subQuery_1->where('statuses.comment', 'LIKE', '%' . $requestData['key'] . '%');
-                    });
-                });
-            })->orWhere(function ($sub) use ($requestData) {
-                $sub->when(isset($requestData['search_in']) && count($requestData['search_in']) > 0 && in_array('last_positions', $requestData['search_in']), function ($q) use ($requestData) {
-                    $q->whereHas('positions', function ($subQuery_1) use ($requestData) {
-                        $subQuery_1->where('is_current', 1)->where(function ($s_q) use ($requestData) {
-                            $s_q->where('positions.name', 'LIKE', '%' . $requestData['key'] . '%')
-                                ->orWhere(function ($s_q_f) use ($requestData) {
-                                    $s_q_f->whereHas('company', function ($s_q_c) use ($requestData) {
-                                        $s_q_c->where('companies.name', 'LIKE', '%' . $requestData['key'] . '%');
-                                    });
-                                });
-                        });
-                    });
-                });
-            })->orWhere(function ($sub) use ($requestData) {
-                $sub->when(!isset($requestData['experience']) && isset($requestData['search_in']) && count($requestData['search_in']) > 0 && in_array('positions', $requestData['search_in']), function ($q) use ($requestData) {
-                    $q->whereHas('positions', function ($subQuery_1) use ($requestData) {
-                        $subQuery_1->where('positions.name', 'LIKE', '%' . $requestData['key'] . '%')
-                            ->orWhere(function ($s_q) use ($requestData) {
-                            $s_q->whereHas('company', function ($s_q_c) use ($requestData) {
-                                $s_q_c->where('companies.name', 'LIKE', '%' . $requestData['key'] . '%');
+                $sub->when(isset($requestData['positions']), function ($q) use ($requestData) {
+                    $q->whereHas('positions', function ($subQ) use ($requestData) {
+                        $type = $requestData['positions'] === 'all' ? [0, 1] : [1];
+                        $subQ
+                            ->whereIn('is_current', $type)
+                            ->where('positions.name', 'LIKE', '%' . $requestData['key'] . '%')
+                            ->when(isset($requestData['experience']) && $requestData['experience'] > 0, function ($sub_q) use ($requestData) {
+                                $sub_q->select(DB::raw('SUM(duration)'))->having(DB::raw('SUM(duration)'), '>=', $requestData['experience'] * 12);
                             });
-                        })->when(isset($requestData['experience']) && $requestData['experience']>0, function ($s_q) use ($requestData) {
-                            $s_q->select(DB::raw('SUM(duration)'))->having(DB::raw('SUM(duration)'), '>=', $requestData['experience'] * 12);
-                        });
                     });
                 });
             });
-        })->when(isset($requestData['keys_ids']) && count($requestData['keys_ids']) > 0, function ($q) use ($requestData) {
-            $q->whereHas('keys', function ($subQuery_1) use ($requestData) {
-                $subQuery_1->whereIn('keys.id', $requestData['keys_ids']);
+        })->when(isset($requestData['keys_ids']) && count($requestData['keys_ids']) > 0, function ($query) use ($requestData) {
+            $query->whereHas('keys', function ($subQuery) use ($requestData) {
+                $subQuery->whereIn('keys.id', $requestData['keys_ids']);
             });
-        })->when(isset($requestData['categories']) && count($requestData['categories']) > 0, function ($q) use ($requestData) {
-            $q->whereHas('statuses', function ($subQuery_1) use ($requestData) {
+        })->when(isset($requestData['categories']) && count($requestData['categories']) > 0, function ($query) use ($requestData) {
+            $query->whereHas('statuses', function ($subQuery) use ($requestData) {
                 $ids = $requestData['categories'];
-                $subQuery_1->whereIn('statuses.category_id', DB::table('categories')->select('id')->whereIn('id', $ids)->orWhereIn('parent_id', $ids)->pluck('id'));
+                $subQuery->whereIn('statuses.category_id', DB::table('categories')->select('id')->whereIn('id', $ids)->orWhereIn('parent_id', $ids)->pluck('id'));
             });
-        })->when(isset($requestData['companies']) && count($requestData['companies']) > 0, function ($q) use ($requestData) {
-            $q->whereHas('positions', function ($subQuery_1) use ($requestData) {
-                $subQuery_1->whereIn('positions.company_id', $requestData['companies']);
+        })->when(isset($requestData['companies']) && count($requestData['companies']) > 0, function ($query) use ($requestData) {
+            $query->whereHas('positions', function ($subQuery) use ($requestData) {
+                $subQuery->whereIn('positions.company_id', $requestData['companies']);
             });
-        })->when(isset($requestData['name']), function ($q) use ($requestData) {
-            $q->where('firstName', 'LIKE', "%" . $requestData['name'] . "%")
+        })->when(isset($requestData['name']), function ($query) use ($requestData) {
+            $query->where('firstName', 'LIKE', "%" . $requestData['name'] . "%")
                 ->orWhere('lastName', 'LIKE', "%" . $requestData['name'] . "%")
                 ->orWhere(DB::raw(' CONCAT(firstName," ", lastName)'), 'LIKE', "%" . $requestData['name'] . "%")
                 ->orWhere(DB::raw(' CONCAT(lastName," ", firstName)'), 'LIKE', "%" . $requestData['name'] . "%");
-        })->when(isset($requestData['experience']) && $requestData['experience'] > 0 , function ($q) use ($requestData) {
-            $q->when(isset($requestData['key']),function ($ss_q) use ($requestData){
-                $ss_q->whereHas('positions', function ($subQuery_1) use ($requestData) {
-                    $subQuery_1->where('positions.name', 'LIKE', '%' . $requestData['key'] . '%')
-                        ->orWhere(function ($s_q) use ($requestData) {
-                            $s_q->whereHas('company', function ($s_q_c) use ($requestData) {
-                                $s_q_c->where('companies.name', 'LIKE', '%' . $requestData['key'] . '%');
-                            });
-                        })->select(DB::raw('SUM(duration)'))->having(DB::raw('SUM(duration)'), '>=', $requestData['experience'] * 12);
-                });
+        })->when(!isset($requestData['key']) && isset($requestData['experience']) && $requestData['experience'] > 0, function ($query) use ($requestData) {
+            $query->whereHas('positions', function ($subQ) use ($requestData) {
+                $subQ
+                    ->where('positions.name', 'LIKE', '%' . $requestData['key'] . '%')
+                    ->select(DB::raw('SUM(duration)'))->having(DB::raw('SUM(duration)'), '>=', $requestData['experience'] * 12);
             });
-            $q->when(!isset($requestData['key']),function ($ss_q) use ($requestData){
-                $ss_q->whereHas('positions', function ($subQuery_1) use ($requestData) {
-                    $subQuery_1->select(DB::raw('SUM(duration)'))->having(DB::raw('SUM(duration)'), '>=', $requestData['experience'] * 12);
-                });
-            });
-
-        })->when(isset($requestData['include_ac_connections']) && $requestData['include_ac_connections'] === 'no', function ($q) use ($requestData) {
-            $q->doesnthave('accounts');
+        })->when(isset($requestData['include_ac_connections']) && $requestData['include_ac_connections'] === 'no', function ($query) use ($requestData) {
+            $query->doesnthave('accounts');
         })->orderby('id', 'desc')->paginate(20);
     }
 

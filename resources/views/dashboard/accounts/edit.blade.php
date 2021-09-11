@@ -84,32 +84,49 @@
                                             @enderror
                                         </div>
 
-                                        @if($account->type === 1)
-                                        <div class="form-group">
-                                            <label for="limit_connection_request">Limit connection request *</label>
-                                            <input type="number" min="1" id="limit_connection_request" class="form-control" name="limit_connection_request" value="{{$account->limit_connection_request}}">
+{{--                                        @if($account->type === 1)--}}
+{{--                                        <div class="form-group">--}}
+{{--                                            <label for="limit_connection_request">Limit connection request *</label>--}}
+{{--                                            <input type="number" min="1" id="limit_connection_request" class="form-control" name="limit_connection_request" value="{{$account->limit_connection_request}}">--}}
 
-                                            @error('limit_connection_request')
+{{--                                            @error('limit_connection_request')--}}
+{{--                                            <span class="invalid-feedback d-block" role="alert">--}}
+{{--                                          <strong>{{ $message }}</strong>--}}
+{{--                                      </span>--}}
+{{--                                            @enderror--}}
+{{--                                        </div>--}}
+{{--                                        <div class="form-group">--}}
+{{--                                            <label for="limit_conversation">Limit conversation *</label>--}}
+{{--                                            <input type="number" min="1" id="limit_conversation" class="form-control" name="limit_conversation" value="{{$account->limit_conversation}}">--}}
+
+{{--                                            @error('limit_conversation')--}}
+{{--                                            <span class="invalid-feedback d-block" role="alert">--}}
+{{--                                          <strong>{{ $message }}</strong>--}}
+{{--                                      </span>--}}
+{{--                                            @enderror--}}
+{{--                                        </div>--}}
+{{--                                        @else--}}
+{{--                                            <input type="hidden"  name="limit_connection_request" value="1">--}}
+{{--                                            <input type="hidden"  name="limit_conversation" value="1">--}}
+{{--                                        @endif--}}
+                                        <div class="form-group">
+                                            <label>Cookie *</label>
+                                            <textarea class="form-control" name="cookie_str" rows="3">{{$account->cookie_str}}</textarea>
+                                            @error('cookie_str')
                                             <span class="invalid-feedback d-block" role="alert">
                                           <strong>{{ $message }}</strong>
                                       </span>
                                             @enderror
                                         </div>
                                         <div class="form-group">
-                                            <label for="limit_conversation">Limit conversation *</label>
-                                            <input type="number" min="1" id="limit_conversation" class="form-control" name="limit_conversation" value="{{$account->limit_conversation}}">
-
-                                            @error('limit_conversation')
+                                            <label>Cookie socket *</label>
+                                            <textarea class="form-control" name="cookie_socket_str" rows="3">{{$account->cookie_socket_str}}</textarea>
+                                            @error('cookie_socket_str')
                                             <span class="invalid-feedback d-block" role="alert">
                                           <strong>{{ $message }}</strong>
                                       </span>
                                             @enderror
                                         </div>
-                                        @else
-                                            <input type="hidden"  name="limit_connection_request" value="1">
-                                            <input type="hidden"  name="limit_conversation" value="1">
-                                        @endif
-
 
                                         <div class="form-group">
                                             <label>Proxies *</label>
@@ -129,17 +146,17 @@
                                             </select>
                                         </div>
 
-                                        <div class="form-group">
-                                            <label>Status </label>
-                                            <select class="form-control" name="status" required>
-                                                <option value="0"  @if($account->status === 0) selected @endif>
-                                                    Inactive
-                                                </option>
-                                                <option value="1"  @if($account->status === 1) selected @endif>
-                                                    Active
-                                                </option>
-                                            </select>
-                                        </div>
+{{--                                        <div class="form-group">--}}
+{{--                                            <label>Status </label>--}}
+{{--                                            <select class="form-control" name="status" required>--}}
+{{--                                                <option value="0"  @if($account->status === 0) selected @endif>--}}
+{{--                                                    Inactive--}}
+{{--                                                </option>--}}
+{{--                                                <option value="1"  @if($account->status === 1) selected @endif>--}}
+{{--                                                    Active--}}
+{{--                                                </option>--}}
+{{--                                            </select>--}}
+{{--                                        </div>--}}
 
 
                                         <br/>

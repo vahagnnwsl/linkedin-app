@@ -8,8 +8,9 @@ use App\Http\Resources\Collections\ConversationCollection;
 use App\Jobs\AccountsLogin;
 use App\Jobs\GetAccountConversations;
 use App\Jobs\SyncAccountConnectionsJob;
-use App\Jobs\SyncAccountConversations;
 use App\Jobs\SyncRequestsJob;
+use App\Linkedin\Api;
+use App\Linkedin\Responses\Cookie;
 use App\Repositories\AccountRepository;
 use App\Repositories\ConversationRepository;
 use App\Repositories\MessageRepository;
@@ -27,13 +28,13 @@ use Illuminate\Support\Facades\Auth;
 class AccountController extends Controller
 {
 
-    protected $accountRepository;
+    protected AccountRepository $accountRepository;
 
-    protected $conversationRepository;
+    protected ConversationRepository $conversationRepository;
 
-    protected $messageRepository;
+    protected MessageRepository $messageRepository;
 
-    protected $proxyRepository;
+    protected ProxyRepository $proxyRepository;
 
 
     /**
@@ -84,7 +85,6 @@ class AccountController extends Controller
         if (!$account) {
             abort(404);
         }
-
         return view('dashboard.accounts.edit', compact('account', 'proxies'));
     }
 
@@ -98,6 +98,19 @@ class AccountController extends Controller
     {
 
         $data = $request->validated();
+        try {
+            $data['cookie_web'] = json_encode(Cookie::parsCookieForWeb($data['cookie_str']));
+        }catch (\Exception $exception){
+            $this->putFlashMessage(false, 'Invalid cookie string');
+
+            return redirect()->route('accounts.edit', $id);
+        }
+        try {
+            $data['cookie_socket'] = json_encode(Cookie::parsCookieForSocket($data['cookie_socket_str']));
+        }catch (\Exception $exception){
+            $this->putFlashMessage(false, 'Invalid socket cookie string');
+            return redirect()->route('accounts.edit', $id);
+        }
 
         $this->accountRepository->update($id, Arr::except($data, 'proxies_id'));
 
@@ -116,6 +129,21 @@ class AccountController extends Controller
     public function store(AccountRequest $request): RedirectResponse
     {
         $data = $request->validated();
+        try {
+            $data['cookie_web'] = json_encode(Cookie::parsCookieForWeb($data['cookie_str']));
+        }catch (\Exception $exception){
+            $this->putFlashMessage(false, 'Invalid web cookie string');
+            return redirect()->back();
+        }
+
+        try {
+            $data['cookie_socket'] = json_encode(Cookie::parsCookieForSocket($data['cookie_socket_str']));
+        }catch (\Exception $exception){
+            $this->putFlashMessage(false, 'Invalid socket cookie string');
+            return redirect()->back();
+        }
+
+
 
         $proxy = $this->accountRepository->store(Arr::except($data, 'proxies_id'));
 
@@ -205,6 +233,23 @@ class AccountController extends Controller
         AccountsLogin::dispatch($type);
         $this->putFlashMessage(true, 'Your request on process');
         return redirect()->back();
+    }
+
+    /**
+     * @param int $id
+     * @return RedirectResponse
+     */
+    public function checkLife(int $id): RedirectResponse
+    {
+        $account = $this->accountRepository->getById($id);
+        $resp = Api::profile($account->login,$account->password)->getOwnProfile();
+        if ($resp['status'] === 200){
+            $this->putFlashMessage(true, 'Life goes on ');
+        }else{
+            $this->putFlashMessage(false, 'Life does not go on');
+        }
+        return redirect()->back();
 
     }
+
 }

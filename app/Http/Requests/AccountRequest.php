@@ -29,10 +29,12 @@ class AccountRequest extends FormRequest
             'login' => 'required|string|max:255|unique:accounts,login',
             'entityUrn' => 'required|string|max:255|unique:accounts,entityUrn',
             'proxies_id'=>'required|array|min:1',
-            'status'=>'sometimes',
+            'cookie_str'=>'required|string',
+            'cookie_socket_str'=>'required|string',
+//            'status'=>'sometimes',
             'type'=>'required',
-            'limit_conversation'=>'required|integer|min:1|max:150',
-            'limit_connection_request'=>'required|integer|min:1|max:150',
+//            'limit_conversation'=>'required|integer|min:1|max:150',
+//            'limit_connection_request'=>'required|integer|min:1|max:150',
 
         ];
 

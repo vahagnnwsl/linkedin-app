@@ -4,8 +4,10 @@
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1>Jobs</h1>
+                <div class="col-md-12">
+
+                    <h1>Jobs <span style="float: right" class="text-blue">Total: {{$jobs->total()}}</span>
+                    </h1>
                 </div>
 
             </div>

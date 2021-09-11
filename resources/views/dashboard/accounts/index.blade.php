@@ -20,8 +20,8 @@
 
                         <div class="btn-group float-right">
 
-                            <a href="{{route('accounts.login',1)}}" class="btn btn-primary">Login all real</a>
-                            <a href="{{route('accounts.login',2)}}" class="btn btn-info">Login all unreal</a>
+{{--                            <a href="{{route('accounts.login',1)}}" class="btn btn-primary">Login all real</a>--}}
+{{--                            <a href="{{route('accounts.login',2)}}" class="btn btn-info">Login all unreal</a>--}}
                             <a class="btn btn-success btn-md float-right" href="{{route('accounts.create')}}">
                                 <i class="fas fa-plus"></i>
                                 Add
@@ -96,43 +96,52 @@
                                 <td>{{$account->lastActivityAt}}</td>
 
                                 <td>
-                                    <div class="btn-group btn-group-md float-right">
+                                    <div class="dropdown dropleft">
+                                        <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
+                                            <i class="fa fa-universal-access"></i>
+                                        </a>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item"
+                                               href="{{route('accounts.checkLife',$account->id)}}"
+                                               title="Sync Conversations">
+                                                <span class="text-bold text-black-50">   Check life</span>
+                                            </a>
 
-{{--                                        @if($account->type === 1)--}}
-                                            <a class="btn btn-default btn-sm"
+                                            <a class="dropdown-item"
                                                href="{{route('accounts.syncConversations',$account->id)}}"
                                                title="Sync Conversations">
-                                                <i class="fas fa-sync"></i>
+                                                <span class="text-bold text-black-50">   Sync Conversations</span>
                                             </a>
 
-                                            <a class="btn btn-info btn-sm"
+                                            <a class="dropdown-item"
                                                href="{{route('accounts.syncConnections',$account->id)}}"
                                                title="Sync Connections">
-                                                <i class="fas fa-sync"></i>
+                                                <span class="text-bold text-black-50">     Sync Connections</span>
                                             </a>
 
-                                            <a class="btn btn-warning btn-sm"
-                                               href="{{route('accounts.syncRequests',$account->id)}}"
-                                               title="Sync send request">
-                                                <i class="fas fa-sync"></i>
+{{--                                            <a class="dropdown-item"--}}
+{{--                                               href="{{route('accounts.syncRequests',$account->id)}}"--}}
+{{--                                               title="Sync send request">--}}
+{{--                                                       <span class="text-bold text-black-50">--}}
+{{--                                                           Sync send request--}}
+{{--                                                       </span>--}}
+{{--                                            </a>--}}
+
+                                            <a class="dropdown-item"
+                                               href="{{route('accounts.conversations',$account->id)}}"
+                                               title="Conversations List">
+                                                <span class="text-bold text-black-50">Conversations List</span>
                                             </a>
 
-{{--                                        @endif--}}
-                                        <a class="btn btn-dark btn-sm"
-                                           href="{{route('accounts.conversations',$account->id)}}"
-                                           title="Conversations List">
-                                            <i class="fas fa-envelope"></i>
-                                        </a>
 
-
-                                        @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))
-                                            <a class="btn btn-primary btn-sm"
-                                               href="{{route('accounts.edit',$account->id)}}"
-                                               title="Edit">
-                                                <i class="fas fa-user-edit"></i>
-                                            </a>
-                                        @endif
-
+                                            @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))
+                                                <a class="dropdown-item"
+                                                   href="{{route('accounts.edit',$account->id)}}"
+                                                   title="Edit">
+                                                    <span class="text-bold text-black-50">  Edit</span>
+                                                </a>
+                                            @endif
+                                        </div>
                                     </div>
                                 </td>
                             </tr>

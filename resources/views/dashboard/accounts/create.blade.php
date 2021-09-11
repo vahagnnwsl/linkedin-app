@@ -81,27 +81,46 @@
                                       </span>
                                             @enderror
                                         </div>
-                                        <div class="form-group">
-                                            <label for="limit_connection_request">Limit connection request *</label>
-                                            <input type="number" min="1" id="limit_connection_request" class="form-control" name="limit_connection_request" value="{{old('limit_connection_request')}}">
+{{--                                        <div class="form-group">--}}
+{{--                                            <label for="limit_connection_request">Limit connection request *</label>--}}
+{{--                                            <input type="number" min="1" id="limit_connection_request" class="form-control" name="limit_connection_request" value="{{old('limit_connection_request')}}">--}}
 
-                                            @error('limit_connection_request')
+{{--                                            @error('limit_connection_request')--}}
+{{--                                            <span class="invalid-feedback d-block" role="alert">--}}
+{{--                                          <strong>{{ $message }}</strong>--}}
+{{--                                      </span>--}}
+{{--                                            @enderror--}}
+{{--                                        </div>--}}
+{{--                                        <div class="form-group">--}}
+{{--                                            <label for="limit_conversation">Limit conversation *</label>--}}
+{{--                                            <input type="number" min="1" id="limit_conversation" class="form-control" name="limit_conversation" value="{{old('limit_conversation')}}">--}}
+
+{{--                                            @error('limit_conversation')--}}
+{{--                                            <span class="invalid-feedback d-block" role="alert">--}}
+{{--                                          <strong>{{ $message }}</strong>--}}
+{{--                                      </span>--}}
+{{--                                            @enderror--}}
+{{--                                        </div>--}}
+
+                                        <div class="form-group">
+                                            <label>Cookie web *</label>
+                                            <textarea class="form-control" name="cookie_str" rows="3">{{old('cookie_str')}}</textarea>
+                                            @error('cookie_str')
                                             <span class="invalid-feedback d-block" role="alert">
                                           <strong>{{ $message }}</strong>
                                       </span>
                                             @enderror
                                         </div>
-                                        <div class="form-group">
-                                            <label for="limit_conversation">Limit conversation *</label>
-                                            <input type="number" min="1" id="limit_conversation" class="form-control" name="limit_conversation" value="{{old('limit_conversation')}}">
 
-                                            @error('limit_conversation')
+                                        <div class="form-group">
+                                            <label>Cookie socket *</label>
+                                            <textarea class="form-control" name="cookie_socket_str" rows="3">{{old('cookie_socket_str')}}</textarea>
+                                            @error('cookie_socket_str')
                                             <span class="invalid-feedback d-block" role="alert">
                                           <strong>{{ $message }}</strong>
                                       </span>
                                             @enderror
                                         </div>
-
                                         <div class="form-group">
                                             <label>Proxies *</label>
                                             <select multiple="multiple" class="select2 form-control w-100" required

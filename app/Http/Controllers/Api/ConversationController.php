@@ -24,22 +24,22 @@ class ConversationController extends Controller
     /**
      * @var ConversationRepository
      */
-    protected $conversationRepository;
+    protected ConversationRepository $conversationRepository;
 
     /**
      * @var MessageRepository
      */
-    protected $messageRepository;
+    protected MessageRepository $messageRepository;
 
     /**
      * @var AccountRepository
      */
-    protected $accountRepository;
+    protected AccountRepository $accountRepository;
 
     /**
      * @var ConnectionRepository
      */
-    protected $connectionRepository;
+    protected ConnectionRepository $connectionRepository;
 
     /**
      * ConversationController constructor.

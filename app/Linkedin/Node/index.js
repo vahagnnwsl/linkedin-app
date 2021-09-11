@@ -19,7 +19,6 @@ const eventSourceInitDict = {
         'x-restli-protocol-version': '2.0.0'
     }
 };
-console.log(eventSourceInitDict)
 
 var es = new EventSource('https://realtime.www.linkedin.com/realtime/connect', eventSourceInitDict);
 
@@ -42,6 +41,7 @@ es.onmessage = result => {
                         login: process.env.ACCOUNT_LOGIN
                     }).then((d)=>{
                         console.log(d.data)
+                        return d.data
                     }).catch((e)=>{
                         console.log(e)
                     })

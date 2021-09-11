@@ -55,7 +55,7 @@ class AccountRepository extends Repository
      */
     public function attachConnections(int $id, array $data): void
     {
-        $this->model()::whereId($id)->connections()->attach($data);
+        DB::table('account_connections')->insert(['account_id' => $id, 'connection_id' => $data[0]]);
     }
 
 

@@ -74,7 +74,7 @@ class ConnectionService
         $result = (new Profile_2(Api::profile($account->login, $account->password, $proxy)->searchPeople($key->name, $country->entityUrn, $params['companyEntityUrn'] ?? null, $start)))();
 
         if ($result['success']) {
-            $this->connectionRepository->updateOrCreateConnectionsWithKey((array)$result['data'], $account->id, $key->id);
+            $this->connectionRepository->updateOrCreateConnectionsOnTimeKeySearch((array)$result['data'], $account->id, $key->id);
             $start += 10;
             sleep($params['sleep'] ?? 2);
 

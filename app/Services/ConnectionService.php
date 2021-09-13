@@ -14,16 +14,15 @@ use App\Models\Proxy;
 use App\Repositories\AccountRepository;
 use App\Repositories\ConnectionRepository;
 use App\Repositories\ConnectionRequestRepository;
-use App\Repositories\ProxyRepository;
+use Illuminate\Support\Facades\File;
 
 class ConnectionService
 {
 
 
-    protected $connectionRepository;
-    protected $connectionRequestRepository;
-    protected $proxyRepository;
-    protected $accountRepository;
+    protected ConnectionRepository $connectionRepository;
+    protected ConnectionRequestRepository $connectionRequestRepository;
+    protected AccountRepository $accountRepository;
 
     public function __construct()
     {
@@ -59,11 +58,11 @@ class ConnectionService
     {
         $result = Response::connections(Api::profile($account->login, $account->password, $proxy)->getProfileConnections($start));
 
+        File::put(time().'.json',json_encode($result));
         if ($result['success']) {
-            $this->connectionRepository->updateOrCreateSelThoughCollection((array)$result['data'], $account->id, 0, true, false, false);
+            $this->connectionRepository->updateOrCreateConnections((array)$result['data'], $account->id);
             $start += 50;
             sleep(5);
-
             $this->recursiveGetAccountConnections($account, $proxy, $start);
         }
 
@@ -75,14 +74,7 @@ class ConnectionService
         $result = (new Profile_2(Api::profile($account->login, $account->password, $proxy)->searchPeople($key->name, $country->entityUrn, $params['companyEntityUrn'] ?? null, $start)))();
 
         if ($result['success']) {
-            $this->connectionRepository->updateOrCreateSelThoughCollection(
-                (array)$result['data'],
-                $account->id,
-                $key->id,
-                $params['conDistance'] ?? false,
-                $params['conCompany'] ?? false,
-                $params['conConversation'] ?? false
-            );
+            $this->connectionRepository->updateOrCreateConnectionsWithKey((array)$result['data'], $account->id, $key->id);
             $start += 10;
             sleep($params['sleep'] ?? 2);
 
@@ -97,7 +89,7 @@ class ConnectionService
         $resp = Response::conversationsConnections(Api::conversation($account->login, $account->password, $proxy)->getConversations($params), $account->entityUrn);
 
         if ($resp['success']) {
-            $this->connectionRepository->updateOrCreateSelThoughCollection($resp['data'], $account->id, 0, true, false, true);
+            $this->connectionRepository->updateOrCreateConversation($resp['data'], $account->id);
             $this->recursiveGetAccountConversations($account, $proxy, ['createdBefore' => $resp['lastActivityAt']]);
         }
 

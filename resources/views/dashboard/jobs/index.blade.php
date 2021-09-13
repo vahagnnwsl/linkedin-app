@@ -16,44 +16,34 @@
     <section class="content">
         <div class="container-fluid">
             <div class="card">
-                 <div class="card-header">
-                     <div class="btn-group">
-                         <a href="?type=process" class="btn btn-primary">In process</a>
-                         <a href="?type=failed" class="btn btn-danger">Failed</a>
-                     </div>
-
-                 </div>
-                <div class="card-body p-2">
-                    <div class="table-responsive mailbox-messages">
-                        <table class="table table-striped projects">
-
-                            <tbody>
-                            @foreach($jobs as $job)
-                                @if($type ==='process')
-
-                                  <tr>
-                                      <ul class="list-group mt-2">
-                                          <li class="list-group-item">  {{$job->id}}</li>
-                                          <li class="list-group-item json" data-json="{{$job->payload}}"></li>
-                                      </ul>
-                                  </tr>
-                                @else
-                                    <tr>
-                                        <ul class="list-group mt-2">
-                                            <li class="list-group-item">  {{$job->uuid}}</li>
-                                            <li class="list-group-item">{{$job->failed_at}}</li>
-                                            <li class="list-group-item json" data-json="{{$job->payload}}">
-                                            <li class="list-group-item json" data-json="{{$job->exception}}">
-
-                                            </li>
-                                        </ul>
-                                    </tr>
-                                @endif
-
-                            @endforeach
-                            </tbody>
-                        </table>
+                <div class="card-header">
+                    <div class="btn-group">
+                        <a href="?type=process" class="btn btn-primary">In process</a>
+                        <a href="?type=failed" class="btn btn-danger">Failed</a>
                     </div>
+
+                </div>
+                <div class="card-body p-2">
+                    <ul class="list-group list-group-flush">
+                        @foreach($jobs as $job)
+                            @if($type ==='process')
+                                <li class="list-group-item">
+                                    <strong class="text-info">ID:</strong> {{$job->id}}<br/>
+                                    @foreach($job->display as $key=>$value)
+                                        <strong class="text-info">{{$key}}:</strong>  <em> {{$value}} </em> <br/>
+                                    @endforeach
+                                </li>
+                            @else
+                                <li class="list-group-item">
+                                    <strong class="text-info">ID:</strong> {{$job->id}}<br/>
+                                    @foreach($job->display as $key=>$value)
+                                        <strong class="text-info">{{$key}}:</strong>  <em> {{$value}} </em> <br/>
+                                    @endforeach
+                                </li>
+                            @endif
+
+                        @endforeach
+                    </ul>
                     {!! $jobs->appends($_GET)->links('vendor.pagination') !!}
 
                 </div>
@@ -63,13 +53,3 @@
     </section>
 
 @endsection
-@push('js')
-     <script>
-         $.each($('.json'),function (){
-
-             $(this).html(  '<pre>'+JSON.stringify($(this).attr('data-json'), null, 2)+'</pre>')
-         })
-
-     </script>
-
-@endpush

@@ -1,46 +1,49 @@
 <?php
 
-namespace App\Jobs\Keys;
+namespace App\Jobs\Account;
 
 use App\Linkedin\Api;
-use App\Linkedin\Responses\Profile_2;
 use App\Linkedin\Responses\Response;
-use App\Models\Key;
+use App\Models\Account;
+use App\Models\Proxy;
 use App\Repositories\AccountRepository;
 use App\Repositories\ConnectionRepository;
-use App\Repositories\CountryRepository;
-use App\Repositories\KeyRepository;
 use App\Services\ConnectionService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\File;
 
-class SearchByKeyCompanies implements ShouldQueue
+class GetConnections implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
-     * @var Key
+     * @var Account
      */
-    protected Key $key;
-
-
-    protected ConnectionService $connectionService;
-
+    protected $account;
 
     /**
-     * RunKeyJob constructor.
-     * @param Key $key
+     * @var Proxy
      */
-    public function __construct(Key $key)
-    {
-        $this->key = $key;
-        $this->connectionService = new ConnectionService();
-    }
+    protected $proxy;
 
+    protected $connectionService;
+
+    /**
+     * SyncAccountConnectionsJob constructor.
+     * @param Account $account
+     */
+    public function __construct(Account $account)
+    {
+        $this->account = $account;
+
+        $this->proxy = $account->getRandomFirstProxy();
+
+        $this->connectionService = new ConnectionService();
+
+    }
 
     /**
      * Execute the job.
@@ -50,14 +53,8 @@ class SearchByKeyCompanies implements ShouldQueue
     public function handle()
     {
 
-        $parsedCompanies = $this->key->parsedCompanies;
-
-        $parsedCompanies->map(function ($company) {
-            SearchByKeyCompany::dispatch($this->key, $company);
-        });
-
+        $this->connectionService->getAccountConnections($this->account, $this->proxy);
     }
-
 
     /**
      * @return array
@@ -66,7 +63,7 @@ class SearchByKeyCompanies implements ShouldQueue
     {
         return [
             'JobClass' => get_class($this),
-            'Key' => $this->key->name,
+            'Account' => $this->account->full_name ,
         ];
     }
 }

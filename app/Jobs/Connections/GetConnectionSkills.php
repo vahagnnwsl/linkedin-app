@@ -42,6 +42,18 @@ class GetConnectionSkills implements ShouldQueue
         $this->connectionRepository = new ConnectionRepository();
     }
 
+    /**
+     * @return array
+     */
+    public function displayAttribute(): array
+    {
+        return [
+            'JobClass' => get_class($this),
+            'Connection' => $this->linkedinUser->fullName .' '. $this->linkedinUser->id,
+            'Account' => $this->account->full_name ,
+        ];
+    }
+
     public function handle()
     {
         $skills = Api::profile($this->account->login, $this->account->password)->getProfileSkills($this->linkedinUser->entityUrn);

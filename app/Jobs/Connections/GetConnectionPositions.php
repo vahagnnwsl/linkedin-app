@@ -46,6 +46,19 @@ class GetConnectionPositions implements ShouldQueue
         $this->companyRepository = new CompanyRepository();
     }
 
+
+    /**
+     * @return array
+     */
+    public function displayAttribute(): array
+    {
+        return [
+            'JobClass' => get_class($this),
+            'Connection' => $this->linkedinUser->fullName.' '. $this->linkedinUser->id,
+            'Account' => $this->account->full_name,
+        ];
+    }
+
     public function handle()
     {
         $positions = Api::profile($this->account->login, $this->account->password)->getProfile($this->linkedinUser->entityUrn);

@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AccountRequest;
 use App\Http\Resources\Collections\ConversationCollection;
+use App\Jobs\Account\GetConnections;
+use App\Jobs\Account\GetConversations;
 use App\Jobs\AccountsLogin;
-use App\Jobs\GetAccountConversations;
-use App\Jobs\SyncAccountConnectionsJob;
 use App\Jobs\SyncRequestsJob;
 use App\Linkedin\Api;
 use App\Linkedin\Responses\Cookie;
@@ -22,8 +22,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Auth;
-
 
 class AccountController extends Controller
 {
@@ -100,14 +98,14 @@ class AccountController extends Controller
         $data = $request->validated();
         try {
             $data['cookie_web'] = json_encode(Cookie::parsCookieForWeb($data['cookie_str']));
-        }catch (\Exception $exception){
+        } catch (\Exception $exception) {
             $this->putFlashMessage(false, 'Invalid cookie string');
 
             return redirect()->route('accounts.edit', $id);
         }
         try {
             $data['cookie_socket'] = json_encode(Cookie::parsCookieForSocket($data['cookie_socket_str']));
-        }catch (\Exception $exception){
+        } catch (\Exception $exception) {
             $this->putFlashMessage(false, 'Invalid socket cookie string');
             return redirect()->route('accounts.edit', $id);
         }
@@ -131,24 +129,20 @@ class AccountController extends Controller
         $data = $request->validated();
         try {
             $data['cookie_web'] = json_encode(Cookie::parsCookieForWeb($data['cookie_str']));
-        }catch (\Exception $exception){
+        } catch (\Exception $exception) {
             $this->putFlashMessage(false, 'Invalid web cookie string');
             return redirect()->back();
         }
 
         try {
             $data['cookie_socket'] = json_encode(Cookie::parsCookieForSocket($data['cookie_socket_str']));
-        }catch (\Exception $exception){
+        } catch (\Exception $exception) {
             $this->putFlashMessage(false, 'Invalid socket cookie string');
             return redirect()->back();
         }
 
-
-
         $proxy = $this->accountRepository->store(Arr::except($data, 'proxies_id'));
-
         $this->accountRepository->syncProxies($proxy->id, $data['proxies_id']);
-
         $this->putFlashMessage(true, 'Successfully created');
         return redirect()->route('accounts.index');
     }
@@ -160,10 +154,8 @@ class AccountController extends Controller
     public function syncConversations($id): RedirectResponse
     {
         $account = $this->accountRepository->getById($id);
-        GetAccountConversations::dispatch($account);
-
+        GetConversations::dispatch($account);
         $this->putFlashMessage(true, 'Your request on process');
-
         return redirect()->back();
     }
 
@@ -175,8 +167,7 @@ class AccountController extends Controller
     {
 
         $account = $this->accountRepository->getById($id);
-        SyncAccountConnectionsJob::dispatch($account);
-
+        GetConnections::dispatch($account);
         $this->putFlashMessage(true, 'Your request on process');
 
         return redirect()->back();
@@ -242,14 +233,33 @@ class AccountController extends Controller
     public function checkLife(int $id): RedirectResponse
     {
         $account = $this->accountRepository->getById($id);
-        $resp = Api::profile($account->login,$account->password)->getOwnProfile();
-        if ($resp['status'] === 200){
+        $resp = Api::profile($account->login, $account->password)->getOwnProfile();
+        if ($resp['status'] === 200) {
             $this->putFlashMessage(true, 'Life goes on ');
-        }else{
+        } else {
             $this->putFlashMessage(false, 'Life does not go on');
         }
         return redirect()->back();
 
+    }
+
+    /**
+     * @return JsonResponse
+     */
+    public function checkAllLife(): JsonResponse
+    {
+        $accounts = $this->accountRepository->getAllRealAccounts();
+
+        $resp = $accounts->map(function ($account) {
+            $resp = Api::profile($account->login, $account->password)->getOwnProfile();
+            return [
+                'id' => $account->id,
+                'success' => $resp['status'] === 200,
+                'life' => $resp['status'] === 200 ? 'Life goes on ' : 'Life does not go on',
+            ];
+        });
+
+        return response()->json($resp);
     }
 
 }

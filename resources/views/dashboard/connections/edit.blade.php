@@ -90,7 +90,12 @@
                                                 @foreach($connection->positions as $position)
                                                     <div class="col-12 border">
                                                         @if($position->company)
-                                                            <h5 class="text-bold text-black-50">{{ $position->company->name }}</h5>
+                                                            <h5 class="text-bold text-black-50">
+                                                                <a href="/dashboard/connections?companies%5B%5D={{ $position->company->id }}">
+                                                                    {{ $position->company->name }}
+                                                                </a>
+
+                                                            </h5>
                                                         @endif
 
                                                         <p class="mt-2"><mark>{{ $position->name }}</mark>

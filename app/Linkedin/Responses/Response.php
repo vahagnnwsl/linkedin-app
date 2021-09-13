@@ -221,12 +221,14 @@ class Response
         });
 
 
+        $filter =  $interlocutors->filter(function ($interlocutor) use ($user_linkedin_entityUrn) {
+            return $user_linkedin_entityUrn !== $interlocutor['connection']['entityUrn'] && !is_null($interlocutor['conversation']) && $interlocutor['conversation']['interlocutorEntityUrn'] !== 'UNKNOWN';
+        })->toArray();
+
         return [
             'lastActivityAt' => $conversations->min('lastActivityAt'),
             'success' => true,
-            'data' => $interlocutors->filter(function ($interlocutor) use ($user_linkedin_entityUrn) {
-                return $user_linkedin_entityUrn !== $interlocutor['connection']['entityUrn'] && !is_null($interlocutor['conversation']) && $interlocutor['conversation']['interlocutorEntityUrn'] !== 'UNKNOWN';
-            })->toArray(),
+            'data' => array_values($filter),
 
         ];
 

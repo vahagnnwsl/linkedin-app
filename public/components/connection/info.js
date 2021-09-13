@@ -25,7 +25,9 @@ Vue.component('connection-info', {
                     <div class="row" v-if="positions.length">
                         <h5 class="text-bold pl-2 text-info">Positions</h5>
                         <div class="col-12 border"  v-for="(position,index ) in positions">
-                            <h5 class="text-bold text-black-50" v-if="position.company">{{ position.company.name }}</h5>
+                            <h5 class="text-bold text-black-50" v-if="position.company">
+                                <a :href="'/dashboard/connections?companies%5B%5D='+position.company.id" >{{ position.company.name }}</a>
+                            </h5>
                             <p class="mt-2"><mark>{{position.name }}</mark>
                                 <em v-if="position.start_date">{{ position.start_date }}</em>
                                 –

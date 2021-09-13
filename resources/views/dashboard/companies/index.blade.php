@@ -88,7 +88,13 @@
                                          onerror="this.src='/dist/img/lin_def_image.svg'" width="50">
                                 </td>
                                 <td>
+                                    @if($company->is_parsed === 1)
+                                    <a href="/dashboard/connections?companies%5B%5D={{ $company->id }}">
+                                        {{ $company->name }}
+                                    </a>
+                                    @else
                                     {{$company->name}}
+                                    @endif
                                 </td>
                                 <td>
                                     {{$company->entityUrn}}

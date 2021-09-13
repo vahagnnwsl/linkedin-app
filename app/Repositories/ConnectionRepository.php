@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\AaccountsConversationsLimit;
 use App\Models\Category;
 use App\Models\Connection;
+use App\Models\Key;
 use App\Models\Message;
 use App\Models\Position;
 use App\Models\Status;
@@ -18,14 +19,16 @@ use Illuminate\Support\Facades\File;
 class ConnectionRepository extends Repository
 {
 
-    protected $companyRepository;
-    protected $messageRepository;
+    protected CompanyRepository $companyRepository;
+    protected MessageRepository $messageRepository;
+    protected ConversationRepository $conversationRepository;
     public static $PARSED_STATUS = 1;
     public static $UNPARSED_STATUS = 0;
 
     public function __construct()
     {
         $this->companyRepository = new CompanyRepository();
+        $this->conversationRepository = new ConversationRepository();
         $this->messageRepository = new MessageRepository();
     }
 
@@ -66,24 +69,15 @@ class ConnectionRepository extends Repository
     {
 
         return $this->model()::when(isset($requestData['key']), function ($query) use ($requestData) {
-            $query->when(isset($requestData['search_in']) && count($requestData['search_in']) > 0 && in_array('occupation', $requestData['search_in']), function ($q) use ($requestData) {
-                $q->where('occupation', 'LIKE', "%" . $requestData['key'] . "%");
-            })->orWhere(function ($subQuery) use ($requestData) {
-                $subQuery->when(isset($requestData['search_in']) && count($requestData['search_in']) > 0 && in_array('skills', $requestData['search_in']), function ($q) use ($requestData) {
-
+            $query
+                ->when(isset($requestData['search_in']) && count($requestData['search_in']) > 0 && in_array('occupation', $requestData['search_in']), function ($q) use ($requestData) {
+                    $q->where('occupation', 'LIKE', "%" . $requestData['key'] . "%");
+                })
+                ->when(isset($requestData['search_in']) && count($requestData['search_in']) > 0 && in_array('skills', $requestData['search_in']), function ($q) use ($requestData) {
                     $q->whereHas('skills', function ($subQ) use ($requestData) {
                         $subQ->where('skills.name', 'LIKE', '%' . $requestData['key'] . '%');
                     });
-                });
-            })->orWhere(function ($subQuery) use ($requestData) {
-                $subQuery->when(isset($requestData['statuses']), function ($q) use ($requestData) {
-                    $q->whereHas('statuses', function ($subQ) use ($requestData) {
-                        $type = $requestData['statuses'] === 'all' ? [0, 1] : [1];
-                        $subQ->where('statuses.comment', 'LIKE', '%' . $requestData['key'] . '%')->whereIn('is_last', $type);
-                    });
-                });
-            })->orWhere(function ($sub) use ($requestData) {
-                $sub->when(isset($requestData['positions']), function ($q) use ($requestData) {
+                })->when(isset($requestData['positions']), function ($q) use ($requestData) {
                     $q->whereHas('positions', function ($subQ) use ($requestData) {
                         $type = $requestData['positions'] === 'all' ? [0, 1] : [1];
                         $subQ
@@ -93,8 +87,12 @@ class ConnectionRepository extends Repository
                                 $sub_q->select(DB::raw('SUM(duration)'))->having(DB::raw('SUM(duration)'), '>=', $requestData['experience'] * 12);
                             });
                     });
+                })->when(isset($requestData['statuses']), function ($q) use ($requestData) {
+                    $q->whereHas('statuses', function ($subQ) use ($requestData) {
+                        $type = $requestData['statuses'] === 'all' ? [0, 1] : [1];
+                        $subQ->where('statuses.comment', 'LIKE', '%' . $requestData['key'] . '%')->whereIn('is_last', $type);
+                    });
                 });
-            });
         })->when(isset($requestData['keys_ids']) && count($requestData['keys_ids']) > 0, function ($query) use ($requestData) {
             $query->whereHas('keys', function ($subQuery) use ($requestData) {
                 $subQuery->whereIn('keys.id', $requestData['keys_ids']);
@@ -119,8 +117,12 @@ class ConnectionRepository extends Repository
                     ->where('positions.name', 'LIKE', '%' . $requestData['key'] . '%')
                     ->select(DB::raw('SUM(duration)'))->having(DB::raw('SUM(duration)'), '>=', $requestData['experience'] * 12);
             });
-        })->when(isset($requestData['include_ac_connections']) && $requestData['include_ac_connections'] === 'no', function ($query) use ($requestData) {
-            $query->doesnthave('accounts');
+        })->when(isset($requestData['distance']), function ($query) use ($requestData) {
+            if ($requestData['distance'] === 'no_accounts') {
+                $query->doesnthave('accounts');
+            } else if ($requestData['distance'] === 'accounts') {
+                $query->whereHas('accounts');
+            }
         })->orderby('id', 'desc')->paginate(20);
     }
 
@@ -299,5 +301,83 @@ class ConnectionRepository extends Repository
     public function getCategories(): Collection
     {
         return Category::get();
+    }
+
+
+    public function updateOrCreateConnections(array $resp, int $account_id)
+    {
+        collect($resp)->map(function ($item) use ($account_id) {
+            DB::beginTransaction();
+            try {
+                $connection = $this->updateOrCreate(['entityUrn' => $item['connection']['entityUrn']], $item['connection']);
+                DB::table('account_connections')
+                    ->updateOrInsert(
+                        ['account_id' => $account_id, 'connection_id' => $connection->id],
+                        ['account_id' => $account_id, 'connection_id' => $connection->id]
+                    );
+                DB::commit();
+            } catch (\Exception $exception) {
+                \Illuminate\Support\Facades\Log::error($exception->getMessage());
+                DB::rollback();
+            }
+        });
+    }
+
+
+    public function updateOrCreateConnectionsWithKey(array $resp, int $account_id, int $key_id)
+    {
+        collect($resp)->map(function ($item) use ($account_id, $key_id) {
+            DB::beginTransaction();
+            try {
+                $connection = $this->updateOrCreate(['entityUrn' => $item['connection']['entityUrn']], $item['connection']);
+                DB::table('account_connections')
+                    ->updateOrInsert(
+                        ['account_id' => $account_id, 'connection_id' => $connection->id],
+                        ['account_id' => $account_id, 'connection_id' => $connection->id]
+                    );
+
+                DB::table('connections_keys')
+                    ->updateOrInsert(
+                        ['connection_id' => $connection->id, 'key_id' => $key_id],
+                        ['connection_id' => $connection->id, 'key_id' => $key_id]
+                    );
+
+                DB::commit();
+            } catch (\Exception $exception) {
+                \Illuminate\Support\Facades\Log::error($exception->getMessage());
+                DB::rollback();
+            }
+        });
+    }
+
+
+    public function updateOrCreateConversation(array $resp, int $account_id)
+    {
+
+        collect($resp)->map(function ($item) use ($account_id) {
+            DB::beginTransaction();
+            try {
+                $connection = $this->updateOrCreate(['entityUrn' => $item['connection']['entityUrn']], $item['connection']);
+                DB::table('account_connections')
+                    ->updateOrInsert(
+                        ['account_id' => $account_id, 'connection_id' => $connection->id],
+                        ['account_id' => $account_id, 'connection_id' => $connection->id]
+                    );
+                $this->conversationRepository->updateOrCreate(
+                    [
+                        'account_id' => $account_id,
+                        'connection_id' => $connection->id,
+                        'entityUrn' => $item['conversation']['entityUrn']
+                    ],
+                    [
+                        'lastActivityAt' => Carbon::createFromTimestampMsUTC($item['conversation']['lastActivityAt'])->toDateTimeString()
+                    ]
+                );
+                DB::commit();
+            } catch (\Exception $exception) {
+                \Illuminate\Support\Facades\Log::error($exception->getMessage());
+                DB::rollback();
+            }
+        });
     }
 }

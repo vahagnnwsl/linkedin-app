@@ -5,23 +5,19 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Collections\ConversationCollection;
 use App\Http\Resources\Collections\MessageCollection;
-use App\Jobs\GetConversationMessages;
-use App\Jobs\GetLastMessagesConversation;
-use App\Jobs\SyncLastMessagesForOneAccount;
+use App\Jobs\Conversations\GetConversationMessages;
 use App\Repositories\ConversationRepository;
 use App\Repositories\MessageRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\ResourceCollection;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 
 class ConversationController extends Controller
 {
 
-    protected $conversationRepository;
+    protected ConversationRepository $conversationRepository;
 
-    protected $messageRepository;
+    protected MessageRepository $messageRepository;
 
     /**
      * PermissionController constructor.

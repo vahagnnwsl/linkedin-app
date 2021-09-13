@@ -20,8 +20,8 @@
 
                         <div class="btn-group float-right">
 
-{{--                            <a href="{{route('accounts.login',1)}}" class="btn btn-primary">Login all real</a>--}}
-{{--                            <a href="{{route('accounts.login',2)}}" class="btn btn-info">Login all unreal</a>--}}
+                            {{--                            <a href="{{route('accounts.login',1)}}" class="btn btn-primary">Login all real</a>--}}
+                            {{--                            <a href="{{route('accounts.login',2)}}" class="btn btn-info">Login all unreal</a>--}}
                             <a class="btn btn-success btn-md float-right" href="{{route('accounts.create')}}">
                                 <i class="fas fa-plus"></i>
                                 Add
@@ -53,7 +53,7 @@
                                 Type
                             </th>
                             <th>
-                                LastActivityAt
+                                Is valid
                             </th>
                             <th>
                             </th>
@@ -93,7 +93,9 @@
 
                                     @endif
                                 </td>
-                                <td>{{$account->lastActivityAt}}</td>
+                                <td id="life_{{$account->id}}">
+
+                                </td>
 
                                 <td>
                                     <div class="dropdown dropleft">
@@ -119,13 +121,13 @@
                                                 <span class="text-bold text-black-50">     Sync Connections</span>
                                             </a>
 
-{{--                                            <a class="dropdown-item"--}}
-{{--                                               href="{{route('accounts.syncRequests',$account->id)}}"--}}
-{{--                                               title="Sync send request">--}}
-{{--                                                       <span class="text-bold text-black-50">--}}
-{{--                                                           Sync send request--}}
-{{--                                                       </span>--}}
-{{--                                            </a>--}}
+                                            {{--                                            <a class="dropdown-item"--}}
+                                            {{--                                               href="{{route('accounts.syncRequests',$account->id)}}"--}}
+                                            {{--                                               title="Sync send request">--}}
+                                            {{--                                                       <span class="text-bold text-black-50">--}}
+                                            {{--                                                           Sync send request--}}
+                                            {{--                                                       </span>--}}
+                                            {{--                                            </a>--}}
 
                                             <a class="dropdown-item"
                                                href="{{route('accounts.conversations',$account->id)}}"
@@ -161,5 +163,30 @@
 
     </section>
 @endsection
+@push('js')
+    <script>
+        $(document).ready(function () {
+            function check() {
+                $.ajax({
+                    url: "/dashboard/accounts/checkAllLife",
+                    success: function (data) {
+                        for (let i in data) {
+                            if (data[i].success) {
+                                $('#life_' + data[i].id).html('<span class="badge badge-success">' + data[i].life + '</span>');
+                            } else {
+                                $('#life_' + data[i].id).html('<span class="badge badge-danger">' + data[i].life + '</span>');
+                            }
+                        }
+                    }
+                })
+            }
 
+            setInterval(function () {
+                check()
+            }, 30000)
+            check()
+
+        })
+    </script>
+@endpush
 

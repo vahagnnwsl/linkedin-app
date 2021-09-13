@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\KeyRequest;
 use App\Jobs\Keys\SearchByKey;
+use App\Jobs\Keys\SearchByKeyCompanies;
 use App\Jobs\LinkedinSearchByKey;
 use App\Jobs\LinkedinSearchByKeyAndCountry;
 use App\Jobs\SearchByKeyAndCompany;
@@ -28,22 +29,22 @@ class KeyController extends Controller
     /**
      * @var KeyRepository
      */
-    protected $keyRepository;
+    protected KeyRepository $keyRepository;
 
     /**
      * @var CountryRepository
      */
-    protected $countryRepository;
+    protected CountryRepository $countryRepository;
 
     /**
      * @var AccountRepository
      */
-    protected $accountRepository;
+    protected AccountRepository $accountRepository;
 
     /**
      * @var ProxyRepository
      */
-    protected $proxyRepository;
+    protected ProxyRepository $proxyRepository;
 
 
     /**
@@ -148,7 +149,7 @@ class KeyController extends Controller
     public function searchByCompanies(int $id): RedirectResponse
     {
         $key = $this->keyRepository->getById($id);
-        SearchByKey::dispatch($key);
+        SearchByKeyCompanies::dispatch($key);
         $this->putFlashMessage(true, 'Successfully run job');
         return redirect()->back();
     }

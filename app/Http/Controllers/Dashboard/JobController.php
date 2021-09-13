@@ -8,6 +8,8 @@ use App\Jobs\Keys\SearchByKey;
 use App\Jobs\LinkedinSearchByKey;
 use App\Jobs\LinkedinSearchByKeyAndCountry;
 use App\Jobs\SearchByKeyAndCompany;
+use App\Models\FailedJob;
+use App\Models\Job;
 use App\Repositories\AccountRepository;
 use App\Repositories\CountryRepository;
 use App\Repositories\KeyRepository;
@@ -27,13 +29,17 @@ use Illuminate\Support\Facades\DB;
 class JobController extends Controller
 {
 
+    /**
+     * @param Request $request
+     * @return Application|Factory|View
+     */
     public function index(Request $request){
 
         $type = $request->get('type') ?? 'process';
         if ($type === 'process'){
-            $jobs = DB::table('jobs')->paginate(20);
+            $jobs = Job::paginate(20);
         }else{
-            $jobs = DB::table('failed_jobs')->paginate(20);
+            $jobs = FailedJob::paginate(20);
         }
 
         return view('dashboard.jobs.index', compact('jobs','type'));

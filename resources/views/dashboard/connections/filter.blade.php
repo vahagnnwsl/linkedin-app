@@ -104,6 +104,29 @@
                                 >All positions
                             </label>
                         </div>
+                        <hr/>
+                        <div class="form-check">
+                            <label class="form-check-label" style="cursor: pointer">
+                                <input type="radio" class="form-check-input" value="accounts" name="distance"
+                                       @if(request()->get('distance') &&  request()->get('distance') === 'accounts') checked @endif
+                                >Only accounts connections
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label" style="cursor: pointer">
+                                <input type="radio" class="form-check-input" value="no_accounts" name="distance"
+                                       @if(request()->get('distance') && request()->get('distance') === 'no_accounts') checked @endif
+                                >Only connections that hav not accounts
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label" style="cursor: pointer">
+                                <input type="radio" class="form-check-input" value="all" name="distance"
+                                       @if(request()->get('distance') && request()->get('distance') === 'all') checked @endif
+                                >All
+                            </label>
+                        </div>
+
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -119,13 +142,7 @@
                 </div>
 
                 <div class="col-md-12 mt-2">
-                    <div class="form-group form-check text-info" >
-                        <label class="form-check-label" style="cursor: pointer">
-                            <input
-                                @if(request()->get('include_ac_connections') && request()->get('include_ac_connections') === 'no') checked @endif
-                                class="form-check-input" type="checkbox" value="no" name="include_ac_connections"> Not include account connections
-                        </label>
-                    </div>
+
                     <div class="btn-group btn-group-sm float-right">
                         <a href="{{url(request()->path())}}" class="btn btn-default float-right mr-1">Clear</a>
                         <button type="submit" class="btn btn-info float-right"><i class="fa fa-search"></i></button>

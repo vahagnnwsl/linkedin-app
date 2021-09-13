@@ -28,6 +28,17 @@ class GetConnectionsSkills implements ShouldQueue
         $this->connectionRepository = new ConnectionRepository();
     }
 
+    /**
+     * @return array
+     */
+    public function displayAttribute(): array
+    {
+        return [
+            'JobClass' => get_class($this),
+            'Account' => $this->account->full_name,
+        ];
+    }
+
     public function handle()
     {
         $connections = $this->connectionRepository->getAvailableRecordForParsingSkills();

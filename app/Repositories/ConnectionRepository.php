@@ -342,6 +342,28 @@ class ConnectionRepository extends Repository
                         ['connection_id' => $connection->id, 'key_id' => $key_id]
                     );
 
+                if ($connection->occupation) {
+
+                    $chunks = preg_split('/(at|-|–)/', $connection->occupation, -1, PREG_SPLIT_NO_EMPTY);
+
+                    if (count($chunks) > 1) {
+                        $companyName = trim($chunks[count($chunks) - 1]);
+
+                        $company = $this->companyRepository->getByName($companyName);
+
+                        if (!$company) {
+                            $company = $this->companyRepository->store(['name' => $companyName]);
+                        }
+
+
+                        DB::table('company_search_keys')
+                            ->updateOrInsert(
+                                ['key_id' => $key_id, 'company_id' => $company->id],
+                                ['key_id' => $key_id, 'company_id' => $company->id]
+                            );
+                    }
+                }
+
                 DB::commit();
             } catch (\Exception $exception) {
                 \Illuminate\Support\Facades\Log::error($exception->getMessage());

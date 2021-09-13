@@ -10,6 +10,7 @@ use App\Jobs\Account\GetConversations;
 use App\Jobs\AccountsLogin;
 use App\Jobs\SyncRequestsJob;
 use App\Linkedin\Api;
+use App\Linkedin\Responses\Connection;
 use App\Linkedin\Responses\Cookie;
 use App\Repositories\AccountRepository;
 use App\Repositories\ConversationRepository;
@@ -235,6 +236,8 @@ class AccountController extends Controller
         $account = $this->accountRepository->getById($id);
         $resp = Api::profile($account->login, $account->password)->getOwnProfile();
         if ($resp['status'] === 200) {
+            $resp  = Connection::parseSingle((array)$resp['data']);
+            $account->update($resp);
             $this->putFlashMessage(true, 'Life goes on ');
         } else {
             $this->putFlashMessage(false, 'Life does not go on');

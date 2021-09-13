@@ -68,5 +68,13 @@ class Connection
 
         return $resp;
     }
+
+    public static function parseSingle(array $data){
+
+        return [
+            'entityUrn'=>  explode(':',$data['included'][0]->entityUrn)[3],
+//            'publicIdentifier'=>  $data['included'][0]->publicIdentifier,
+        ];
+    }
 }
 

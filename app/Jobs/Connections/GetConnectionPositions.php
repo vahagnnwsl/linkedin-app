@@ -54,7 +54,7 @@ class GetConnectionPositions implements ShouldQueue
     {
         return [
             'JobClass' => get_class($this),
-            'Connection' => $this->linkedinUser->fullName.' '. $this->linkedinUser->id,
+            'Connection' => $this->linkedinUser->fullName . ' ' . $this->linkedinUser->id,
             'Account' => $this->account->full_name,
         ];
     }
@@ -80,7 +80,8 @@ class GetConnectionPositions implements ShouldQueue
                             ],
                             [
                                 'name' => $item['companyName'],
-                                'entityUrn' => $item['companyUrn']
+                                'entityUrn' => $item['companyUrn'],
+                                'is_parsed' => 1
                             ])->id;
                     }
 

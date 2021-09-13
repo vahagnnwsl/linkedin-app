@@ -40,7 +40,16 @@ class ChekKeyCompanies implements ShouldQueue
         $this->companyService = new CompanyService();
     }
 
-
+    /**
+     * @return array
+     */
+    public function displayAttribute(): array
+    {
+        return [
+            'JobClass' => get_class($this),
+            'Key' => $this->key->name,
+        ];
+    }
     /**
      * Execute the job.
      *

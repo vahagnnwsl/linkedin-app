@@ -44,6 +44,7 @@ class Auth extends Repository
                 Helper::putJson($response['cookies'], Constants::SESSIONS_PATH . $this->login);
             }
 
+            dump($response, $this->login);
             return $response;
         }
 

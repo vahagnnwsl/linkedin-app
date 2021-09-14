@@ -53,9 +53,13 @@
                         </a>
                         <a href="{{route('connections.getPositions')}}" class="btn btn-outline-info"
                            onclick="return confirm(&quot;Run job?&quot;)"
-
                         >
                             Get Each Positions
+                        </a>
+                        <a href="{{route('connections.calcExperience')}}" class="btn btn-outline-info"
+                           onclick="return confirm(&quot;Run job?&quot;)"
+                        >
+                            Calculate experience
                         </a>
                     </div>
                 </div>

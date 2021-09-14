@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StatusRequest;
+use App\Jobs\Connections\CalcExperience;
 use App\Jobs\Connections\GetConnectionPositions;
 use App\Jobs\Connections\GetConnectionSkills;
 use App\Jobs\Connections\GetConnectionsPositions;
@@ -269,7 +270,16 @@ class ConnectionController extends Controller
         GetConnectionSkills::dispatch($account, $connection);
         $this->putFlashMessage(true, 'Successfully run job');
         return redirect()->back();
+    }
 
+    /**
+     * @return RedirectResponse
+     */
+    public function calcExperience(): RedirectResponse
+    {
+        CalcExperience::dispatch();
+        $this->putFlashMessage(true, 'Successfully run job');
+        return redirect()->back();
     }
 
     /**

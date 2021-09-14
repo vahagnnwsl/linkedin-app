@@ -24,6 +24,7 @@ var es = new EventSource('https://realtime.www.linkedin.com/realtime/connect', e
 
 es.onmessage = result => {
     const data = JSON.parse(result.data);
+    console.log(data)
 
     if (data.hasOwnProperty(key)) {
 

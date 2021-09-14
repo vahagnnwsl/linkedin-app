@@ -98,14 +98,14 @@ class AccountController extends Controller
 
         $data = $request->validated();
         try {
-            $data['cookie_web'] = json_encode(Cookie::parsCookieForWeb($data['cookie_str']));
+            $data['cookie_web'] = Cookie::parsCookieForWeb($data['cookie_str']);
         } catch (\Exception $exception) {
             $this->putFlashMessage(false, 'Invalid cookie string');
 
             return redirect()->route('accounts.edit', $id);
         }
         try {
-            $data['cookie_socket'] = json_encode(Cookie::parsCookieForSocket($data['cookie_socket_str']));
+            $data['cookie_socket'] = Cookie::parsCookieForSocket($data['cookie_socket_str']);
         } catch (\Exception $exception) {
             $this->putFlashMessage(false, 'Invalid socket cookie string');
             return redirect()->route('accounts.edit', $id);
@@ -129,14 +129,14 @@ class AccountController extends Controller
     {
         $data = $request->validated();
         try {
-            $data['cookie_web'] = json_encode(Cookie::parsCookieForWeb($data['cookie_str']));
+            $data['cookie_web'] = Cookie::parsCookieForWeb($data['cookie_str']);
         } catch (\Exception $exception) {
             $this->putFlashMessage(false, 'Invalid web cookie string');
             return redirect()->back();
         }
 
         try {
-            $data['cookie_socket'] = json_encode(Cookie::parsCookieForSocket($data['cookie_socket_str']));
+            $data['cookie_socket'] = Cookie::parsCookieForSocket($data['cookie_socket_str']);
         } catch (\Exception $exception) {
             $this->putFlashMessage(false, 'Invalid socket cookie string');
             return redirect()->back();

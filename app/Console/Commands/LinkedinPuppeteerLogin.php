@@ -9,6 +9,7 @@ use App\Linkedin\Helper;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 use Nesk\Puphpeteer\Puppeteer;
+use Nesk\Rialto\Data\JsFunction;
 
 class LinkedinPuppeteerLogin extends Command
 {
@@ -50,6 +51,7 @@ class LinkedinPuppeteerLogin extends Command
      * @var string
      */
     protected string $password_selector = 'password';
+    protected string $code_selector = 'pin';
 
     /**
      * Execute the console command.
@@ -62,6 +64,9 @@ class LinkedinPuppeteerLogin extends Command
 
         foreach ($accounts as $account) {
             try {
+
+
+
 
                 $browser = (new Puppeteer)->launch([
                     'headless' => true,
@@ -86,24 +91,40 @@ class LinkedinPuppeteerLogin extends Command
 
                 $page->waitForNavigation();
 
-                $cookies = $page->cookies();
 
+                $code = $this->ask('Enter code');
+
+                $codeInput = $page->querySelector('[name="' . $this->code_selector . '"]');
+                $codeInput->type($code);
+                $page->screenshot(['path' => storage_path('1.png')]);
+
+                $page->querySelector('button[id=email-pin-submit-button')->click();
+                $page->waitForNavigation();
+
+                $page->screenshot(['path' => storage_path('2.png')]);
+
+                $cookies = $page->cookies();
+//                $pageFunction = JsFunction::createWithParameters(['element'])
+//                    ->body("return document.cookie");
+
+                $dimensions = $page->evaluate(JsFunction::create("return document.cookie;"));
+                dump($dimensions,11);
                 $filtered = [];
 
-                foreach ($cookies as $item) {
-                    $filtered[$item['name']] = str_replace('"', '', $item['value']);
-                }
-
-                $cookie = [
-                    'str' => Helper::cookieToString(collect($filtered)),
-                    'crfToken' => $filtered['JSESSIONID']
-                ];
-
-                if (!File::exists($this->cookie_path)) {
-                    File::makeDirectory($this->cookie_path, $mode = 0777, true, true);
-                }
-
-                File::put($this->cookie_path . '/' . $account->login . '.json', json_encode($cookie));
+//                foreach ($cookies as $item) {
+//                    $filtered[$item['name']] = str_replace('"', '', $item['value']);
+//                }
+//
+//                $cookie = [
+//                    'str' => Helper::cookieToString(collect($filtered)),
+//                    'crfToken' => $filtered['JSESSIONID']
+//                ];
+//
+//                if (!File::exists($this->cookie_path)) {
+//                    File::makeDirectory($this->cookie_path, $mode = 0777, true, true);
+//                }
+//
+//                File::put($this->cookie_path . '/' . $account->login . '.json', json_encode($cookie));
 
                 $page->screenshot(['path' => storage_path($account->login . '.png')]);
 

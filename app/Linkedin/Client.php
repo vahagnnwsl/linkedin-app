@@ -27,22 +27,22 @@ class Client
 
         $config = [];
 
-        if ($proxy) {
-            if ($proxy->login && $proxy->password) {
-                $config['proxy'] = "{$proxy->type}://{$proxy->login}:{$proxy->password}@{$proxy->ip}:{$proxy->port}";
-
-            } else {
-                $config['proxy'] = "{$proxy->type}://{$proxy->ip}:{$proxy->port}";
-
-            }
-        }
+//        if ($proxy) {
+//            if ($proxy->login && $proxy->password) {
+//                $config['proxy'] = "{$proxy->type}://{$proxy->login}:{$proxy->password}@{$proxy->ip}:{$proxy->port}";
+//
+//            } else {
+//                $config['proxy'] = "{$proxy->type}://{$proxy->ip}:{$proxy->port}";
+//
+//            }
+//        }
 
         $headers = [];
 
         if ($cookie_name) {
             $cookie = Account::whereLogin($cookie_name)->first();
             $headers = Arr::add($headers, 'csrf-token', $cookie->cookie_web['JSESSIONID']);
-            $headers = Arr::add($headers, 'cookie', Helper::cookieToString(collect($cookie->cookie_web)));
+            $headers = Arr::add($headers, 'cookie', $cookie->cookie_str);
         }
 
         foreach (Constants::$$header_type as $key => $val) {

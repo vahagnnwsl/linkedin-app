@@ -23,7 +23,6 @@ class Cookie
     ];
 
 
-
     protected static array $necessarySocketKeys = [
         'lidc',
         'lissc',
@@ -52,12 +51,8 @@ class Cookie
     public static function parsCookieForWeb(string $cookie): array
     {
         $array = explode(';', $cookie);
-        $array = Helper::parseCookies($array);
-        $cookie = Arr::only($array,self::$necessaryKeys);
-        $cookie['chp_token'] = 'delete me';
-        $cookie['wwepo'] = 'delete me';
-        $cookie['recent_history'] = 'delete me';
-        return $cookie;
+        $cookie = Helper::parseCookies($array);
+        return ['JSESSIONID' => str_replace("'", '', $cookie['JSESSIONID'])];
     }
 
     /**

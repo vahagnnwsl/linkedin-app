@@ -2,12 +2,14 @@
 namespace App\Linkedin\Contracts;
 
 
+use App\Models\Account;
+
 interface Credentials  {
 
+
     /**
-     * @param string $login
-     * @param string $password
+     * @param Account $account
      * @return $this
      */
-    public function setCredentials(string $login,string $password): self;
+    public function setCredentials(Account $account): self;
 }

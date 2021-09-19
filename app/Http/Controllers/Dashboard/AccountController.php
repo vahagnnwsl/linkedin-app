@@ -7,7 +7,6 @@ use App\Http\Requests\AccountRequest;
 use App\Http\Resources\Collections\ConversationCollection;
 use App\Jobs\Account\GetConnections;
 use App\Jobs\Account\GetConversations;
-use App\Jobs\AccountsLogin;
 use App\Jobs\SyncRequestsJob;
 use App\Linkedin\Api;
 use App\Linkedin\Responses\Connection;
@@ -22,7 +21,6 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 
 class AccountController extends Controller
 {
@@ -98,22 +96,13 @@ class AccountController extends Controller
 
         $data = $request->validated();
         try {
-            $data['cookie_web'] = Cookie::parsCookieForWeb($data['cookie_str']);
+            $data['jsessionid'] = Cookie::getJsessionid($data['cookie_web_str']);
         } catch (\Exception $exception) {
             $this->putFlashMessage(false, 'Invalid cookie string');
-
-            return redirect()->route('accounts.edit', $id);
-        }
-        try {
-            $data['cookie_socket'] = Cookie::parsCookieForSocket($data['cookie_socket_str']);
-        } catch (\Exception $exception) {
-            $this->putFlashMessage(false, 'Invalid socket cookie string');
             return redirect()->route('accounts.edit', $id);
         }
 
-        $this->accountRepository->update($id, Arr::except($data, 'proxies_id'));
-
-        $this->accountRepository->syncProxies($id, $data['proxies_id']);
+        $this->accountRepository->update($id, $data);
 
         $this->putFlashMessage(true, 'Successfully updated');
 
@@ -128,22 +117,8 @@ class AccountController extends Controller
     public function store(AccountRequest $request): RedirectResponse
     {
         $data = $request->validated();
-        try {
-            $data['cookie_web'] = Cookie::parsCookieForWeb($data['cookie_str']);
-        } catch (\Exception $exception) {
-            $this->putFlashMessage(false, 'Invalid web cookie string');
-            return redirect()->back();
-        }
-
-        try {
-            $data['cookie_socket'] = Cookie::parsCookieForSocket($data['cookie_socket_str']);
-        } catch (\Exception $exception) {
-            $this->putFlashMessage(false, 'Invalid socket cookie string');
-            return redirect()->back();
-        }
-
-        $proxy = $this->accountRepository->store(Arr::except($data, 'proxies_id'));
-        $this->accountRepository->syncProxies($proxy->id, $data['proxies_id']);
+        $data['status'] = 0;
+        $this->accountRepository->store($data);
         $this->putFlashMessage(true, 'Successfully created');
         return redirect()->route('accounts.index');
     }
@@ -220,12 +195,6 @@ class AccountController extends Controller
         return redirect()->back();
     }
 
-    public function login(int $type): RedirectResponse
-    {
-        AccountsLogin::dispatch($type);
-        $this->putFlashMessage(true, 'Your request on process');
-        return redirect()->back();
-    }
 
     /**
      * @param int $id
@@ -234,9 +203,9 @@ class AccountController extends Controller
     public function checkLife(int $id): RedirectResponse
     {
         $account = $this->accountRepository->getById($id);
-        $resp = Api::profile($account->login, $account->password)->getOwnProfile();
+        $resp = Api::profile($account)->getOwnProfile();
         if ($resp['status'] === 200) {
-            $resp  = Connection::parseSingle((array)$resp['data']);
+            $resp = Connection::parseSingle((array)$resp['data']);
             $account->update($resp);
             $this->putFlashMessage(true, 'Life goes on ');
         } else {
@@ -254,7 +223,7 @@ class AccountController extends Controller
         $accounts = $this->accountRepository->getAllRealAccounts();
 
         $resp = $accounts->map(function ($account) {
-            $resp = Api::profile($account->login, $account->password)->getOwnProfile();
+            $resp = Api::profile($account)->getOwnProfile();
             return [
                 'id' => $account->id,
                 'success' => $resp['status'] === 200,

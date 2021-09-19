@@ -44,7 +44,7 @@ class Invitation extends Repository
             'trackingId' => $tracking_id
         ];
 
-        return  $this->client->setHeaders($this->login)->post(Constants::API_URL . '/growth/normInvitations', $payload);
+        return  $this->client->setHeaders($this->account)->post(Constants::API_URL . '/growth/normInvitations', $payload);
     }
 
     /**
@@ -59,7 +59,7 @@ class Invitation extends Repository
             'q' => 'invitationType'
         ];
 
-        return $this->client->setHeaders($this->login)->get(Constants::API_URL . '/relationships/sentInvitationViewsV2', $query_params);
+        return $this->client->setHeaders($this->account)->get(Constants::API_URL . '/relationships/sentInvitationViewsV2', $query_params);
     }
 
     /**
@@ -73,7 +73,7 @@ class Invitation extends Repository
             'q' => 'receivedInvitation'
         ];
 
-        return $this->client->setHeaders($this->login)->get(Constants::API_URL . '/relationships/invitationViews', $query_params);
+        return $this->client->setHeaders($this->account)->get(Constants::API_URL . '/relationships/invitationViews', $query_params);
     }
 
     /**
@@ -92,6 +92,6 @@ class Invitation extends Repository
             "isGenericInvitation" => false
         ];
 
-        return $this->client->setHeaders($this->login)->post(Constants::API_URL . '/relationships/invitations/' . $invitation_id . '?action=' . $action, $payload, ['action' => $action]);
+        return $this->client->setHeaders($this->account)->post(Constants::API_URL . '/relationships/invitations/' . $invitation_id . '?action=' . $action, $payload, ['action' => $action]);
     }
 }

@@ -27,7 +27,7 @@ class Profile extends Repository
      */
     public function getOwnProfile(): array
     {
-        return $this->client->setHeaders($this->login)->get(Constants::API_URL . '/me');
+        return $this->client->setHeaders($this->account)->get(Constants::API_URL . '/me');
     }
 
     /**
@@ -45,7 +45,7 @@ class Profile extends Repository
             'start' => $start,
         ];
 
-        return $this->client->setHeaders($this->login)->get(Constants::API_URL . '/relationships/dash/connections', $query_params);
+        return $this->client->setHeaders($this->account)->get(Constants::API_URL . '/relationships/dash/connections', $query_params);
     }
 
     /**
@@ -55,7 +55,7 @@ class Profile extends Repository
     public function getProfile(string $public_identifier): array
     {
 
-        return $this->client->setHeaders($this->login)->get(Constants::API_URL . '/identity/profiles/' . $public_identifier . '/profileView');
+        return $this->client->setHeaders($this->account)->get(Constants::API_URL . '/identity/profiles/' . $public_identifier . '/profileView');
     }
 
     /**
@@ -64,7 +64,7 @@ class Profile extends Repository
      */
     public function getProfileSkills(string $public_identifier): array
     {
-        return $this->client->setHeaders($this->login)->get(Constants::API_URL . '/identity/profiles/' . $public_identifier . '/skillCategory?includeHiddenEndorsers=true');
+        return $this->client->setHeaders($this->account)->get(Constants::API_URL . '/identity/profiles/' . $public_identifier . '/skillCategory?includeHiddenEndorsers=true');
     }
 
     /**
@@ -86,7 +86,7 @@ class Profile extends Repository
 
         $query = "decorationId=com.linkedin.voyager.dash.deco.search.SearchClusterCollection-92&origin=FACETED_SEARCH&q=all&query=(keywords:" . $key . ",flagshipSearchIntent:SEARCH_SRP,queryParameters:(".$companyStr."resultType:List(PEOPLE),geoUrn:List(" . $country_id . ")),includeFiltersInResponse:false)&start=" . $start;
 
-        return $this->client->setHeaders($this->login)->get(Constants::API_URL . '/search/dash/clusters?' . $query);
+        return $this->client->setHeaders($this->account)->get(Constants::API_URL . '/search/dash/clusters?' . $query);
     }
 
 
@@ -102,7 +102,7 @@ class Profile extends Repository
 
         $query = "decorationId=com.linkedin.voyager.dash.deco.search.SearchClusterCollection-92&origin=FACETED_SEARCH&q=all&query=(keywords:" . $key . ",flagshipSearchIntent:SEARCH_SRP,queryParameters:(currentCompany:List(" . $company_id . "),resultType:List(PEOPLE),geoUrn:List(" . $country_id . ")),includeFiltersInResponse:false)&start=" . $start;
 
-        return $this->client->setHeaders($this->login)->get(Constants::API_URL . '/search/dash/clusters?' . $query);
+        return $this->client->setHeaders($this->account)->get(Constants::API_URL . '/search/dash/clusters?' . $query);
 
     }
 

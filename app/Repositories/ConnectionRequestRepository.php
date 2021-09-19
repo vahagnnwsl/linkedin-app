@@ -7,8 +7,8 @@ use App\Models\ConnectionRequest;
 
 class ConnectionRequestRepository extends Repository
 {
-    public static $PENDING_STATUS = 0;
-    public static $ACCEPTED_STATUS = 1;
+    public static int $PENDING_STATUS = 0;
+    public static int $ACCEPTED_STATUS = 1;
 
     public function model(): string
     {

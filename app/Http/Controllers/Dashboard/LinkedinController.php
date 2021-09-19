@@ -96,7 +96,7 @@ class LinkedinController extends Controller
     public function searchConnection(Request $request): JsonResponse
     {
         $account = Auth::user()->account;
-        $result = Response::profiles((array)Api::profile($account->login, $account->password)->searchPeople($request->get('key')));
+        $result = Response::profiles((array)Api::profile($account)->searchPeople($request->get('key')));
         return response()->json(['profiles' => $result]);
     }
 
@@ -115,7 +115,7 @@ class LinkedinController extends Controller
     public function getSentInvitations(): JsonResponse
     {
         $account = Auth::user()->account;
-        return response()->json(['invitations' => Response::invitations((array)Api::invitation($account->login, $account->password)->getSentInvitations())]);
+        return response()->json(['invitations' => Response::invitations((array)Api::invitation($account)->getSentInvitations())]);
     }
 
     /**

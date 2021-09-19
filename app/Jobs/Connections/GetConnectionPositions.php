@@ -41,7 +41,7 @@ class GetConnectionPositions implements ShouldQueue
     {
         $this->account = $account;
         $this->linkedinUser = $connection;
-        $this->proxy = $account->getRandomFirstProxy();
+        $this->proxy = $account->proxy;
         $this->connectionRepository = new ConnectionRepository();
         $this->companyRepository = new CompanyRepository();
     }
@@ -61,7 +61,7 @@ class GetConnectionPositions implements ShouldQueue
 
     public function handle()
     {
-        $positions = Api::profile($this->account->login, $this->account->password)->getProfile($this->linkedinUser->entityUrn);
+        $positions = Api::profile($this->account)->getProfile($this->linkedinUser->entityUrn);
         $positions = \App\Linkedin\Responses\Connection::parse($positions, 'positions');
 
         if (count($positions)) {

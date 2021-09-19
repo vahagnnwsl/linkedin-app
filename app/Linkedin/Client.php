@@ -17,12 +17,12 @@ class Client
     protected GuzzleClient $client;
 
     /**
-     * @param string $cookie_name
-     * @param string $header_type
+     * @param Account $account
      * @param Proxy|null $proxy
+     * @param string $header_type
      * @return $this
      */
-    public function setHeaders(string $cookie_name = '', string $header_type = 'REQUEST_HEADERS', Proxy $proxy = null): self
+    public function setHeaders(Account $account, Proxy $proxy = null, string $header_type = 'REQUEST_HEADERS'): self
     {
 
         $config = [];
@@ -39,11 +39,8 @@ class Client
 
         $headers = [];
 
-        if ($cookie_name) {
-            $cookie = Account::whereLogin($cookie_name)->first();
-            $headers = Arr::add($headers, 'csrf-token', $cookie->cookie_web['JSESSIONID']);
-            $headers = Arr::add($headers, 'cookie', $cookie->cookie_str);
-        }
+        $headers = Arr::add($headers, 'csrf-token', $account->jsessionid);
+        $headers = Arr::add($headers, 'cookie', $account->cookie_web_str);
 
         foreach (Constants::$$header_type as $key => $val) {
             $headers = Arr::add($headers, $key, $val);

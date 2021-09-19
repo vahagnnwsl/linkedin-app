@@ -1,18 +1,9 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\Pm2;
 
-
-use App\Http\Repositories\LinkedinConversationRepository;
-use App\Http\Repositories\LinkedinMessageRepository;
-use App\Http\Repositories\UserRepository;
-use App\Linkedin\Helper;
-use App\Linkedin\Responses\Response;
-use App\Models\AaccountsConversationsLimit;
 use App\Repositories\AccountRepository;
-use Carbon\Carbon;
 use Illuminate\Console\Command;
-use App\Linkedin\Api;
 use Illuminate\Support\Facades\File;
 
 class PM2Configs extends Command
@@ -22,7 +13,7 @@ class PM2Configs extends Command
      *
      * @var string
      */
-    protected $signature = 'command:PM2Configs';
+    protected $signature = 'command:set-pm2-ecosystem';
 
     /**
      * The console command description.
@@ -71,7 +62,8 @@ class PM2Configs extends Command
             );
         }
 
-       File::put(storage_path('linkedin/ecosystem.json'),json_encode($apps));
+        File::put(storage_path('linkedin/ecosystem.json'), json_encode($apps));
 
+        return 1;
     }
 }

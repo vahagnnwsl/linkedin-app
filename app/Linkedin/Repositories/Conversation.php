@@ -35,7 +35,7 @@ class Conversation extends Repository
 
         $query_params['keyVersion'] = 'LEGACY_INBOX';
 
-        return $this->client->setHeaders($this->login)->get(Constants::API_URL . '/messaging/conversations', $query_params);
+        return $this->client->setHeaders($this->account)->get(Constants::API_URL . '/messaging/conversations', $query_params);
     }
 
     /**
@@ -44,7 +44,7 @@ class Conversation extends Repository
      */
     public function getConversation(string $conversation_urn_id): array
     {
-        return $this->client->setHeaders($this->login)->get(Constants::API_URL . '/messaging/conversations/' . $conversation_urn_id, ['keyVersion' => 'LEGACY_INBOX']);
+        return $this->client->setHeaders($this->account)->get(Constants::API_URL . '/messaging/conversations/' . $conversation_urn_id, ['keyVersion' => 'LEGACY_INBOX']);
     }
 
     /**
@@ -57,7 +57,7 @@ class Conversation extends Repository
 
         $query_params['keyVersion'] = 'LEGACY_INBOX';
 
-        return $this->client->setHeaders($this->login)->get(Constants::API_URL . '/messaging/conversations/' . $conversation_urn_id . '/events', $query_params);
+        return $this->client->setHeaders($this->account)->get(Constants::API_URL . '/messaging/conversations/' . $conversation_urn_id . '/events', $query_params);
     }
 
 
@@ -87,7 +87,7 @@ class Conversation extends Repository
         ];
 
 
-        return $this->client->setHeaders($this->login)->post(Constants::API_URL . '/messaging/conversations/' . $conversation_urn_id . '/events?action=create', $payload);
+        return $this->client->setHeaders($this->account)->post(Constants::API_URL . '/messaging/conversations/' . $conversation_urn_id . '/events?action=create', $payload);
 
     }
 
@@ -106,7 +106,7 @@ class Conversation extends Repository
             ]
         ];
 
-        return $this->client->setHeaders($this->login)->post(Constants::API_URL . '/messaging/conversations/' . $conversation_urn_id, $payload);
+        return $this->client->setHeaders($this->account)->post(Constants::API_URL . '/messaging/conversations/' . $conversation_urn_id, $payload);
     }
 
 
@@ -120,7 +120,7 @@ class Conversation extends Repository
             'until' => 1000 * Carbon::now()->timestamp
         ];
 
-        return $this->client->setHeaders($this->login)->post(Constants::API_URL . '/messaging/badge?', $payload, ['action' => 'markAllItemsAsSeen']);
+        return $this->client->setHeaders($this->account)->post(Constants::API_URL . '/messaging/badge?', $payload, ['action' => 'markAllItemsAsSeen']);
     }
 
     /**
@@ -156,6 +156,6 @@ class Conversation extends Repository
         ];
 
 
-        return $this->client->setHeaders($this->login)->post(Constants::API_URL . '/messaging/conversations?action=create', $payload);
+        return $this->client->setHeaders($this->account)->post(Constants::API_URL . '/messaging/conversations?action=create', $payload);
     }
 }

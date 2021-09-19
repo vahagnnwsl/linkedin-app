@@ -37,7 +37,7 @@ class GetConnectionSkills implements ShouldQueue
     {
         $this->account = $account;
         $this->linkedinUser = $connection;
-        $this->proxy = $account->getRandomFirstProxy();
+        $this->proxy = $account->proxy;
         $this->skillRepository = new SkillRepository();
         $this->connectionRepository = new ConnectionRepository();
     }
@@ -56,7 +56,7 @@ class GetConnectionSkills implements ShouldQueue
 
     public function handle()
     {
-        $skills = Api::profile($this->account->login, $this->account->password)->getProfileSkills($this->linkedinUser->entityUrn);
+        $skills = Api::profile($this->account)->getProfileSkills($this->linkedinUser->entityUrn);
         $skills = \App\Linkedin\Responses\Connection::parse($skills, 'skills');
 
 

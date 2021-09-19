@@ -114,6 +114,13 @@
                         </div>
                         <div class="form-check">
                             <label class="form-check-label" style="cursor: pointer">
+                                <input type="radio" class="form-check-input" value="accounts_with_keys" name="distance"
+                                       @if(request()->get('distance') &&  request()->get('distance') === 'accounts_with_keys') checked @endif
+                                >Only accounts connections have keys
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label" style="cursor: pointer">
                                 <input type="radio" class="form-check-input" value="no_accounts" name="distance"
                                        @if(request()->get('distance') && request()->get('distance') === 'no_accounts') checked @endif
                                 >Only connections that hav not accounts
@@ -132,6 +139,20 @@
                 <div class="col-md-4">
                     <label for="keys_ids">Name</label>
                     <input type="text" class="form-control" name="name" placeholder="Type name" value="{{request()->get('name')}}">
+                </div>
+
+                <div class="col-md-4">
+                    <label for="accounts">Accounts</label>
+                    <select multiple="multiple" class="select2 form-control" data-placeholder="Select something" id="accounts" name="accounts[]">
+                        @foreach($accounts as $ac)
+                            <option
+                                @if(request()->get('accounts') && count(request()->get('accounts')) && in_array($ac->id,request()->get('accounts'))) selected
+                                @endif value="{{$ac->id}}"
+
+
+                            >{{$ac->full_name}}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">

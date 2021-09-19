@@ -14,7 +14,7 @@ class ConnectionRequestController extends Controller
     /**
      * @var ConnectionRequestRepository
      */
-    protected $connectionRequestRepository;
+    protected ConnectionRequestRepository $connectionRequestRepository;
 
 
     /**

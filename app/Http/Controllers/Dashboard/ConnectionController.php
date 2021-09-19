@@ -10,8 +10,6 @@ use App\Jobs\Connections\GetConnectionSkills;
 use App\Jobs\Connections\GetConnectionsPositions;
 use App\Jobs\Connections\GetConnectionsSkills;
 use App\Linkedin\Api;
-use App\Linkedin\Repositories\Profile;
-use App\Linkedin\Responses\Connection;
 use App\Linkedin\Responses\Response;
 use App\Repositories\AccountRepository;
 use App\Repositories\CategoryRepository;
@@ -29,7 +27,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class ConnectionController extends Controller
 {
@@ -82,6 +79,8 @@ class ConnectionController extends Controller
      */
     public function index(Request $request)
     {
+
+
         $filterAttributes = ['account', 'name'];
         $data = $request->all();
         $enableKeysIdes = [];
@@ -99,10 +98,11 @@ class ConnectionController extends Controller
 
         $connections = $this->connectionRepository->filter($data, 'id');
         $categories = $this->connectionRepository->getCategories();
+        $accounts = $this->accountRepository->getAll();
 
         $userAccount = Auth::user()->account;
 
-        return view('dashboard.connections.index', compact('connections','categories', 'filterAttributes', 'keys', 'userAccount', 'relatedAccountsIdes','companies'));
+        return view('dashboard.connections.index', compact('connections','accounts','categories', 'filterAttributes', 'keys', 'userAccount', 'relatedAccountsIdes','companies'));
     }
 
     /**
@@ -117,8 +117,9 @@ class ConnectionController extends Controller
         $connection->load('statuses');
         $connection->load('statuses.category');
         $categories = $this->categoryRepository->getAll();
+        $keys = $this->keyRepository->getAll();
 
-        return view('dashboard.connections.edit', compact('connection', 'categories'));
+        return view('dashboard.connections.edit', compact('connection', 'categories','keys'));
     }
 
 
@@ -128,10 +129,6 @@ class ConnectionController extends Controller
      */
     public function getInfo(int $id): JsonResponse
     {
-//
-//        $account = Auth::user()->account;
-//        $positions = Api::profile($account->login, $account->password)->getProfile('ACoAACKvpZ0B_D57F3IJRPfyBnZoFsshG69_rrg');
-//        dd(Connection::parse($positions, 'positions'));
 
         $connection = $this->connectionRepository->getById($id);
         $connection->load('positions');
@@ -164,7 +161,7 @@ class ConnectionController extends Controller
         $connection = $this->connectionRepository->getById($id);
         $proxy = $account->getRandomFirstProxy();
 
-        $data = Response::getTrackingId(Api::profile($account->login, $account->password, $proxy)->getProfile($connection->entityUrn), $connection->entityUrn);
+        $data = Response::getTrackingId(Api::profile($account, $proxy)->getProfile($connection->entityUrn), $connection->entityUrn);
 
         return response()->json($data);
     }
@@ -183,7 +180,7 @@ class ConnectionController extends Controller
 
         $connection = $this->connectionRepository->getById($id);
 
-        $data = Api::invitation($account->login, $account->password, $proxy)->sendInvitation($connection->entityUrn, $request->get('trackingId'), $request->get('message'));
+        $data = Api::invitation($account, $proxy)->sendInvitation($connection->entityUrn, $request->get('trackingId'), $request->get('message'));
 
         if ($data['status'] === 201) {
 
@@ -215,7 +212,7 @@ class ConnectionController extends Controller
 
         $connection = $this->connectionRepository->getById($id);
 
-        $data = Response::newConversation((array)Api::conversation($account->login, $account->password, $proxy)->createConversation($request->get('message'), $connection->entityUrn));
+        $data = Response::newConversation((array)Api::conversation($account, $proxy)->createConversation($request->get('message'), $connection->entityUrn));
 
         $data['account_id'] = $account->id;
         $data['connection_id'] = $connection->id;
@@ -290,6 +287,18 @@ class ConnectionController extends Controller
     public function addStatus(StatusRequest $statusRequest, int $id): RedirectResponse
     {
         $this->connectionRepository->addStatus($statusRequest->validated(), $id);
+        $this->putFlashMessage(true, 'Successfully added');
+        return redirect()->back();
+    }
+
+    /**
+     * @param Request $request
+     * @param int $id
+     * @return RedirectResponse
+     */
+    public function addKeys(Request $request, int $id): RedirectResponse
+    {
+        $this->connectionRepository->addKeys($id,$request->get('keys'));
         $this->putFlashMessage(true, 'Successfully added');
         return redirect()->back();
     }

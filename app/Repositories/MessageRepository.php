@@ -9,6 +9,7 @@ use Illuminate\Support\Arr;
 class MessageRepository extends Repository
 {
 
+
     const DRAFT_STATUS = 0;
     const SENDED_STATUS = 1;
 
@@ -34,27 +35,15 @@ class MessageRepository extends Repository
      * @param int $event
      * @param bool $is_parser
      */
-
-    public function updateOrCreateCollection(array $requestData,
-                                             int $conversation_id,
-                                             int $user_id,
-                                             int $account_id,
-                                             string $account_entityUrn,
-                                             int $status = self::DRAFT_STATUS,
-                                             int $event = self::NOT_RECEIVE_EVENT,
-                                             bool $is_parser = false
-    ): void
+    public function updateOrCreateCollection(array $requestData, int $conversation_id, int $user_id, int $account_id, string $account_entityUrn, int $status = self::DRAFT_STATUS, int $event = self::NOT_RECEIVE_EVENT, bool $is_parser = false): void
     {
-
         collect($requestData)->map(function ($item) use ($conversation_id, $user_id, $account_id, $account_entityUrn, $status, $event, $is_parser) {
-
 
             if ($account_entityUrn === $item['user_entityUrn']) {
                 $item['user_id'] = $user_id;
                 $item['account_id'] = $account_id;
             } else {
                 $item['connection_id'] = (new ConnectionRepository())->getIdByEntityUrn($item['user_entityUrn'])->id ?? null;
-
 
                 if (is_null($item['connection_id'])) {
                     return true;
@@ -65,7 +54,7 @@ class MessageRepository extends Repository
             $item['status'] = $status;
             $item['event'] = $event;
 
-            if ($is_parser){
+            if ($is_parser) {
                 $this->model()::unsetEventDispatcher();
             }
 

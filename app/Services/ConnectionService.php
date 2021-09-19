@@ -31,34 +31,48 @@ class ConnectionService
         $this->accountRepository = new AccountRepository();
     }
 
+    /**
+     * @param Key $key
+     * @param array $params
+     */
     public function search(Key $key, array $params)
     {
 
         $account = $key->getRandomRelation('accounts');
-        $proxy = $account->getRandomFirstProxy();
         $country = $key->country;
 
-        $this->recursiveSearch($key, $proxy, $account, $country, $params, 0);
+        $this->recursiveSearch($key, $account, $country, $params, 0);
     }
 
-    public function getAccountConnections(Account $account, Proxy $proxy)
+    /**
+     * @param Account $account
+     * @param Proxy $proxy
+     */
+    public function getAccountConnections(Account $account, Proxy $proxy=null)
     {
 
         $this->recursiveGetAccountConnections($account, $proxy, 0);
     }
 
-    public function getAccountConversations(Account $account, Proxy $proxy)
+    /**
+     * @param Account $account
+     * @param Proxy $proxy
+     */
+    public function getAccountConversations(Account $account, Proxy $proxy = null)
     {
 
         $this->recursiveGetAccountConversations($account, $proxy, []);
-
     }
 
-    public function recursiveGetAccountConnections(Account $account, Proxy $proxy, int $start = 0)
+    /**
+     * @param Account $account
+     * @param Proxy $proxy
+     * @param int $start
+     */
+    public function recursiveGetAccountConnections(Account $account, Proxy $proxy = null, int $start = 0)
     {
-        $result = Response::connections(Api::profile($account->login, $account->password, $proxy)->getProfileConnections($start));
+        $result = Response::connections(Api::profile($account, $proxy)->getProfileConnections($start));
 
-        File::put(time().'.json',json_encode($result));
         if ($result['success']) {
             $this->connectionRepository->updateOrCreateConnections((array)$result['data'], $account->id);
             $start += 50;
@@ -68,25 +82,35 @@ class ConnectionService
 
     }
 
-    public function recursiveSearch(Key $key, Proxy $proxy, Account $account, Country $country, array $params = [], $start = 0)
+
+    /**
+     * @param Key $key
+     * @param Account $account
+     * @param Country $country
+     * @param array $params
+     * @param int $start
+     */
+    public function recursiveSearch(Key $key, Account $account, Country $country, array $params = [], $start = 0)
     {
 
-        $result = (new Profile_2(Api::profile($account->login, $account->password, $proxy)->searchPeople($key->name, $country->entityUrn, $params['companyEntityUrn'] ?? null, $start)))();
+        $proxy = $account->proxy;
+
+        $result = (new Profile_2(Api::profile($account,$proxy)->searchPeople($key->name, $country->entityUrn, $params['companyEntityUrn'] ?? null, $start)))();
 
         if ($result['success']) {
             $this->connectionRepository->updateOrCreateConnectionsOnTimeKeySearch((array)$result['data'], $account->id, $key->id);
             $start += 10;
             sleep($params['sleep'] ?? 2);
 
-            $this->recursiveSearch($key, $proxy, $account, $country, $params, $start);
+            $this->recursiveSearch($key, $account, $country, $params, $start);
         }
 
     }
 
-    public function recursiveGetAccountConversations(Account $account, Proxy $proxy, array $params)
+    public function recursiveGetAccountConversations(Account $account, Proxy $proxy = null, array $params)
     {
 
-        $resp = Response::conversationsConnections(Api::conversation($account->login, $account->password, $proxy)->getConversations($params), $account->entityUrn);
+        $resp = Response::conversationsConnections(Api::conversation($account, $proxy)->getConversations($params), $account->entityUrn);
 
         if ($resp['success']) {
             $this->connectionRepository->updateOrCreateConversation($resp['data'], $account->id);
@@ -103,7 +127,7 @@ class ConnectionService
     {
         $proxy = $account->getRandomFirstProxy();
 
-        $resp = (new Invitation(Api::invitation($account->login, $account->password, $proxy)->getSentInvitations()))();
+        $resp = (new Invitation(Api::invitation($account, $proxy)->getSentInvitations()))();
 
         if ($resp['success']) {
 

@@ -16,30 +16,20 @@ class Messages
 {
 
     protected $data;
-    protected $conversation_urn;
 
     const FROM_KEY = '*from';
     const MESSAGE_TYPE = 'com.linkedin.voyager.messaging.Event';
 
-    public function __construct(array $data, string $conversation_urn)
+    public static function invoke(object $data, string $conversation_urn): array
     {
-        $this->data = $data;
-        $this->conversation_urn = $conversation_urn;
-    }
 
-
-    public function __invoke(): array
-    {
-        $data = $this->data;
-        $conversation_urn = $this->conversation_urn;
-
-        if (!count($data['data']->included)) {
+        if (!count($data->included)) {
             return [
                 'success' => false
             ];
         }
 
-        $data = collect($data['data']->included)->groupBy('$type');
+        $data = collect($data->included)->groupBy('$type');
 
         $messagesData = $data[self::MESSAGE_TYPE];
 

@@ -3,15 +3,12 @@
 namespace App\Console\Commands\Accounts;
 
 
-use App\Linkedin\Responses\Cookie;
+use App\Linkedin\Api;
+use App\Linkedin\Responses\Connection;
 use App\Models\Account;
-use App\Repositories\AccountRepository;
-use App\Repositories\UserRepository;
 use App\Linkedin\Helper;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\File;
 use Nesk\Puphpeteer\Puppeteer;
-use Nesk\Rialto\Data\JsFunction;
 
 class PuppeteerLogin extends Command
 {
@@ -129,10 +126,16 @@ class PuppeteerLogin extends Command
             'crfToken' => $filtered['JSESSIONID']
         ];
 
-        $data['cookie_web'] = ['JSESSIONID' => $cookie['crfToken']];
-        $data['cookie_str'] = $cookie['str'];
+        $data['jsessionid'] = $cookie['crfToken'];
+        $data['cookie_web_str'] = $cookie['str'];
+        $data['cookie_socket_str'] = $cookie['str'];
         $account->update($data);
+        $resp = Api::profile($account)->getOwnProfile();
 
+        if ($resp['status'] === 200) {
+            $resp = Connection::parseSingle((array)$resp['data']);
+            $account->update($resp);
+        }
         $browser->close();
 
         return 1;

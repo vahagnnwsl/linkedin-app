@@ -27,7 +27,7 @@ class GetConnections implements ShouldQueue
     /**
      * @var Proxy
      */
-    protected $proxy;
+    protected  $proxy;
 
     protected $connectionService;
 
@@ -39,7 +39,7 @@ class GetConnections implements ShouldQueue
     {
         $this->account = $account;
 
-        $this->proxy = $account->getRandomFirstProxy();
+        $this->proxy = $account->proxy;
 
         $this->connectionService = new ConnectionService();
 

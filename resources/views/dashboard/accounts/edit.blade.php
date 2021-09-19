@@ -111,8 +111,8 @@
 {{--                                        @endif--}}
                                         <div class="form-group">
                                             <label>Cookie *</label>
-                                            <textarea class="form-control" name="cookie_str" rows="3">{{$account->cookie_str}}</textarea>
-                                            @error('cookie_str')
+                                            <textarea class="form-control" name="cookie_web_str" rows="3">{{$account->cookie_web_str}}</textarea>
+                                            @error('cookie_web_str')
                                             <span class="invalid-feedback d-block" role="alert">
                                           <strong>{{ $message }}</strong>
                                       </span>
@@ -129,11 +129,11 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label>Proxies *</label>
-                                            <select multiple="multiple" class="select2 form-control w-100" required
-                                                    data-placeholder="Select something" id="proxies_id" name="proxies_id[]">
+                                            <label>Proxies </label>
+                                            <select  class="form-control w-100" required id="proxy_id" name="proxy_id">
+                                                <option selected disabled>Select one </option>
                                                 @foreach($proxies as $item)
-                                                    <option value="{{$item['id']}}" @if(in_array($item['id'],$account->proxies()->pluck('proxies.id')->toArray())) selected @endif>{{$item['text']}}</option>
+                                                    <option value="{{$item['id']}}" @if($account->proxy_id === $item['id']) selected @endif>{{$item['text']}}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -146,17 +146,17 @@
                                             </select>
                                         </div>
 
-{{--                                        <div class="form-group">--}}
-{{--                                            <label>Status </label>--}}
-{{--                                            <select class="form-control" name="status" required>--}}
-{{--                                                <option value="0"  @if($account->status === 0) selected @endif>--}}
-{{--                                                    Inactive--}}
-{{--                                                </option>--}}
-{{--                                                <option value="1"  @if($account->status === 1) selected @endif>--}}
-{{--                                                    Active--}}
-{{--                                                </option>--}}
-{{--                                            </select>--}}
-{{--                                        </div>--}}
+                                        <div class="form-group">
+                                            <label>Status </label>
+                                            <select class="form-control" name="status" required>
+                                                <option value="0"  @if($account->status === 0) selected @endif>
+                                                    Inactive
+                                                </option>
+                                                <option value="1"  @if($account->status === 1) selected @endif>
+                                                    Active
+                                                </option>
+                                            </select>
+                                        </div>
 
 
                                         <br/>

@@ -79,17 +79,17 @@
 
                                 <td>
                                     @if($account->status)
-                                        <span class="badge badge-success">Active</span>
+                                        <span class="badge badge-success"><em style="letter-spacing: 2px">ACTIVE</em></span>
                                     @else
-                                        <span class="badge badge-danger">Inactive</span>
+                                        <span class="badge badge-danger"><em style="letter-spacing: 2px">INACTIVE</em></span>
 
                                     @endif
                                 </td>
                                 <td>
                                     @if($account->type===1)
-                                        <span class="badge badge-warning">Real</span>
+                                        <span class="badge badge-primary"><em style="letter-spacing: 2px">REAL</em></span>
                                     @else
-                                        <span class="badge badge-danger">Unreal</span>
+                                        <span class="badge badge-info"><em style="letter-spacing: 2px">UNREAL</em></span>
 
                                     @endif
                                 </td>

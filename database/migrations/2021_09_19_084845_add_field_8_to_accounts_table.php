@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddField7ToAccountsTable extends Migration
+class AddField8ToAccountsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,10 +14,12 @@ class AddField7ToAccountsTable extends Migration
     public function up()
     {
         Schema::table('accounts', function (Blueprint $table) {
-            $table->text('cookie_str')->nullable();
-            $table->text('cookie_web')->nullable();
-            $table->text('cookie_socket_str')->nullable();
-            $table->text('cookie_socket')->nullable();
+            $table->string('jsessionid')->nullable();
+            $table->text('cookie_web_str')->nullable();
+            $table->dropColumn('cookie_web');
+            $table->dropColumn('cookie_str');
+            $table->dropColumn('cookie_socket');
+
         });
     }
 
@@ -28,8 +30,6 @@ class AddField7ToAccountsTable extends Migration
      */
     public function down()
     {
-        Schema::table('accounts', function (Blueprint $table) {
-            //
-        });
+
     }
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -25,16 +26,12 @@ class Account extends Model
         'type',
         'limit_connection_request',
         'limit_conversation',
-        'cookie_str',
-        'cookie_web',
-        'cookie_socket',
+        'jsessionid',
+        'cookie_web_str',
         'cookie_socket_str',
+        'proxy_id',
     ];
 
-    protected $casts = [
-        'cookie_web' => 'json',
-        'cookie_socket' => 'json',
-    ];
     /**
      * @return BelongsToMany
      */
@@ -61,11 +58,11 @@ class Account extends Model
 
 
     /**
-     * @return belongsToMany
+     * @return BelongsTo
      */
-    public function proxies(): belongsToMany
+    public function proxy(): BelongsTo
     {
-        return $this->belongsToMany(Proxy::class, 'accounts_proxies', 'account_id', 'proxy_id');
+        return $this->belongsTo(Proxy::class);
     }
 
     /**

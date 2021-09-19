@@ -41,7 +41,7 @@ class Company extends Repository
             'keywords' => $keyWord
         ];
 
-        return $this->client->setHeaders($this->login,Constants::REQUEST_HEADERS_TYPE,$this->proxy)->get(Constants::API_URL . '/typeahead/hitsV2', $query_params);
+        return $this->client->setHeaders($this->account,Constants::REQUEST_HEADERS_TYPE,$this->proxy)->get(Constants::API_URL . '/typeahead/hitsV2', $query_params);
     }
 
 //    /**

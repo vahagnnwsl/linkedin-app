@@ -69,6 +69,10 @@ class Connection
         return $resp;
     }
 
+    /**
+     * @param array $data
+     * @return array
+     */
     public static function parseSingle(array $data){
 
         return [

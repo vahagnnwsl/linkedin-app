@@ -119,9 +119,9 @@ class AccountRepository extends Repository
     /**
      * @return mixed
      */
-    public function getAllRealAccounts()
+    public function getAllRealAccounts(int $status = 1)
     {
-        return $this->model()::where('type', self::$TYPE_REAL)->get();
+        return $this->model()::where('type', self::$TYPE_REAL)->whereStatus($status)->get();
     }
 
     /**

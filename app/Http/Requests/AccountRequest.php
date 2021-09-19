@@ -27,11 +27,10 @@ class AccountRequest extends FormRequest
             'full_name' => 'required|string|max:255',
             'password' => 'required|string|max:255',
             'login' => 'required|string|max:255|unique:accounts,login',
-            'entityUrn' => 'required|string|max:255|unique:accounts,entityUrn',
-            'proxies_id'=>'required|array|min:1',
-            'cookie_str'=>'required|string',
-            'cookie_socket_str'=>'required|string',
-//            'status'=>'sometimes',
+            'proxy_id'=>'sometimes|exists:App\Models\Proxy,id',
+            'cookie_web_str'=>'sometimes|string',
+            'cookie_socket_str'=>'sometimes|string',
+            'status'=>'sometimes',
             'type'=>'required',
 //            'limit_conversation'=>'required|integer|min:1|max:150',
 //            'limit_connection_request'=>'required|integer|min:1|max:150',
@@ -40,7 +39,7 @@ class AccountRequest extends FormRequest
 
         if ($this->method() === 'PUT') {
             $rules['login'] .= ',' . $this->route('id');
-            $rules['entityUrn'] .= ',' . $this->route('id');
+            $rules['entityUrn'] = 'required|string|max:255|unique:accounts,entityUrn,' . $this->route('id');
         }
 
         return $rules;

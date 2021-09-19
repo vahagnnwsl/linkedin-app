@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddField7ToAccountsTable extends Migration
+class AddField9ToAccountsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,10 +14,8 @@ class AddField7ToAccountsTable extends Migration
     public function up()
     {
         Schema::table('accounts', function (Blueprint $table) {
-            $table->text('cookie_str')->nullable();
-            $table->text('cookie_web')->nullable();
-            $table->text('cookie_socket_str')->nullable();
-            $table->text('cookie_socket')->nullable();
+            $table->unsignedBigInteger('proxy_id')->nullable();
+            $table->foreign('proxy_id')->references('id')->on('proxies')->onDelete('cascade');
         });
     }
 

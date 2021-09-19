@@ -39,7 +39,7 @@ class GetConversations implements ShouldQueue
     public function __construct(Account $account)
     {
         $this->account = $account;
-        $this->proxy = $account->getRandomFirstProxy();
+        $this->proxy = $account->proxy;
         $this->connectionService = new ConnectionService();
 
     }

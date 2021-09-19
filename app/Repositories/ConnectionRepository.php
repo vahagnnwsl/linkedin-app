@@ -22,8 +22,9 @@ class ConnectionRepository extends Repository
     protected CompanyRepository $companyRepository;
     protected MessageRepository $messageRepository;
     protected ConversationRepository $conversationRepository;
-    public static $PARSED_STATUS = 1;
-    public static $UNPARSED_STATUS = 0;
+    public static int $PARSED_STATUS = 1;
+    public static int $UNPARSED_STATUS = 0;
+
 
     public function __construct()
     {
@@ -117,11 +118,17 @@ class ConnectionRepository extends Repository
                     ->where('positions.name', 'LIKE', '%' . $requestData['key'] . '%')
                     ->select(DB::raw('SUM(duration)'))->having(DB::raw('SUM(duration)'), '>=', $requestData['experience'] * 12);
             });
+        })->when(isset($requestData['accounts']) && count($requestData['accounts']) > 0, function ($query) use ($requestData) {
+            $query->whereHas('accounts', function ($subQuery) use ($requestData) {
+                $subQuery->whereIn('accounts.id', $requestData['accounts']);
+            });
         })->when(isset($requestData['distance']), function ($query) use ($requestData) {
             if ($requestData['distance'] === 'no_accounts') {
                 $query->doesnthave('accounts');
             } else if ($requestData['distance'] === 'accounts') {
                 $query->whereHas('accounts');
+            }elseif($requestData['distance'] === 'accounts_with_keys'){
+                $query->whereHas('accounts')->whereHas('keys');
             }
         })->orderby('id', 'desc')->paginate(20);
     }
@@ -260,7 +267,8 @@ class ConnectionRepository extends Repository
      * @param int $account_id
      * @param int $key_id
      */
-    public function updateOrCreateConnectionsOnTimeKeySearch(array $resp, int $account_id, int $key_id){
+    public function updateOrCreateConnectionsOnTimeKeySearch(array $resp, int $account_id, int $key_id)
+    {
         collect($resp)->map(function ($item) use ($account_id, $key_id) {
             DB::beginTransaction();
             try {
@@ -330,5 +338,14 @@ class ConnectionRepository extends Repository
                 DB::rollback();
             }
         });
+    }
+
+    /**
+     * @param int $id
+     * @param array $dataKeys
+     */
+    public function addKeys(int $id, array $dataKeys)
+    {
+        $this->model()::whereId($id)->first()->keys()->sync($dataKeys);
     }
 }

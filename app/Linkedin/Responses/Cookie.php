@@ -57,6 +57,17 @@ class Cookie
 
     /**
      * @param string $cookie
+     * @return string
+     */
+    public static function getJsessionid(string $cookie): string
+    {
+        $array = explode(';', $cookie);
+        $cookie = Helper::parseCookies($array);
+        return str_replace("'", '', $cookie['JSESSIONID']);
+    }
+
+    /**
+     * @param string $cookie
      * @return array
      */
     #[ArrayShape(['str' => "string", 'crfToken' => "mixed"])]

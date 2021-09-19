@@ -3,37 +3,27 @@
 namespace App\Linkedin\Repositories;
 
 use App\Linkedin\Contracts\Credentials;
+use App\Models\Account;
 use App\Models\Proxy;
 
 class Repository implements Credentials
 {
 
-    /**
-     * @var string
-     */
-    protected string $login;
+    protected Account $account;
 
-    /**
-     * @var
-     */
+
     protected  $proxy;
 
-    /**
-     * @var string
-     */
-    protected string $password;
-
 
     /**
-     * @param string $login
-     * @param string $password
+     * @param Account $account
+     * @param Proxy|null $proxy
      * @return $this
      */
-    public function setCredentials(string $login, string $password,Proxy $proxy= null): self
+    public function setCredentials(Account $account,Proxy $proxy = null): self
     {
-        $this->login = $login;
 
-        $this->password = $password;
+        $this->account = $account;
 
         $this->proxy = $proxy;
 

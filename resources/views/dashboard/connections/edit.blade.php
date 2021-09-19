@@ -1,5 +1,8 @@
 @extends('dashboard.layouts')
+@push('css')
+    <link rel="stylesheet" href="/plugins/select2/css/select2.min.css">
 
+@endpush
 @section('sub_content')
     <section class="content-header">
         <div class="container-fluid">
@@ -98,11 +101,12 @@
                                                             </h5>
                                                         @endif
 
-                                                        <p class="mt-2"><mark>{{ $position->name }}</mark>
+                                                        <p class="mt-2">
+                                                            <mark>{{ $position->name }}</mark>
                                                             @if($position->start_date)
                                                                 |  <em>{{ $position->start_date->format('F  Y') }}</em>
                                                             @endif
--
+                                                            -
                                                             @if($position->end_date)
                                                                 <em>{{ $position->end_date->format('F  Y') }}</em>
                                                             @else
@@ -110,7 +114,9 @@
                                                             @endif
                                                             <em class="float-right">  {{ $position->duration }}</em>
                                                         </p>
-                                                            <p><em><mark>{{ $position->description }}</mark></em></p>
+                                                        <p><em>
+                                                                <mark>{{ $position->description }}</mark>
+                                                            </em></p>
                                                     </div>
                                                 @endforeach
                                             </div>
@@ -124,7 +130,8 @@
                                     <div class="card h-100">
                                         <div class="card-header">
                                             <h5 class="text-bold pl-2 text-info">Statuses
-                                                <a href="#" class="btn btn-success float-right"  data-toggle="modal" data-target="#statusModal">
+                                                <a href="#" class="btn btn-success float-right" data-toggle="modal"
+                                                   data-target="#statusModal">
                                                     Add
                                                 </a>
                                             </h5>
@@ -133,18 +140,57 @@
                                         <div class="card-body">
                                             <div class="row">
                                                 @foreach($connection->statuses as $status)
-                                                    <div class="col-12  border-bottom  {{$status->is_last === 1 ? 'border-warning border' : ''}}">
-                                                          <h5 class="text-bold text-black-50">{{$status->category->name}}</h5>
-                                                         <p>
-                                                             <em>
+                                                    <div
+                                                        class="col-12  border-bottom  {{$status->is_last === 1 ? 'border-warning border' : ''}}">
+                                                        <h5 class="text-bold text-black-50">{{$status->category->name}}</h5>
+                                                        <p>
+                                                            <em>
                                                                 <mark>{{$status->comment}} </mark>
-                                                             </em>
-                                                         </p>
+                                                            </em>
+                                                        </p>
                                                     </div>
                                                 @endforeach
 
                                             </div>
 
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row gutters-sm">
+                                <div class="col-sm-12 mb-3">
+                                    <div class="card h-100">
+                                        <div class="card-header">
+                                            <h5 class="text-bold pl-2 text-info">Keys</h5>
+
+                                        </div>
+                                        <div class="card-body">
+                                            <form action="{{route('connections.addKeys',$connection->id)}}" method="POST">
+                                                @csrf
+                                                <div class="row">
+
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+
+                                                            <select multiple="multiple" class="select2 form-control"
+                                                                    data-placeholder="Select something" id="keys"
+                                                                    name="keys[]">
+                                                                @foreach($keys as $key)
+                                                                    <option
+                                                                        @if(in_array($key->id,$connection->keys()->pluck('keys.id')->toArray())) selected
+                                                                        @endif value="{{$key->id}}">{{$key->name}}</option>
+                                                                @endforeach
+                                                            </select>
+
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <button class="btn btn-success float-right">Add</button>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
@@ -156,7 +202,7 @@
         </div>
         <div class="modal fade" id="statusModal" style="display: none;" aria-hidden="true">
             <div class="modal-dialog modal-lg" style="min-height: 400px">
-                <div class="modal-content"  style="min-height: 400px">
+                <div class="modal-content" style="min-height: 400px">
                     <div class="modal-header  bg-info">
                         <h4 class="modal-title">Add status</h4>
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -167,8 +213,8 @@
 
                             <div class="form-group">
                                 <label>Category</label>
-                                <select class="form-control w-100"  name="category_id" aria-required="true" required>
-                                    <option selected disabled value="">Select one </option>
+                                <select class="form-control w-100" name="category_id" aria-required="true" required>
+                                    <option selected disabled value="">Select one</option>
                                     @foreach($categories as $category)
                                         <option value="{{$category->id}}">{{$category->name}} </option>
                                     @endforeach
@@ -181,9 +227,9 @@
                             </div>
                             <div class="form-group">
                                 <label>Comment</label>
-                                <textarea class="form-control" name="comment" rows="4" ></textarea>
+                                <textarea class="form-control" name="comment" rows="4"></textarea>
                                 <div class="form-group">
-                                     <button class="btn btn-success mt-2 float-right">Submit</button>
+                                    <button class="btn btn-success mt-2 float-right">Submit</button>
                                 </div>
                             </div>
                         </form>
@@ -192,9 +238,26 @@
                     </div>
                 </div>
             </div>
-        </div>`,
+        </div>
+        `,
     </section>
 @endsection
 
+@push('js')
+    <script src="/plugins/select2/js/select2.full.min.js"></script>
+    <script src="/plugins/moment/moment.min.js"></script>
+
+    <script src="/plugins/daterangepicker/daterangepicker.js"></script>
 
 
+    <script>
+
+        $(function () {
+
+            $('.select2').select2({
+                multiple: true,
+            })
+        });
+
+    </script>
+@endpush

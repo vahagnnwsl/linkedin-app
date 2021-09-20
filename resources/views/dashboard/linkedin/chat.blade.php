@@ -68,23 +68,13 @@
             width: 100%;
             padding: 10px 1rem;
             cursor: pointer;
-            border-bottom: 1px solid #f0f4f8;
+            border: 1px solid #f0f4f8;
+            margin-bottom: 2px!important;
+            margin-top: 2px!important;
         }
 
         .users .person:hover {
-            background-color: wheat;
-            /* Fallback Color */
-            background-image: -webkit-gradient(linear, left top, left bottom, from(#e9eff5), to(#ffffff));
-            /* Saf4+, Chrome */
-            background-image: -webkit-linear-gradient(right, #e9eff5, #ffffff);
-            /* Chrome 10+, Saf5.1+, iOS 5+ */
-            background-image: -moz-linear-gradient(right, #e9eff5, #ffffff);
-            /* FF3.6 */
-            background-image: -ms-linear-gradient(right, #e9eff5, #ffffff);
-            /* IE10 */
-            background-image: -o-linear-gradient(right, #e9eff5, #ffffff);
-            /* Opera 11.10+ */
-            background-image: linear-gradient(right, #e9eff5, #ffffff);
+            border: 1px solid darkcyan;
         }
 
         .users .person.active-user {
@@ -277,7 +267,6 @@
 
         .chat-container li .chat-hour {
             padding: 0;
-            margin-bottom: 10px;
             font-size: .75rem;
             display: flex;
             flex-direction: row;
@@ -376,6 +365,11 @@
         }
         .active2{
             background-color: darkcyan;
+            color: white;
+
+        }
+        .active2:hover{
+            background-color: darkcyan!important;
             color: white;
 
         }

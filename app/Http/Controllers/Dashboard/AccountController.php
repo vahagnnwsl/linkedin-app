@@ -7,6 +7,7 @@ use App\Http\Requests\AccountRequest;
 use App\Http\Resources\Collections\ConversationCollection;
 use App\Jobs\Account\GetConnections;
 use App\Jobs\Account\GetConversations;
+use App\Jobs\Account\Pm2Ecosystem;
 use App\Jobs\Conversations\GetConversationsMessages;
 use App\Jobs\SyncRequestsJob;
 use App\Linkedin\Api;
@@ -107,7 +108,7 @@ class AccountController extends Controller
         $this->accountRepository->update($id, $data);
 
         $this->putFlashMessage(true, 'Successfully updated');
-
+        Pm2Ecosystem::dispatch();
         return redirect()->route('accounts.edit', $id);
     }
 

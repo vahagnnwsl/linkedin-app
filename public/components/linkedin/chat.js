@@ -41,7 +41,7 @@ Vue.component('linkedin-chat', {
                     </li>
                 </ul>
 
-                <a href="javascript:void(0)" class="w-100 text-center loadMoreButton p-2" @click="getConversations">
+                <a href="javascript:void(0)" class="w-100 text-center loadMoreButton p-2" @click="getConversations" v-if="loadMoreConversation">
                     Load more
                     <i class="fa fa-arrow-circle-down"></i>
                 </a>
@@ -228,6 +228,7 @@ Vue.component('linkedin-chat', {
                 id: '',
                 connection: null
             },
+            loadMoreConversation: true,
             conversations: [],
             messages: [],
             relativeConversations: [],
@@ -304,8 +305,12 @@ Vue.component('linkedin-chat', {
 
                     this.conversations.push(...response.data.conversations)
 
+
                     this.start += 10;
                     this.sortConversations()
+                    if (response.data.conversations.length === 0){
+                        this.loadMoreConversation = false;
+                    }
                 })
         },
         selectConversation: function (conversation) {

@@ -2,6 +2,8 @@
     "private": true,
     "scripts": {
         "pm2-start-linkedin": "pm2 start storage/linkedin/ecosystem.json",
+        "pm2-restart-linkedin": "pm2 restart all",
+        "pm2-stop-linkedin": "pm2 delete all",
         "dev": "npm run development",
         "development": "mix",
         "watch": "mix watch",

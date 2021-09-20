@@ -7,6 +7,7 @@ use App\Http\Requests\AccountRequest;
 use App\Http\Resources\Collections\ConversationCollection;
 use App\Jobs\Account\GetConnections;
 use App\Jobs\Account\GetConversations;
+use App\Jobs\Conversations\GetConversationsMessages;
 use App\Jobs\SyncRequestsJob;
 use App\Linkedin\Api;
 use App\Linkedin\Responses\Connection;
@@ -21,6 +22,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AccountController extends Controller
 {
@@ -146,6 +148,19 @@ class AccountController extends Controller
         GetConnections::dispatch($account);
         $this->putFlashMessage(true, 'Your request on process');
 
+        return redirect()->back();
+    }
+
+
+    /**
+     * @param int $id
+     * @return RedirectResponse
+     */
+    public function syncConversationsMessages(int $id): RedirectResponse
+    {
+        $account = $this->accountRepository->getById($id);
+        GetConversationsMessages::dispatch(Auth::user(), $account);
+        $this->putFlashMessage(true, 'Your request on process');
         return redirect()->back();
     }
 

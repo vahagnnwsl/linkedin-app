@@ -120,6 +120,11 @@
                                                title="Sync Connections">
                                                 <span class="text-bold text-black-50">     Sync Connections</span>
                                             </a>
+                                            <a class="dropdown-item"
+                                               href="{{route('accounts.syncConversationsMessages',$account->id)}}"
+                                               title="Sync conversations messages">
+                                                <span class="text-bold text-black-50">Sync conversations messages</span>
+                                            </a>
 
                                             {{--                                            <a class="dropdown-item"--}}
                                             {{--                                               href="{{route('accounts.syncRequests',$account->id)}}"--}}

@@ -39,6 +39,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
         Route::get('/{id}/connections/sync', [App\Http\Controllers\Dashboard\AccountController::class, 'syncConnections'])->name('accounts.syncConnections')->middleware(['role:Admin|Manager']);
         Route::get('/{id}/requests/sync', [App\Http\Controllers\Dashboard\AccountController::class, 'syncRequests'])->name('accounts.syncRequests')->middleware(['role:Admin|Manager']);
         Route::get('/{id}/conversations', [App\Http\Controllers\Dashboard\AccountController::class, 'getConversations']);
+        Route::get('/{id}/conversation-messages', [App\Http\Controllers\Dashboard\AccountController::class, 'syncConversationsMessages'])->name('accounts.syncConversationsMessages');
         Route::get('/{id}/conversations/history', [App\Http\Controllers\Dashboard\AccountController::class, 'conversations'])->name('accounts.conversations')->middleware(['role:Admin|Manager']);
         Route::get('/{id}/conversations/{conversation_id}/messages', [App\Http\Controllers\Dashboard\AccountController::class, 'conversationMessages'])->name('accounts.conversationMessages')->middleware(['role:Admin|Manager']);
         Route::get('/{id}/checkLife', [App\Http\Controllers\Dashboard\AccountController::class, 'checkLife'])->name('accounts.checkLife')->middleware(['role:Admin|Manager']);

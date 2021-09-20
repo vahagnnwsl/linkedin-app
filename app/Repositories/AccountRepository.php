@@ -9,12 +9,12 @@ use Illuminate\Support\Facades\DB;
 class AccountRepository extends Repository
 {
 
-    public static $ACTIVE_STATUS = 1;
-    public static $INACTIVE_STATUS = 0;
+    public static int $ACTIVE_STATUS = 1;
+    public static int $INACTIVE_STATUS = 0;
 
 
-    public static $TYPE_REAL = 1;
-    public static $TYPE_UNREAL = 2;
+    public static int $TYPE_REAL = 1;
+    public static int $TYPE_UNREAL = 2;
 
 
     public function model(): string

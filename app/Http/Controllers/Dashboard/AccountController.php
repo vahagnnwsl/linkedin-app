@@ -9,6 +9,7 @@ use App\Jobs\Account\GetConnections;
 use App\Jobs\Account\GetConversations;
 use App\Jobs\Account\Pm2Ecosystem;
 use App\Jobs\Conversations\GetConversationsMessages;
+use App\Jobs\Pm2\DeletePid;
 use App\Jobs\SyncRequestsJob;
 use App\Linkedin\Api;
 use App\Linkedin\Responses\Connection;
@@ -104,10 +105,19 @@ class AccountController extends Controller
             $this->putFlashMessage(false, 'Invalid cookie string');
             return redirect()->route('accounts.edit', $id);
         }
+        $beforeAccount = $this->accountRepository->getById($id);
+
 
         $this->accountRepository->update($id, $data);
 
         $this->putFlashMessage(true, 'Successfully updated');
+        $account = $this->accountRepository->getById($id);
+
+
+        if ($beforeAccount->status === $this->accountRepository::$ACTIVE_STATUS && $account->type === $this->accountRepository::$TYPE_REAL && (int)$data['status']===$this->accountRepository::$INACTIVE_STATUS) {
+            DeletePid::dispatch($account);
+        }
+
         Pm2Ecosystem::dispatch();
         return redirect()->route('accounts.edit', $id);
     }

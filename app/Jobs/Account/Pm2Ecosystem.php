@@ -80,8 +80,8 @@ class Pm2Ecosystem implements ShouldQueue
 
         File::put(storage_path('linkedin/ecosystem.json'), json_encode($apps));
         //TO DO CHANGE
-        shell_exec('npm run pm2-stop-linkedin');
-        shell_exec('npm run pm2-start-linkedin');
+//        shell_exec('npm run pm2-stop-linkedin');
+        shell_exec('npm run pm2-reload-linkedin');
 
     }
 }

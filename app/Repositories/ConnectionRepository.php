@@ -127,8 +127,12 @@ class ConnectionRepository extends Repository
                 $query->doesnthave('accounts');
             } else if ($requestData['distance'] === 'accounts') {
                 $query->whereHas('accounts');
-            }elseif($requestData['distance'] === 'accounts_with_keys'){
-                $query->whereHas('accounts')->whereHas('keys');
+            }
+        })->when(isset($requestData['connections_keys']), function ($query) use ($requestData) {
+            if ($requestData['connections_keys'] === 'have_keys') {
+                $query->whereHas('keys');
+            } else if ($requestData['connections_keys'] === 'no_keys') {
+                $query->doesnthave('keys');
             }
         })->orderby('id', 'desc')->paginate(20);
     }

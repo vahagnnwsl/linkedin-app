@@ -114,13 +114,6 @@
                         </div>
                         <div class="form-check">
                             <label class="form-check-label" style="cursor: pointer">
-                                <input type="radio" class="form-check-input" value="accounts_with_keys" name="distance"
-                                       @if(request()->get('distance') &&  request()->get('distance') === 'accounts_with_keys') checked @endif
-                                >Only accounts connections have keys
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <label class="form-check-label" style="cursor: pointer">
                                 <input type="radio" class="form-check-input" value="no_accounts" name="distance"
                                        @if(request()->get('distance') && request()->get('distance') === 'no_accounts') checked @endif
                                 >Only connections that hav not accounts
@@ -133,7 +126,28 @@
                                 >All
                             </label>
                         </div>
-
+                        <hr/>
+                        <div class="form-check">
+                            <label class="form-check-label" style="cursor: pointer">
+                                <input type="radio" class="form-check-input" value="have_keys" name="connections_keys"
+                                       @if(request()->get('connections_keys') &&  request()->get('connections_keys') === 'have_keys') checked @endif
+                                >Only  connections have keys
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label" style="cursor: pointer">
+                                <input type="radio" class="form-check-input" value="no_keys" name="connections_keys"
+                                       @if(request()->get('connections_keys') &&  request()->get('connections_keys') === 'no_keys') checked @endif
+                                >Only  connections have no keys
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label" style="cursor: pointer">
+                                <input type="radio" class="form-check-input" value="all" name="connections_keys"
+                                       @if(request()->get('connections_keys') &&  request()->get('connections_keys') === 'all') checked @endif
+                                >All
+                            </label>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-4">

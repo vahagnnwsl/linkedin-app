@@ -110,7 +110,7 @@
 {{--                                            <input type="hidden"  name="limit_conversation" value="1">--}}
 {{--                                        @endif--}}
                                         <div class="form-group">
-                                            <label>Cookie *</label>
+                                            <label>Cookie </label>
                                             <textarea class="form-control" name="cookie_web_str" rows="3">{{$account->cookie_web_str}}</textarea>
                                             @error('cookie_web_str')
                                             <span class="invalid-feedback d-block" role="alert">
@@ -119,7 +119,7 @@
                                             @enderror
                                         </div>
                                         <div class="form-group">
-                                            <label>Cookie socket *</label>
+                                            <label>Cookie socket </label>
                                             <textarea class="form-control" name="cookie_socket_str" rows="3">{{$account->cookie_socket_str}}</textarea>
                                             @error('cookie_socket_str')
                                             <span class="invalid-feedback d-block" role="alert">

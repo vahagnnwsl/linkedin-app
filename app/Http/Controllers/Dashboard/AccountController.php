@@ -99,12 +99,15 @@ class AccountController extends Controller
     {
 
         $data = $request->validated();
-        try {
-            $data['jsessionid'] = Cookie::getJsessionid($data['cookie_web_str']);
-        } catch (\Exception $exception) {
-            $this->putFlashMessage(false, 'Invalid cookie string');
-            return redirect()->route('accounts.edit', $id);
+        if ($data['cookie_web_str']){
+            try {
+                $data['jsessionid'] = Cookie::getJsessionid($data['cookie_web_str']);
+            } catch (\Exception $exception) {
+                $this->putFlashMessage(false, 'Invalid cookie string');
+                return redirect()->route('accounts.edit', $id);
+            }
         }
+
         $beforeAccount = $this->accountRepository->getById($id);
 
 

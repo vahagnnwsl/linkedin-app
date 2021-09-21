@@ -30,12 +30,12 @@ class MessageController extends Controller
     /**
      * @var MessageRepository
      */
-    protected $messageRepository;
+    protected MessageRepository $messageRepository;
 
     /**
      * @var ConversationRepository
      */
-    protected $conversationRepository;
+    protected ConversationRepository $conversationRepository;
 
 
     /**
@@ -147,6 +147,5 @@ class MessageController extends Controller
         $this->messageRepository->update($id, ['is_delete' => 1]);
         return response()->json([]);
     }
-
 
 }

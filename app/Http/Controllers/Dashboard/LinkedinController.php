@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Collections\ConversationCollection;
+use App\Http\Resources\ConversationResource;
 use App\Repositories\ConversationRepository;
 use App\Repositories\MessageRepository;
 use App\Repositories\UserRepository;
@@ -28,17 +29,17 @@ class LinkedinController extends Controller
     /**
      * @var MessageRepository
      */
-    protected $messageRepository;
+    protected MessageRepository $messageRepository;
 
     /**
      * @var ConversationRepository
      */
-    protected $conversationRepository;
+    protected ConversationRepository $conversationRepository;
 
     /**
      * @var UserRepository
      */
-    protected $userRepository;
+    protected UserRepository $userRepository;
 
     /**
      * LinkedinController constructor.
@@ -59,23 +60,12 @@ class LinkedinController extends Controller
      * @param Request $request
      * @return Application|Factory|View|JsonResponse
      */
-    public function chat(Request $request)
+    public function chat()
     {
-        $conversations = [];
 
+        $account = Auth::user()->account;
 
-        if ($account = Auth::user()->account) {
-
-            $conversations = new ConversationCollection($account->conversations()->orderByDesc('lastActivityAt')->get());
-
-
-
-            if ($request->ajax()) {
-                return response()->json(['conversations' => $conversations]);
-            }
-        }
-
-        return view('dashboard.linkedin.chat', compact('account', 'conversations'));
+        return view('dashboard.linkedin.chat', compact('account'));
     }
 
 
@@ -255,7 +245,6 @@ class LinkedinController extends Controller
     {
         return response()->json(Api::invitation(Auth::user()->linkedin_login, Auth::user()->linkedin_password)->sendInvitation($request->get('profile_id'), $request->get('tracking_id'), $request->get('message')));
     }
-
 
 
     /**

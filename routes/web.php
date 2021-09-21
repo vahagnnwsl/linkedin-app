@@ -124,8 +124,11 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
 
     Route::group(['prefix' => 'conversations'], function () {
 
+        Route::get('/{id}', [App\Http\Controllers\Dashboard\ConversationController::class, 'show']);
+        Route::get('/entityUrn/{entityUrn}', [App\Http\Controllers\Dashboard\ConversationController::class, 'getByEntityUrn']);
+        Route::get('/account/{id}', [App\Http\Controllers\Dashboard\ConversationController::class, 'getByAccount']);
         Route::post('/{id}/messages-sync', [App\Http\Controllers\Dashboard\ConversationController::class, 'syncMessages']);
-        Route::get('/{id}/messages', [App\Http\Controllers\Dashboard\ConversationController::class, 'getMessages']);
+        Route::get('/{entityUrn}/messages', [App\Http\Controllers\Dashboard\ConversationController::class, 'getMessages']);
         Route::post('/{id}/sync-last-messages', [App\Http\Controllers\Dashboard\ConversationController::class, 'synLastMessages']);
 
     });

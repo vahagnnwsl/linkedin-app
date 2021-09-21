@@ -41,7 +41,7 @@ class GetConversationsMessages implements ShouldQueue
 
     public function handle(): int
     {
-        $this->account->conversations()->map(function ($conversation){
+        $this->account->conversations->map(function ($conversation){
             GetConversationMessages::dispatch($this->user,$this->account,$conversation);
         });
 

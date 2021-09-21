@@ -33,12 +33,13 @@ class Messages
 
         $messagesData = $data[self::MESSAGE_TYPE];
 
+        File::put(storage_path('a.json'),json_encode($messagesData));
         $messages = $messagesData->map(function ($item) use ( $conversation_urn) {
 
             return [
                 'text' => isset($item->eventContent) && isset($item->eventContent->attributedBody) ? $item->eventContent->attributedBody->text : null,
                 'attachments' => isset($item->eventContent) && isset($item->eventContent->attachments) ? $item->eventContent->attachments[0] : null,
-                'media' => isset($item->eventContent) && isset($item->eventContent->customContent) ? $item->eventContent->customContent->media->previewgif : null,
+                'media' => isset($item->eventContent) && isset($item->eventContent->customContent) && isset($item->eventContent->customContent->media) && isset($item->eventContent->customContent->media->previewgif) ? $item->eventContent->customContent->media->previewgif : null,
                 'user_entityUrn' => Helper::searchInString($item->{self::FROM_KEY}, 'urn:li:fs_messagingMember:(' . $conversation_urn . ',', ')'),
                 'entityUrn' => Helper::searchInString($item->entityUrn, 'urn:li:fs_event:(' . $conversation_urn . ',', ')'),
                 'date' => Carbon::createFromTimestampMsUTC($item->createdAt)->toDateTimeString()

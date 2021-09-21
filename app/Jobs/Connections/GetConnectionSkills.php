@@ -24,7 +24,7 @@ class GetConnectionSkills implements ShouldQueue
 
     protected Account $account;
     protected Connection $linkedinUser;
-    protected Proxy $proxy;
+    protected  $proxy;
     private SkillRepository $skillRepository;
     private ConnectionRepository $connectionRepository;
 

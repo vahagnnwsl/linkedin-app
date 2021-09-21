@@ -115,11 +115,11 @@ Vue.component('linkedin-chat', {
                                     <p v-if="message.text"> {{ message.text }}</p>
                                     <p v-if="message.media"><img :src="message.media.url"></p>
                                     <p v-if="message.attachments">
-                                        <template v-if="message.attachments.mediaType.includes('application')">
-                                            <a :href="message.attachments.reference"> {{ message.attachments.name }}</a>
+                                        <template v-if="message.attachments.mediaType.includes('application') || message.attachments.mediaType.includes('text')">
+                                            <a :href="message.attachments.reference" target="_blank"> {{ message.attachments.name }}</a>
                                         </template>
-                                        <template>
-                                            <img v-else :src="message.attachments.reference">
+                                        <template v-else>
+                                            <img  :src="message.attachments.reference">
                                         </template>
                                     </p>
                                 </div>

@@ -48,7 +48,7 @@ class ConnectionService
      * @param Account $account
      * @param Proxy $proxy
      */
-    public function getAccountConnections(Account $account, Proxy $proxy=null)
+    public function getAccountConnections(Account $account, Proxy $proxy = null)
     {
 
         $this->recursiveGetAccountConnections($account, $proxy, 0);
@@ -56,17 +56,17 @@ class ConnectionService
 
     /**
      * @param Account $account
-     * @param Proxy $proxy
+     * @param Proxy|null $proxy
      */
     public function getAccountConversations(Account $account, Proxy $proxy = null)
     {
 
-        $this->recursiveGetAccountConversations($account, $proxy, []);
+        $this->recursiveGetAccountConversations($account, [], $proxy,);
     }
 
     /**
      * @param Account $account
-     * @param Proxy $proxy
+     * @param Proxy|null $proxy
      * @param int $start
      */
     public function recursiveGetAccountConnections(Account $account, Proxy $proxy = null, int $start = 0)
@@ -95,7 +95,7 @@ class ConnectionService
 
         $proxy = $account->proxy;
 
-        $result = (new Profile_2(Api::profile($account,$proxy)->searchPeople($key->name, $country->entityUrn, $params['companyEntityUrn'] ?? null, $start)))();
+        $result = (new Profile_2(Api::profile($account, $proxy)->searchPeople($key->name, $country->entityUrn, $params['companyEntityUrn'] ?? null, $start)))();
 
         if ($result['success']) {
             $this->connectionRepository->updateOrCreateConnectionsOnTimeKeySearch((array)$result['data'], $account->id, $key->id);
@@ -107,14 +107,19 @@ class ConnectionService
 
     }
 
-    public function recursiveGetAccountConversations(Account $account, Proxy $proxy = null, array $params)
+    /**
+     * @param Account $account
+     * @param Proxy|null $proxy
+     * @param array $params
+     */
+    public function recursiveGetAccountConversations(Account $account, array $params, Proxy $proxy = null)
     {
 
         $resp = Response::conversationsConnections(Api::conversation($account, $proxy)->getConversations($params), $account->entityUrn);
 
         if ($resp['success']) {
             $this->connectionRepository->updateOrCreateConversation($resp['data'], $account->id);
-            $this->recursiveGetAccountConversations($account, $proxy, ['createdBefore' => $resp['lastActivityAt']]);
+            $this->recursiveGetAccountConversations($account, ['createdBefore' => $resp['lastActivityAt']], $proxy);
         }
 
     }

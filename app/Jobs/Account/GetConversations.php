@@ -26,7 +26,7 @@ class GetConversations implements ShouldQueue
     /**
      * @var Proxy
      */
-    protected Proxy $proxy;
+    protected $proxy ;
 
 
     protected ConnectionService $connectionService;

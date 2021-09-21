@@ -1,0 +1,120 @@
+Vue.component('chat-messages', {
+    template: `
+        <div class="col-lg-7 col-xl-9">
+        <div class="py-2 px-4 border-bottom d-none d-lg-block">
+            <div class="align-items-center py-1 media">
+                <div class="position-relative" v-if="connection">
+                    <img
+                        :src="connection.image? connection.image: '/dist/img/lin_def_image.svg'"
+                    class="rounded-circle mr-1" alt="Kathie Burton" width="40"
+                    height="40">
+                </div>
+                <div class="pl-3 media-body"  v-if="connection"><strong>{{ connection.firstName }} {{ connection.lastName }}</strong>
+                </div>
+                <div v-if="selectedConversation">
+
+                    <button class="px-3 border btn btn-light btn-lg" @click="syncLastMessages(selectedConversation.id)">
+                       <i class="fa fa-sync-alt float-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="position-relative">
+            <div class="chat-messages p-4">
+               <chat-message :key="index" :message="message" :account="account" v-for="(message,index) in messages"></chat-message>
+
+            </div>
+        </div>
+        <div class="flex-grow-0 py-3 px-4 border-top">
+            <form @submit.prevent="sendMessages" v-if="entityUrn">
+                <div class="input-group"><input placeholder="Type your message" type="text" class="form-control" v-model="form.message">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary">Send</button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+
+        <button v-if="loadMore" @click="getMessages" title="Load more ..." type="button" style="border-radius: 49%; position: absolute;right: 20px;bottom: 80px" class="btn btn-outline-secondary"><i class="fa fa-arrow-circle-down"></i></button>
+
+        </div>
+    `,
+    data: function () {
+        return {
+            start: 0,
+            messages: [],
+            connection: null,
+            entityUrn: '',
+            selectedConversation: null,
+            loadMore: true,
+            form: {
+                message: ''
+            }
+
+
+        }
+    },
+    props: ['account'],
+    mounted() {
+        let _this = this
+
+        $(document).on('selectedConversation', function (e, selectedConversation) {
+            _this.messages = [];
+            _this.start = 0;
+            _this.loadMore = true;
+            _this.selectedConversation = selectedConversation;
+            _this.entityUrn = selectedConversation.entityUrn;
+            _this.connection = selectedConversation.connection;
+            _this.getMessages();
+        });
+
+
+    },
+    methods: {
+        getMessages: function () {
+
+            this.$http.get(`/dashboard/conversations/${this.entityUrn}/messages?start=${this.start}&relative=true`)
+                .then((response) => {
+                    this.messages.unshift(...response.data.messages)
+                    this.start += 10;
+                    if (response.data.messages.length < 10){
+                        this.loadMore = false
+                    }
+                })
+        },
+        sendMessages: function () {
+
+            if (!this.form.message.length) {
+                return;
+            }
+
+            this.$http.post(`/dashboard/messages`, {
+                text: this.form.message,
+                conversation_id: this.selectedConversation.id
+            }).then((response) => {
+                if (response.data.limitError){
+                    toastr.error(response.data.limitError);
+                }else {
+                    this.messages.push(response.data.message);
+                    this.form.message = ''
+                }
+
+            }).catch(() => {
+
+                toastr.error('Something went wrong');
+            })
+        },
+
+        syncLastMessages:function(id){
+            this.$http.post(`/dashboard/conversations/${id}/sync-last-messages`).then(() => {
+                toastr.success('Your request on process');
+            }).catch(() => {
+                toastr.error('Something went wrong');
+            })
+        }
+
+    }
+
+
+})

@@ -65,7 +65,7 @@ class ConversationRepository extends Repository
             return $query->whereHas('connection',function ($q) use ($key){
                 return $q->where('connections.firstName','LIKE',"%$key%")->orWhere('connections.lastName','LIKE',"%$key%");
             });
-        })->skip($start)->take(10)->orderByDesc('lastActivityAt')->get();
+        })->skip($start)->take(12)->orderByDesc('lastActivityAt')->get();
     }
 
     /**

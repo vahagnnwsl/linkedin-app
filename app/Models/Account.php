@@ -89,4 +89,5 @@ class Account extends Model
         return $this->hasMany(AccountConversationsLimit::class)->whereDate('created_at',date('Y-m-d'))->count();
     }
 
+
 }

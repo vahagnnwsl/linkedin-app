@@ -5,6 +5,7 @@ namespace App\Jobs\Keys;
 use App\Linkedin\Api;
 use App\Linkedin\Responses\Profile_2;
 use App\Linkedin\Responses\Response;
+use App\Models\Account;
 use App\Models\Company;
 use App\Models\Key;
 use App\Repositories\AccountRepository;
@@ -39,15 +40,20 @@ class SearchByKeyCompany implements ShouldQueue
      */
     protected ConnectionService $connectionService;
 
+    /**
+     * @var Account
+     */
+    protected Account $account;
 
     /**
      * @param Key $key
      * @param Company $company
      */
-    public function __construct(Key $key,Company $company)
+    public function __construct(Key $key,Account $account,Company $company)
     {
         $this->key = $key;
         $this->company = $company;
+        $this->account = $account;
         $this->connectionService = new ConnectionService();
     }
 
@@ -59,7 +65,7 @@ class SearchByKeyCompany implements ShouldQueue
      */
     public function handle()
     {
-        $this->connectionService->search($this->key, [
+        $this->connectionService->search($this->key,$this->account, [
             'companyEntityUrn' => $this->company->entityUrn,
         ]);
     }
@@ -73,7 +79,8 @@ class SearchByKeyCompany implements ShouldQueue
         return [
             'JobClass' => get_class($this),
             'Key' => $this->key->name,
-            'Company' => 'Company: '.$this->company->name.'| ID: '.$this->company->id
+            'Company' => 'Company: '.$this->company->name.'| ID: '.$this->company->id,
+            'Account' => $this->account->full_name,
         ];
     }
 }

@@ -20,7 +20,7 @@ Vue.component('chat-messages', {
             </div>
         </div>
         <div class="position-relative">
-            <div class="chat-messages p-4">
+            <div class="chat-messages p-4" id="messages">
                <chat-message :key="index" :message="message" :account="account" v-for="(message,index) in messages"></chat-message>
 
             </div>
@@ -68,7 +68,22 @@ Vue.component('chat-messages', {
             _this.connection = selectedConversation.connection;
             _this.getMessages();
         });
+        channel.bind('newMessage', function (message) {
 
+            // _this.mapConversationAndSetLastActivityAt(message.conversation_id,message.date);
+            // _this.sortConversations();
+
+            if (_this.selectedConversation.id && _this.selectedConversation.id  === message.conversation_id){
+                _this.messages.push(message);
+                _this.scroll();
+
+            }else {
+                $(document).trigger('newMessage', message.conversation_id);
+            }
+
+            console.log(message)
+
+        })
 
     },
     methods: {
@@ -82,6 +97,12 @@ Vue.component('chat-messages', {
                         this.loadMore = false
                     }
                 })
+        },
+        scroll: function () {
+            setTimeout(function () {
+                $("#messages").scrollTop($("#messages")[0].scrollHeight);
+
+            }, 1000)
         },
         sendMessages: function () {
 

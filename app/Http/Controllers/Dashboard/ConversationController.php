@@ -76,7 +76,7 @@ class ConversationController extends Controller
      */
     public function getByAccount(int $account_id,Request $request): JsonResponse
     {
-        $conversations = new ConversationCollection($this->conversationRepository->getByAccountId($account_id, $request->get('start'), $request->get('key')));
+        $conversations = new ConversationCollection($this->conversationRepository->getByAccountId($account_id, $request->get('start'), $request->get('key'),$request->get('distance')));
         return response()->json(['conversations' => $conversations]);
     }
 

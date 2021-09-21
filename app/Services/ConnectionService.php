@@ -35,12 +35,9 @@ class ConnectionService
      * @param Key $key
      * @param array $params
      */
-    public function search(Key $key, array $params)
+    public function search(Key $key, Account $account, array $params)
     {
-
-        $account = $key->getRandomRelation('accounts');
         $country = $key->country;
-
         $this->recursiveSearch($key, $account, $country, $params, 0);
     }
 

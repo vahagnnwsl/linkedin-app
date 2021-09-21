@@ -5,7 +5,6 @@ namespace App\Events;
 use App\Http\Resources\MessageResource;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-use Illuminate\Support\Facades\File;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -15,6 +14,14 @@ class NewMessage implements ShouldBroadcast
 
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+
+
+    /**
+     * The name of the queue the job should be sent to.
+     *
+     * @var string|null
+     */
+    public $queue = 'newMessage';
     /**
      * @var MessageResource
      */
@@ -23,7 +30,7 @@ class NewMessage implements ShouldBroadcast
     /**
      * @var string
      */
-    private  $channel_name;
+    private string $channel_name;
 
 
     public function __construct( $message, string $channel_name)

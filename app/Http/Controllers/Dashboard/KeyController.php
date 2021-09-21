@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\KeyRequest;
+use App\Jobs\Keys\DispatchSearch;
 use App\Jobs\Keys\SearchByKey;
 use App\Jobs\Keys\SearchByKeyCompanies;
 use App\Jobs\LinkedinSearchByKey;
@@ -136,7 +137,7 @@ class KeyController extends Controller
     public function search(int $id): RedirectResponse
     {
         $key = $this->keyRepository->getById($id);
-        SearchByKey::dispatch($key);
+        DispatchSearch::dispatch($key);
         $this->putFlashMessage(true, 'Successfully run job');
         return redirect()->back();
 

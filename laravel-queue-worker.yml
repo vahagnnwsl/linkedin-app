@@ -1,5 +1,5 @@
 apps:
-  - name: laravel-queue-worker
+  - name: JOBS
     script: artisan
     exec_mode: fork
     interpreter: php
@@ -7,3 +7,13 @@ apps:
     args:
       - queue:listen
       - --timeout=0
+  - name: EVENTS
+    script: artisan
+    exec_mode: fork
+    interpreter: php
+    instances: 1
+    args:
+      - queue:listen
+      - --timeout=0
+      - --queue=newMessage
+

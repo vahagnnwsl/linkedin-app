@@ -54,4 +54,6 @@ class GetConversationMessages implements ShouldQueue
     {
         $this->conversationService->getConversationMessages($this->user,$this->account,$this->conversation);
     }
+
+
 }

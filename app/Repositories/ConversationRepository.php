@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Conversation;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 
 class ConversationRepository extends Repository
@@ -56,16 +57,45 @@ class ConversationRepository extends Repository
      * @param int $account_id
      * @param int $start
      * @param string|null $key
+     * @param string|null $distance
      * @return mixed
      */
-    public function getByAccountId(int $account_id, int $start = 0,string $key = null)
+    public function getByAccountId(int $account_id, int $start = 0, string $key = null, ?string $distance = 'all')
     {
 
-        return $this->model()::where('account_id', $account_id)->whereNotNull('connection_id')->when($key,function ($query) use($key){
-            return $query->whereHas('connection',function ($q) use ($key){
-                return $q->where('connections.firstName','LIKE',"%$key%")->orWhere('connections.lastName','LIKE',"%$key%");
-            });
-        })->skip($start)->take(12)->orderByDesc('lastActivityAt')->get();
+        $take = $key ? 200 : 10;
+        return $this->model()::where('account_id', $account_id)->whereNotNull('connection_id')
+            ->when($key, function ($query) use ($key, $distance) {
+
+                $query->when($distance === 'connections', function ($subQ) use ($key, $distance) {
+                    $subQ->whereHas('connection', function ($q) use ($key) {
+                        $q->where('connections.firstName', 'LIKE', "%" . $key . "%")
+                            ->orWhere('connections.lastName', 'LIKE', "%" . $key . "%")
+                            ->orWhere(DB::raw(' CONCAT(connections.firstName," ", connections.lastName)'), 'LIKE', "%" . $key . "%")
+                            ->orWhere(DB::raw(' CONCAT(connections.lastName," ", connections.firstName)'), 'LIKE', "%" . $key . "%");
+                    });
+
+                });
+                $query->when($distance === 'messages', function ($subQ) use ($key, $distance) {
+                    $subQ->whereHas('messages', function ($q) use ($key) {
+                        $q->where('messages.text', 'LIKE', "%" . $key . "%");
+                    });
+                });
+                $query->when($distance === 'all', function ($subQ) use ($key, $distance) {
+                    $subQ->where(function ($q) use ($key) {
+                        $q->whereHas('connection', function ($sQ) use ($key) {
+                            $sQ->where('connections.firstName', 'LIKE', "%" . $key . "%")
+                                ->orWhere('connections.lastName', 'LIKE', "%" . $key . "%")
+                                ->orWhere(DB::raw(' CONCAT(connections.firstName," ", connections.lastName)'), 'LIKE', "%" . $key . "%")
+                                ->orWhere(DB::raw(' CONCAT(connections.lastName," ", connections.firstName)'), 'LIKE', "%" . $key . "%");
+                        });
+                    })->orWhere(function ($q) use ($key) {
+                        $q->whereHas('messages', function ($sQ) use ($key) {
+                            $sQ->where('messages.text', 'LIKE', "%" . $key . "%");
+                        });
+                    });
+                });
+            })->skip($start)->take($take)->orderByDesc('lastActivityAt')->get();
     }
 
     /**
@@ -85,9 +115,10 @@ class ConversationRepository extends Repository
      * @param array $accounts_ids
      * @return mixed
      */
-    public function getConnectionConversationsByConnectionAndAccount(int $connection_id,array $accounts_ids){
+    public function getConnectionConversationsByConnectionAndAccount(int $connection_id, array $accounts_ids)
+    {
 
-        return $this->model()::where('connection_id',$connection_id)->whereIn('account_id',$accounts_ids)->get();
+        return $this->model()::where('connection_id', $connection_id)->whereIn('account_id', $accounts_ids)->get();
     }
 
     /**

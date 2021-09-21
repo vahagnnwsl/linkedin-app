@@ -28,9 +28,6 @@ class SearchByKeyCompanies implements ShouldQueue
     protected Key $key;
 
 
-    protected ConnectionService $connectionService;
-
-
     /**
      * RunKeyJob constructor.
      * @param Key $key
@@ -38,7 +35,6 @@ class SearchByKeyCompanies implements ShouldQueue
     public function __construct(Key $key)
     {
         $this->key = $key;
-        $this->connectionService = new ConnectionService();
     }
 
 
@@ -51,9 +47,15 @@ class SearchByKeyCompanies implements ShouldQueue
     {
 
         $parsedCompanies = $this->key->parsedCompanies;
+        $accounts = $this->key->accounts()->where(['status' => 1, 'type' => 1])->get();
 
-        $parsedCompanies->map(function ($company) {
-            SearchByKeyCompany::dispatch($this->key, $company);
+        $parsedCompanies->map(function ($company) use ($accounts) {
+            $accounts->map(function ($account) use ($company) {
+                $resp = Api::profile($account)->getOwnProfile();
+                if ($resp['status'] === 200) {
+                    SearchByKeyCompany::dispatch($this->key, $account, $company);
+                }
+            });
         });
 
     }

@@ -3,7 +3,7 @@
 namespace App\Jobs\Keys;
 
 
-use App\Models\Account;
+use App\Linkedin\Api;
 use App\Models\Key;
 use App\Services\ConnectionService;
 use Illuminate\Bus\Queueable;
@@ -13,7 +13,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use ReflectionProperty;
 
-class SearchByKey implements ShouldQueue
+class DispatchSearch implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -22,24 +22,14 @@ class SearchByKey implements ShouldQueue
      */
     protected Key $key;
 
-    /**
-     * @var Account
-     */
-    protected Account $account;
-
-
-    protected ConnectionService $connectionService;
-
 
     /**
      * RunKeyJob constructor.
      * @param Key $key
      */
-    public function __construct(Key $key,Account $account)
+    public function __construct(Key $key)
     {
         $this->key = $key;
-        $this->account = $account;
-        $this->connectionService = new ConnectionService();
     }
 
 
@@ -51,9 +41,14 @@ class SearchByKey implements ShouldQueue
     public function handle()
     {
 
-        $this->connectionService->search($this->key,$this->account, [
-            'conCompany' => true,
-        ]);
+        $accounts = $this->key->accounts()->where(['status' => 1, 'type' => 1])->get();
+
+        $accounts->map(function ($account) {
+            $resp = Api::profile($account)->getOwnProfile();
+            if ($resp['status'] === 200) {
+                SearchByKey::dispatch($this->key, $account);
+            }
+        });
     }
 
     /**
@@ -64,7 +59,6 @@ class SearchByKey implements ShouldQueue
         return [
             'JobClass' => get_class($this),
             'Key' => $this->key->name,
-            'Account' => $this->account->full_name,
         ];
     }
 }

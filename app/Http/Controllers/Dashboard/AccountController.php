@@ -143,6 +143,12 @@ class AccountController extends Controller
     public function syncConversations($id): RedirectResponse
     {
         $account = $this->accountRepository->getById($id);
+        $resp = Api::profile($account)->getOwnProfile();
+        if ($resp['status'] !== 200) {
+            $this->putFlashMessage(false, 'Invalid cookie');
+            return redirect()->back();
+        }
+
         GetConversations::dispatch($account);
         $this->putFlashMessage(true, 'Your request on process');
         return redirect()->back();
@@ -156,6 +162,11 @@ class AccountController extends Controller
     {
 
         $account = $this->accountRepository->getById($id);
+        $resp = Api::profile($account)->getOwnProfile();
+        if ($resp['status'] !== 200) {
+            $this->putFlashMessage(false, 'Invalid cookie');
+            return redirect()->back();
+        }
         GetConnections::dispatch($account);
         $this->putFlashMessage(true, 'Your request on process');
 
@@ -170,6 +181,11 @@ class AccountController extends Controller
     public function syncConversationsMessages(int $id): RedirectResponse
     {
         $account = $this->accountRepository->getById($id);
+        $resp = Api::profile($account)->getOwnProfile();
+        if ($resp['status'] !== 200) {
+            $this->putFlashMessage(false, 'Invalid cookie');
+            return redirect()->back();
+        }
         GetConversationsMessages::dispatch(Auth::user(), $account);
         $this->putFlashMessage(true, 'Your request on process');
         return redirect()->back();
@@ -206,6 +222,7 @@ class AccountController extends Controller
     {
 
         $messages = $this->messageRepository->getMessagesByConversationId($conversation_id);
+
         $account = $this->accountRepository->getById($account_id);
         $conversation = $this->conversationRepository->getById($conversation_id);
 
@@ -215,6 +232,12 @@ class AccountController extends Controller
     public function syncRequests(int $id): RedirectResponse
     {
         $account = $this->accountRepository->getById($id);
+
+        $resp = Api::profile($account)->getOwnProfile();
+        if ($resp['status'] !== 200) {
+            $this->putFlashMessage(false, 'Invalid cookie');
+            return redirect()->back();
+        }
         SyncRequestsJob::dispatch($account);
         $this->putFlashMessage(true, 'Your request on process');
 

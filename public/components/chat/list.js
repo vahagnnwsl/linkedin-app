@@ -3,15 +3,34 @@ Vue.component('chat-list', {
         <div class="border-right col-lg-5 col-xl-3">
         <div class="px-4 d-none d-md-block">
             <div class="align-items-center media">
-                <div class="media-body"><input placeholder="Search..." type="text" class="my-3 form-control">
+                <div class="media-body">
+                    <form @submit.prevent="search">
+                        <input placeholder="Search..." type="text" name="key" class="my-3 form-control" v-model="searchKey">
+                        <div class="form-check-inline">
+                            <label class="form-check-label">
+                                <input type="radio" name="distance" class="form-check-input" value="connections" v-model="distance">Connections
+                            </label>
+                        </div>
+                        <div class="form-check-inline">
+                            <label class="form-check-label">
+                                <input type="radio" name="distance" class="form-check-input" value="messages" v-model="distance">Messages
+                            </label>
+                        </div>
+                        <div class="form-check-inline">
+                            <label class="form-check-label">
+                                <input type="radio" name="distance" class="form-check-input" value="all"  v-model="distance">All
+                            </label>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
+        <hr/>
         <div class=" chat-list">
             <a :href="'/dashboard/linkedin/chat#entityUrn:'+conversation.entityUrn"
                @click="getConversation(conversation.entityUrn)"
                :class="selectedConversation && selectedConversation.entityUrn === conversation.entityUrn ? 'active': ''"
-               class="border-0 list-group-item-action list-group-item" v-for="(conversation,index) in conversations">
+               class="border-0 list-group-item-action list-group-item" :key="index" v-for="(conversation,index) in conversations">
             <span class="float-right badge badge-success" :ref="'conversation_new_message'+conversation.id"
                   style="display: none">NEW</span>
                 <div class="media">
@@ -43,7 +62,9 @@ Vue.component('chat-list', {
             messageStart: 0,
             selectedConversation: null,
             loadMoreConversation: true,
-            start: 0
+            start: 0,
+            searchKey: '',
+            distance: 'all',
         }
     },
     props: ['account'],
@@ -61,18 +82,31 @@ Vue.component('chat-list', {
             }
         }
         this.getConversations()
+        const  _this = this;
+        $(document).on('newMessage', function (e, conversationId) {
+            _this.$refs['conversation_new_message' + conversationId][0].style.display = 'block';
+        });
+
+
     },
     methods: {
+        search:function (){
+            this.getConversations(true);
+        },
         loadMore: function () {
            this.start +=10;
            this.getConversations();
         },
-        getConversations: function () {
+        getConversations: function (searchable = false) {
 
-            let queryParams = this.searchKey ? '&key=' + this.searchKey : '';
+            let queryParams = this.searchKey ? '&distance='+this.distance+'&key=' + this.searchKey : '';
 
             this.$http.get(`/dashboard/conversations/account/${this.account.id}?start=${this.start}${queryParams ? queryParams : ''}`)
                 .then((response) => {
+
+                    if (searchable){
+                        this.conversations = [];
+                    }
 
                     this.conversations.push(...response.data.conversations)
 
@@ -87,6 +121,9 @@ Vue.component('chat-list', {
                 .then((response) => {
                     this.selectedConversation = response.data.conversation
                     $(document).trigger('selectedConversation', this.selectedConversation);
+                    console.log(this.selectedConversation.id)
+                    this.$refs['conversation_new_message' + this.selectedConversation.id][0].style.display = 'none';
+
                 })
 
         },

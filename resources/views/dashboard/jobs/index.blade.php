@@ -29,13 +29,20 @@
                             @if($type ==='process')
                                 <li class="list-group-item">
                                     <strong class="text-info">ID:</strong> {{$job->id}}<br/>
-                                    @foreach($job->display as $key=>$value)
-                                        <strong class="text-info">{{$key}}:</strong>  <em> {{$value}} </em> <br/>
-                                    @endforeach
+                                    @if($job->queue === 'default')
+                                        @foreach($job->display as $key=>$value)
+                                            <strong class="text-info">{{$key}}:</strong>  <em> {{$value}} </em> <br/>
+                                        @endforeach
+                                    @endif
+
                                 </li>
                             @else
                                 <li class="list-group-item">
-                                    <strong class="text-info">ID:</strong> {{$job->id}}<br/>
+                                    <strong class="text-info">ID:</strong> {{$job->id}}
+                                    <button type="button" class="btn btn-outline-light text-black-50 text-black text-bold" data-toggle="collapse" data-target="#exception{{$job->id}}">View Exception</button>
+                                    <div id="exception{{$job->id}}" class="collapse">
+                                        {{$job->exception}}
+                                    </div>
 
                                 </li>
                             @endif

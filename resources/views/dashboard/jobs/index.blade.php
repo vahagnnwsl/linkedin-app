@@ -36,14 +36,7 @@
                             @else
                                 <li class="list-group-item">
                                     <strong class="text-info">ID:</strong> {{$job->id}}<br/>
-                                    @foreach($job->display as $key=>$value)
-                                       <?php try {
-                                            echo " <strong class='text-info'>".$key.":</strong>  <em> ".$value." </em> <br/>";
-                                        }catch (\Exception $e){
-                                           echo $e;
-                                        }?>
 
-                                    @endforeach
                                 </li>
                             @endif
 

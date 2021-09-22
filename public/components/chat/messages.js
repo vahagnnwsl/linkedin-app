@@ -40,7 +40,7 @@ Vue.component('chat-messages', {
         </div>
 
         <button v-if="loadMore" @click="getMessages" title="Load more ..." type="button"
-                style="border-radius: 49%; position: absolute;right: 20px;bottom: 20px"
+                style="border-radius: 49%; position: absolute;right: 20px;bottom: 10px"
                 class="btn btn-outline-secondary"><i class="fa fa-arrow-circle-down"></i></button>
 
         </div>

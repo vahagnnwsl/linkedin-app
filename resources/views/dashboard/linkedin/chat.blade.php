@@ -458,15 +458,15 @@
         .chat-messages {
             display: flex;
             flex-direction: column;
-            max-height: 710px;
-            min-height: 700px;
+            max-height: 520px;
+            min-height: 500px;
             overflow-y: scroll;
         }
         .chat-list {
             display: flex;
             flex-direction: column;
-            max-height: 620px;
-            min-height: 605px;
+            max-height: 520px;
+            min-height: 500px;
             overflow-y: scroll;
         }
         .chat-message-right {

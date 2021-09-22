@@ -23,6 +23,7 @@ class ConversationResource extends JsonResource
             'connection' => $this->connection,
             'account' => $this->account,
             'lastActivityAt' => $this->lastActivityAt,
+            'lastMessage' => $this->messages()->orderBy('date', 'desc')->first() ? $this->messages()->orderBy('date', 'desc')->first()->text : '',
             'lastActivityAt_diff' => $this->lastActivityAt->diffForHumans(),
         ];
     }

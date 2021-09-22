@@ -30,8 +30,8 @@ Vue.component('chat-list', {
             <a :href="'/dashboard/linkedin/chat#entityUrn:'+conversation.entityUrn"
                @click="getConversation(conversation.entityUrn)"
                :class="selectedConversation && selectedConversation.entityUrn === conversation.entityUrn ? 'active': ''"
-               class="border-0 list-group-item-action list-group-item" :key="index" v-for="(conversation,index) in conversations">
-            <span class="float-right badge badge-success" :ref="'conversation_new_message'+conversation.id"
+               class="border-0 list-group-item-action list-group-item" :key="index"  v-for="(conversation,index) in sortConversations">
+            <span class="float-right badge badge-success" :ref="'conversation_new_message'+conversation.id" :id="'conversation_new_message'+conversation.id"
                   style="display: none">NEW</span>
                 <div class="media">
                     <img :src="conversation.connection.image? conversation.connection.image: '/dist/img/lin_def_image.svg'"
@@ -40,10 +40,14 @@ Vue.component('chat-list', {
                          alt="Michelle Bilodeau" width="40" height="40">
                     <div class="ml-3 media-body">{{ conversation.connection.firstName }}
                         {{ conversation.connection.lastName }}
+                        <div class="small text-black-50" :ref="'lastMessage'+conversation.id" :id="'lastMessage'+conversation.id">
+                            {{ conversation.lastMessage? conversation.lastMessage.slice(0, 20)+'...': '' }}
+                        </div>
                         <div class="small">
                             {{ conversation.lastActivityAt_diff }}
                         </div>
                     </div>
+
                 </div>
             </a>
         </div>
@@ -67,7 +71,20 @@ Vue.component('chat-list', {
             distance: 'all',
         }
     },
+    computed:{
+        sortConversations: function () {
+            return  this.conversations.sort(function (a, b) {
+                return new Date(b.lastActivityAt) - new Date(a.lastActivityAt);
+            });
+        },
+    },
     props: ['account'],
+    watch: {
+
+        conversations: function (o,n) {
+           console.log(o,n)
+        }
+    },
     mounted() {
         if(window.location.hash) {
             let hash = window.location.hash.substring(1);
@@ -84,7 +101,22 @@ Vue.component('chat-list', {
         this.getConversations()
         const  _this = this;
         $(document).on('newMessage', function (e, conversationId) {
-            _this.$refs['conversation_new_message' + conversationId][0].style.display = 'block';
+            // _this.$refs['conversation_new_message' + conversationId][0].style.display = 'block';
+            // _this.sortConversations();
+            // document.getElementById('conversation_new_message' + conversationId).style.display = 'block'
+
+        });
+
+        $(document).on('changeConversationLastMessage', function (e, obj) {
+            // _this.$refs['lastMessage' + obj.conversationId][0].innerHTML = obj.text;
+            for (let i in _this.conversations){
+                if (_this.conversations[i].id === obj.conversationId){
+                    _this.conversations[i].lastActivityAt = obj.lastActivityAt
+                }
+            }
+            // _this.sortConversations();
+            // document.getElementById('lastMessage' + obj.conversationId).innerHTML = obj.text;
+
         });
 
 
@@ -110,7 +142,6 @@ Vue.component('chat-list', {
 
                     this.conversations.push(...response.data.conversations)
 
-                    this.sortConversations()
                     if (response.data.conversations.length === 0) {
                         this.loadMoreConversation = false;
                     }
@@ -121,16 +152,10 @@ Vue.component('chat-list', {
                 .then((response) => {
                     this.selectedConversation = response.data.conversation
                     $(document).trigger('selectedConversation', this.selectedConversation);
-                    console.log(this.selectedConversation.id)
                     this.$refs['conversation_new_message' + this.selectedConversation.id][0].style.display = 'none';
 
                 })
 
-        },
-        sortConversations: function () {
-            this.conversations.sort(function (a, b) {
-                return new Date(b.lastActivityAt) - new Date(a.lastActivityAt);
-            });
         },
     }
 })

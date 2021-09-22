@@ -6,28 +6,31 @@ Vue.component('chat-messages', {
                 <div class="position-relative" v-if="connection">
                     <img
                         :src="connection.image? connection.image: '/dist/img/lin_def_image.svg'"
-                    class="rounded-circle mr-1" alt="Kathie Burton" width="40"
-                    height="40">
+                        class="rounded-circle mr-1" alt="Kathie Burton" width="40"
+                        height="40">
                 </div>
-                <div class="pl-3 media-body"  v-if="connection"><strong>{{ connection.firstName }} {{ connection.lastName }}</strong>
+                <div class="pl-3 media-body" v-if="connection"><strong>{{ connection.firstName }}
+                    {{ connection.lastName }}</strong>
                 </div>
                 <div v-if="selectedConversation">
 
                     <button class="px-3 border btn btn-light btn-lg" @click="syncLastMessages(selectedConversation.id)">
-                       <i class="fa fa-sync-alt float-right"></i>
+                        <i class="fa fa-sync-alt float-right"></i>
                     </button>
                 </div>
             </div>
         </div>
         <div class="position-relative">
             <div class="chat-messages p-4" id="messages">
-               <chat-message :key="index" :message="message" :account="account" v-for="(message,index) in messages"></chat-message>
+                <chat-message :key="index" :message="message" :account="account"
+                              v-for="(message,index) in messages"></chat-message>
 
             </div>
         </div>
         <div class="flex-grow-0 py-3 px-4 border-top">
             <form @submit.prevent="sendMessages" v-if="entityUrn">
-                <div class="input-group"><input placeholder="Type your message" type="text" class="form-control" v-model="form.message">
+                <div class="input-group"><input placeholder="Type your message" type="text" class="form-control"
+                                                v-model="form.message">
                     <div class="input-group-append">
                         <button class="btn btn-primary">Send</button>
                     </div>
@@ -36,7 +39,9 @@ Vue.component('chat-messages', {
 
         </div>
 
-        <button v-if="loadMore" @click="getMessages" title="Load more ..." type="button" style="border-radius: 49%; position: absolute;right: 20px;bottom: 80px" class="btn btn-outline-secondary"><i class="fa fa-arrow-circle-down"></i></button>
+        <button v-if="loadMore" @click="getMessages" title="Load more ..." type="button"
+                style="border-radius: 49%; position: absolute;right: 20px;bottom: 80px"
+                class="btn btn-outline-secondary"><i class="fa fa-arrow-circle-down"></i></button>
 
         </div>
     `,
@@ -73,16 +78,19 @@ Vue.component('chat-messages', {
             // _this.mapConversationAndSetLastActivityAt(message.conversation_id,message.date);
             // _this.sortConversations();
 
-            if (_this.selectedConversation.id && _this.selectedConversation.id  === message.conversation_id){
+            if (_this.selectedConversation.id && _this.selectedConversation.id === message.conversation_id) {
                 _this.messages.push(message);
                 _this.scroll();
 
-            }else {
+            } else {
                 $(document).trigger('newMessage', message.conversation_id);
             }
 
-            console.log(message)
-
+            $(document).trigger('changeConversationLastMessage', {
+                conversationId: message.conversation_id,
+                text: message.text,
+                lastActivityAt: message.date,
+            });
         })
 
     },
@@ -93,7 +101,7 @@ Vue.component('chat-messages', {
                 .then((response) => {
                     this.messages.unshift(...response.data.messages)
                     this.start += 10;
-                    if (response.data.messages.length < 10){
+                    if (response.data.messages.length < 10) {
                         this.loadMore = false
                     }
                 })
@@ -114,20 +122,25 @@ Vue.component('chat-messages', {
                 text: this.form.message,
                 conversation_id: this.selectedConversation.id
             }).then((response) => {
-                if (response.data.limitError){
+                if (response.data.limitError) {
                     toastr.error(response.data.limitError);
-                }else {
+                } else {
                     this.messages.push(response.data.message);
                     this.form.message = ''
                 }
-
-            }).catch(() => {
-
+                $(document).trigger('changeConversationLastMessage', {
+                    conversationId: response.data.message.conversation_id,
+                    text: response.data.message.text,
+                    lastActivityAt: response.data.message.date,
+                });
+                this.scroll();
+            }).catch((e) => {
+                console.log(e)
                 toastr.error('Something went wrong');
             })
         },
 
-        syncLastMessages:function(id){
+        syncLastMessages: function (id) {
             this.$http.post(`/dashboard/conversations/${id}/sync-last-messages`).then(() => {
                 toastr.success('Your request on process');
             }).catch(() => {

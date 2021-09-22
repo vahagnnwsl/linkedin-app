@@ -29,8 +29,13 @@ Vue.component('chat-messages', {
         </div>
         <div class="flex-grow-0 py-3 px-4 border-top">
             <form @submit.prevent="sendMessages" v-if="entityUrn">
-                <div class="input-group"><input placeholder="Type your message" type="text" class="form-control"
+                <div class="input-group">
+                    <div class="input-group-prepend" v-if="loadMore" @click="getMessages" >
+                        <button type="button" class="btn btn-outline-primary" title="Load more ..."><i class="fa fa-arrow-circle-down"></i></button>
+                    </div>
+                    <input placeholder="Type your message" type="text" class="form-control"
                                                 v-model="form.message">
+
                     <div class="input-group-append">
                         <button class="btn btn-primary">Send</button>
                     </div>
@@ -39,9 +44,7 @@ Vue.component('chat-messages', {
 
         </div>
 
-        <button v-if="loadMore" @click="getMessages" title="Load more ..." type="button"
-                style="border-radius: 49%; position: absolute;right: 20px;bottom: 10px"
-                class="btn btn-outline-secondary"><i class="fa fa-arrow-circle-down"></i></button>
+
 
         </div>
     `,

@@ -44,7 +44,7 @@ class ConversationController extends Controller
 
         $conversation = $this->conversationRepository->getById($id);
 
-        GetConversationMessages::dispatch(Auth::user(), $account, $conversation);
+        GetConversationMessages::dispatch(Auth::user(), $account, $conversation,true);
 
         return response()->json([]);
     }

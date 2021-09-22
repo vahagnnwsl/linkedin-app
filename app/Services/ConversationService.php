@@ -30,13 +30,15 @@ class ConversationService
      * @param User $user
      * @param Account $account
      * @param Conversation $conversation
+     * @param bool $isLast
      */
-    public function getConversationMessages(User $user, Account $account, Conversation $conversation)
+    public function getConversationMessages(User $user, Account $account, Conversation $conversation, bool $isLast = false)
     {
-
-        $proxy = $account->proxy;
-
-        $this->recursiveGetConversationMessages($user, $account, $conversation, [], $proxy);
+        $query_params = [];
+        if ($isLast) {
+            $query_params['createdBefore'] = time() * 1000;
+        }
+        $this->recursiveGetConversationMessages($user, $account, $conversation, $query_params);
     }
 
     /**
@@ -46,10 +48,11 @@ class ConversationService
      * @param array $query_params
      * @param $proxy
      */
-    public function recursiveGetConversationMessages(User $user, Account $account, Conversation $conversation, array $query_params, $proxy)
+    public function recursiveGetConversationMessages(User $user, Account $account, Conversation $conversation, array $query_params)
     {
 
-        $response = Api::conversation($account, $proxy)->getConversationMessages($conversation->entityUrn, $query_params);
+        $response = Api::conversation($account, $account->proxy)->getConversationMessages($conversation->entityUrn, $query_params);
+
 
         if ($response['success']) {
             $response = Messages::invoke($response['data'], $conversation->entityUrn);
@@ -57,11 +60,10 @@ class ConversationService
 
         if ($response['success'] && count($response['data'])) {
             $this->messageRepository->updateOrCreateCollection($response['data'], $conversation->id, $user->id, $account->id, $account->entityUrn, $this->messageRepository::SENDED_STATUS, $this->messageRepository::RECEIVE_EVENT, true);
-
-            sleep(3);
+            sleep(1);
             $this->recursiveGetConversationMessages($user, $account, $conversation, [
                 'createdBefore' => $response['lastActivityAt']
-            ], $proxy);
+            ]);
         }
     }
 }

@@ -12,6 +12,8 @@ class UserRepository extends Repository
 
     const ACTIVE_STATUS = 1;
 
+    public static string $ADMIN_ROLE = 'Admin';
+
     /**
      * @return string
      */

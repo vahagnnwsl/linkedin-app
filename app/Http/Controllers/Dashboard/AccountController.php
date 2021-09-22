@@ -8,12 +8,14 @@ use App\Http\Resources\Collections\ConversationCollection;
 use App\Jobs\Account\GetConnections;
 use App\Jobs\Account\GetConversations;
 use App\Jobs\Account\Pm2Ecosystem;
+use App\Jobs\Conversations\GetConversationsLastMessages;
 use App\Jobs\Conversations\GetConversationsMessages;
 use App\Jobs\Pm2\DeletePid;
 use App\Jobs\SyncRequestsJob;
 use App\Linkedin\Api;
 use App\Linkedin\Responses\Connection;
 use App\Linkedin\Responses\Cookie;
+use App\Models\Conversation;
 use App\Repositories\AccountRepository;
 use App\Repositories\ConversationRepository;
 use App\Repositories\MessageRepository;
@@ -59,6 +61,7 @@ class AccountController extends Controller
      */
     public function index()
     {
+//        $conversation = Conversation::where('entityUrn','2-MzQ4ODFlYTctY2JjMi00NmU4LWExMzMtYTkwOGRiM2ZkZmRiXzAxMw==')->first();
 
         $accounts = $this->accountRepository->paginate();
         return view('dashboard.accounts.index', compact('accounts'));
@@ -190,6 +193,19 @@ class AccountController extends Controller
             return redirect()->back();
         }
         GetConversationsMessages::dispatch(Auth::user(), $account);
+        $this->putFlashMessage(true, 'Your request on process');
+        return redirect()->back();
+    }
+
+    public function syncConversationsLastMessages(int $id): RedirectResponse
+    {
+        $account = $this->accountRepository->getById($id);
+        $resp = Api::profile($account)->getOwnProfile();
+        if ($resp['status'] !== 200) {
+            $this->putFlashMessage(false, 'Invalid cookie');
+            return redirect()->back();
+        }
+        GetConversationsLastMessages::dispatch(Auth::user(),$account);
         $this->putFlashMessage(true, 'Your request on process');
         return redirect()->back();
     }

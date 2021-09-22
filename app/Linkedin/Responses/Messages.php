@@ -33,7 +33,6 @@ class Messages
 
         $messagesData = $data[self::MESSAGE_TYPE];
 
-        File::put(storage_path('a.json'),json_encode($messagesData));
         $messages = $messagesData->map(function ($item) use ( $conversation_urn) {
 
             return [

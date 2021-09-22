@@ -123,7 +123,7 @@
                                             <select class="select2" style="width: 100%;" name="keys_ides[]" id="keys_ides" multiple="multiple">
 
                                                 @foreach($keys as $key)
-                                                    <option value="{{$key->id}}" @if(in_array($key->id,$user->keys()->pluck('id')->toArray())) selected @endif>#{{$key->name}}</option>
+                                                    <option value="{{$key->id}}" @if(in_array($key->id,$user->keys()->pluck('keys.id')->toArray())) selected @endif>#{{$key->name}}</option>
                                                 @endforeach
                                             </select>
                                             @error('stacks')

@@ -9,6 +9,7 @@ use App\Models\Key;
 use App\Models\Message;
 use App\Models\Position;
 use App\Models\Status;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
@@ -66,7 +67,7 @@ class ConnectionRepository extends Repository
         return $this->model()::where('entityUrn', $entityUrn)->first('id');
     }
 
-    public function filter(array $requestData, string $orderBy = 'created_at', string $direction = 'desc')
+    public function filter(array $requestData, User $user)
     {
 
         return $this->model()::when(isset($requestData['key']), function ($query) use ($requestData) {
@@ -134,6 +135,24 @@ class ConnectionRepository extends Repository
             } else if ($requestData['connections_keys'] === 'no_keys') {
                 $query->doesnthave('keys');
             }
+        })->when($user->role->name !== UserRepository::$ADMIN_ROLE, function ($query) use ($requestData, $user) {
+            $query->where(function ($subQuery) use ($requestData) {
+                $subQuery->whereHas('keys', function ($q) use ($requestData) {
+                    $q->whereIn('keys.id', $requestData['enableKeysIdes']);
+                });
+            })->orWhere(function ($subQuery) use ($user,$requestData) {
+                $subQuery->when(!isset($requestData['keys_ids']),function ($q) use ($user){
+                    $q->whereHas('accounts', function ($subQ) use ($user) {
+                        $subQ->where('accounts.id', $user->account->id);
+                    });
+                });
+            })->orWhere(function ($subQuery) use ($user,$requestData) {
+                $subQuery->when(!isset($requestData['keys_ids']) && $user->unRealAccounts()->count(),function ($q) use ($user){
+                    $q->whereHas('accounts', function ($subQ) use ($user) {
+                        $subQ->whereIn('accounts.id',$user->unRealAccounts()->pluck('accounts.id')->toArray());
+                    });
+                });
+            });
         })->orderby('id', 'desc')->paginate(20);
     }
 

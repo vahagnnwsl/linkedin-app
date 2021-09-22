@@ -125,6 +125,11 @@
                                                title="Sync conversations messages">
                                                 <span class="text-bold text-black-50">Sync conversations messages</span>
                                             </a>
+                                            <a class="dropdown-item"
+                                               href="{{route('accounts.syncConversationsLastMessages',$account->id)}}"
+                                               title="Sync conversations messages">
+                                                <span class="text-bold text-black-50">Sync conversations last messages</span>
+                                            </a>
 
                                             {{--                                            <a class="dropdown-item"--}}
                                             {{--                                               href="{{route('accounts.syncRequests',$account->id)}}"--}}

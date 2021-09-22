@@ -18,6 +18,7 @@ use App\Repositories\ConnectionRepository;
 use App\Repositories\ConnectionRequestRepository;
 use App\Repositories\ConversationRepository;
 use App\Repositories\KeyRepository;
+use App\Repositories\UserRepository;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -79,16 +80,21 @@ class ConnectionController extends Controller
      */
     public function index(Request $request)
     {
+        $user = Auth::user();
 
 
-        $filterAttributes = ['account', 'name'];
+        if ($user->role->name === UserRepository::$ADMIN_ROLE){
+            $enableKeysIds = $this->keyRepository->query()->pluck('keys.id')->toArray();
+        }else{
+            $enableKeysIds = Auth::user()->keys()->pluck('keys.id')->toArray();
+        }
+
+
         $data = $request->all();
-        $enableKeysIdes = [];
-        $keys = $this->keyRepository->getAll();
 
         $relatedAccountsIdes = Auth::user()->unRealAccounts()->pluck('accounts.id')->toArray();
 
-        $data['enableKeysIdes'] = $enableKeysIdes;
+        $data['enableKeysIdes'] = $enableKeysIds;
 
         $companies = [];
 
@@ -96,13 +102,15 @@ class ConnectionController extends Controller
             $companies = $this->companyRepository->getByIds($request->get('companies'));
         }
 
-        $connections = $this->connectionRepository->filter($data, 'id');
+        $keys = $this->keyRepository->query()->whereIn('keys.id',$enableKeysIds)->get();
+        $connections = $this->connectionRepository->filter($data, $user);
+        $connections->load('accounts','keys');
         $categories = $this->connectionRepository->getCategories();
         $accounts = $this->accountRepository->getAll();
 
         $userAccount = Auth::user()->account;
 
-        return view('dashboard.connections.index', compact('connections','accounts','categories', 'filterAttributes', 'keys', 'userAccount', 'relatedAccountsIdes','companies'));
+        return view('dashboard.connections.index', compact('connections','accounts','categories', 'keys', 'userAccount', 'relatedAccountsIdes','companies'));
     }
 
     /**

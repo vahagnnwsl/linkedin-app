@@ -44,6 +44,7 @@
                 @include('dashboard.connections.filter')
 
                 <div class="card-body text-right">
+                    @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))
                     <div class="btn-group">
                         <a href="{{route('connections.getSkills')}}"
                            class="btn btn-outline-info"
@@ -62,6 +63,7 @@
                             Calculate experience
                         </a>
                     </div>
+                    @endif
                 </div>
                 <div class="card-body p-0">
                     <table class="table table-striped ">
@@ -87,7 +89,7 @@
                                 Keys
                             </th>
 
-                            <th>
+                            <th class="float-right">
                                 Actions
                             </th>
                         </tr>
@@ -109,53 +111,57 @@
                                 <td>
                                     {{$connection->occupation}}
                                 </td>
-
                                 <td>
-                                    @foreach($connection->accounts as $account)
-
-                                        @if($account->type === 2)
-                                            <span class="text-info text-bold">
-                                               {{$account->full_name}}
-
-                                                @if(in_array($account->id,$relatedAccountsIdes) && $relConversation = (new \App\Repositories\ConversationRepository())->getConnectionConversationByConnectionAndAccount($connection->id,$account->id))
-                                                    @if($relConversation)
-                                                        <span class="badge badge-info getConversationMessages"
-                                                              style="cursor: pointer"
-                                                              data-conversdationId="{{$relConversation->id}}"
-                                                              title="{{$relConversation->account->full_name}}">
-                                                              <i class="fa fa-envelope"></i>
-                                                        </span>
-                                                    @endif
-                                                @endif
-                                           </span>
-
-                                        @else
-                                            <span class="text-blue text-bold">
-                                                @if($userAccount->id === $account->id)
-                                                    YOUR'S
-
-                                                    @if($selfConversation = (new \App\Repositories\ConversationRepository())->getConnectionConversationByConnectionAndAccount($connection->id,$account->id))
-
-                                                        <span class="badge badge-primary getConversationMessages"
-                                                              data-conversdationId="{{$selfConversation->id}}"
-                                                              title="{{$selfConversation->account->full_name}}">
-                                                                  <i class="fa fa-envelope"></i>
-                                                        </span>
-
-
-                                                    @endif
-                                                @else
-                                                    {{$account->full_name}}
-                                                @endif
-
-                                            </span>
-                                            @endif
-
-
-                                            </br>
-                                            @endforeach
-
+                                    @foreach($connection->accounts as $ac)
+                                        <span  class="badge badge-secondary">  {{$ac->full_name}}</span>
+                                    @endforeach
                                 </td>
+{{--                                <td>--}}
+
+{{--                                    @foreach($connection->accounts as $account)--}}
+{{--                                        @if($account->type === 2)--}}
+{{--                                            <span class="text-info text-bold">--}}
+{{--                                               {{$account->full_name}}--}}
+
+{{--                                                @if(in_array($account->id,$relatedAccountsIdes) && $relConversation = (new \App\Repositories\ConversationRepository())->getConnectionConversationByConnectionAndAccount($connection->id,$account->id))--}}
+{{--                                                    @if($relConversation)--}}
+{{--                                                        <span class="badge badge-info getConversationMessages"--}}
+{{--                                                              style="cursor: pointer"--}}
+{{--                                                              data-conversdationId="{{$relConversation->id}}"--}}
+{{--                                                              title="{{$relConversation->account->full_name}}">--}}
+{{--                                                              <i class="fa fa-envelope"></i>--}}
+{{--                                                        </span>--}}
+{{--                                                    @endif--}}
+{{--                                                @endif--}}
+{{--                                           </span>--}}
+
+{{--                                        @else--}}
+{{--                                            <span class="text-blue text-bold">--}}
+{{--                                                @if($userAccount->id === $account->id)--}}
+{{--                                                    YOUR'S--}}
+
+{{--                                                    @if($selfConversation = (new \App\Repositories\ConversationRepository())->getConnectionConversationByConnectionAndAccount($connection->id,$account->id))--}}
+
+{{--                                                        <span class="badge badge-primary getConversationMessages"--}}
+{{--                                                              data-conversdationId="{{$selfConversation->id}}"--}}
+{{--                                                              title="{{$selfConversation->account->full_name}}">--}}
+{{--                                                                  <i class="fa fa-envelope"></i>--}}
+{{--                                                        </span>--}}
+
+
+{{--                                                    @endif--}}
+{{--                                                @else--}}
+{{--                                                    {{$account->full_name}}--}}
+{{--                                                @endif--}}
+
+{{--                                            </span>--}}
+{{--                                            @endif--}}
+
+
+{{--                                            </br>--}}
+{{--                                            @endforeach--}}
+
+{{--                                </td>--}}
 
 
                                 <td>
@@ -164,22 +170,22 @@
                                     @endforeach
                                 </td>
 
-                                <td>
+                                <td class="float-right">
                                     <div class="dropdown dropleft">
                                         <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
                                             <i class="fa fa-universal-access"></i>
                                         </a>
                                         <div class="dropdown-menu">
-                                            @if($connection->requestByAccount($userAccount->id)->first())
-                                                <h5 class="dropdown-header">Pending</h5>
-                                            @endif
+{{--                                            @if($connection->requestByAccount($userAccount->id)->first())--}}
+{{--                                                <h5 class="dropdown-header">Pending</h5>--}}
+{{--                                            @endif--}}
 
-                                            @if($connection->canWrite($userAccount->id))
-                                                <a class="sendMessage dropdown-item" href="javascript:void(0)"
-                                                   data-connectionId="{{$connection->id}}">
-                                                    <span class="text-bold text-black-50">Send message</span>
-                                                </a>
-                                            @endif
+{{--                                            @if($connection->canWrite($userAccount->id))--}}
+{{--                                                <a class="sendMessage dropdown-item" href="javascript:void(0)"--}}
+{{--                                                   data-connectionId="{{$connection->id}}">--}}
+{{--                                                    <span class="text-bold text-black-50">Send message</span>--}}
+{{--                                                </a>--}}
+{{--                                            @endif--}}
                                             <a class=" dropdown-item" target="_blank"
                                                href="https://www.linkedin.com/in/{{$connection->entityUrn}}">
                                                 <span class="text-bold text-black-50">Got to Linkedin</span>
@@ -188,10 +194,12 @@
                                                href="javascript:void(0)">
                                                 <span class="text-bold text-black-50">View info</span>
                                             </a>
+                                            @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))
                                             <a class="dropdown-item"
                                                href="{{route('connections.getSkillsAndPositions',$connection->id)}}">
                                                 <span class="text-bold text-black-50">Get skills/positions</span>
                                             </a>
+                                            @endif
                                             <a class="dropdown-item"
                                                href="{{route('connections.edit',$connection->id)}}">
                                                 <span class="text-bold text-black-50">Edit</span>

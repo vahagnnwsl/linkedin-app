@@ -23,19 +23,22 @@ class GetConversationMessages implements ShouldQueue
     protected User $user;
     protected $proxy;
     protected $messageRepository;
+    protected bool $isLast;
 
     /**
      * GetConversationMessages constructor.
      * @param User $user
      * @param Account $account
      * @param Conversation $conversation
+     * @param bool $isLast
      */
-    public function __construct(User $user,Account $account,Conversation $conversation)
+    public function __construct(User $user,Account $account,Conversation $conversation,bool $isLast = false)
     {
         $this->user = $user;
         $this->account = $account;
         $this->conversation = $conversation;
         $this->conversationService = new ConversationService;
+        $this->isLast = $isLast;
     }
 
     /**
@@ -52,7 +55,7 @@ class GetConversationMessages implements ShouldQueue
 
     public function handle()
     {
-        $this->conversationService->getConversationMessages($this->user,$this->account,$this->conversation);
+        $this->conversationService->getConversationMessages($this->user,$this->account,$this->conversation,$this->isLast);
     }
 
 

@@ -93,6 +93,7 @@ Vue.component('chat-messages', {
                 conversationId: message.conversation_id,
                 text: message.text,
                 lastActivityAt: message.date,
+                date_diff: message.date_diff,
             });
         })
 
@@ -135,6 +136,8 @@ Vue.component('chat-messages', {
                     conversationId: response.data.message.conversation_id,
                     text: response.data.message.text,
                     lastActivityAt: response.data.message.date,
+                    date_diff: response.data.message.date_diff,
+
                 });
                 this.scroll();
             }).catch((e) => {

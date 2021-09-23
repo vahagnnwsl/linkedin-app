@@ -101,10 +101,11 @@ Vue.component('chat-list', {
                 }
             }
         }
+
         this.getConversations()
         const _this = this;
         $(document).on('newMessage', function (e, conversationId) {
-          
+
             setTimeout(function () {
                 document.getElementById('conversation_new_message' + conversationId).style.display = 'block';
             }, 1000);
@@ -115,6 +116,7 @@ Vue.component('chat-list', {
             for (let i in _this.conversations) {
                 if (_this.conversations[i].id === obj.conversationId) {
                     _this.conversations[i].lastActivityAt = obj.lastActivityAt
+                    _this.conversations[i].lastActivityAt_diff = obj.date_diff
                 }
             }
             // _this.sortConversations();

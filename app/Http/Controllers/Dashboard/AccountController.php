@@ -15,11 +15,13 @@ use App\Jobs\SyncRequestsJob;
 use App\Linkedin\Api;
 use App\Linkedin\Responses\Connection;
 use App\Linkedin\Responses\Cookie;
+use App\Linkedin\Responses\Invitation;
 use App\Models\Conversation;
 use App\Repositories\AccountRepository;
 use App\Repositories\ConversationRepository;
 use App\Repositories\MessageRepository;
 use App\Repositories\ProxyRepository;
+use App\Services\ConnectionService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -31,29 +33,47 @@ use Illuminate\Support\Facades\Auth;
 class AccountController extends Controller
 {
 
+    /**
+     * @var AccountRepository
+     */
     protected AccountRepository $accountRepository;
 
+    /**
+     * @var ConversationRepository
+     */
     protected ConversationRepository $conversationRepository;
 
+    /**
+     * @var MessageRepository
+     */
     protected MessageRepository $messageRepository;
 
+    /**
+     * @var ProxyRepository
+     */
     protected ProxyRepository $proxyRepository;
+
+    /**
+     * @var ConnectionService
+     */
+    protected ConnectionService $connectionService;
 
 
     /**
-     * AccountController constructor.
      * @param AccountRepository $accountRepository
      * @param ConversationRepository $conversationRepository
      * @param MessageRepository $messageRepository
      * @param ProxyRepository $proxyRepository
+     * @param ConnectionService $connectionService
      */
 
-    public function __construct(AccountRepository $accountRepository, ConversationRepository $conversationRepository, MessageRepository $messageRepository, ProxyRepository $proxyRepository)
+    public function __construct(AccountRepository $accountRepository, ConversationRepository $conversationRepository, MessageRepository $messageRepository, ProxyRepository $proxyRepository,ConnectionService $connectionService)
     {
         $this->accountRepository = $accountRepository;
         $this->conversationRepository = $conversationRepository;
         $this->messageRepository = $messageRepository;
         $this->proxyRepository = $proxyRepository;
+        $this->connectionService = $connectionService;
     }
 
     /**
@@ -61,8 +81,6 @@ class AccountController extends Controller
      */
     public function index()
     {
-//        $conversation = Conversation::where('entityUrn','2-MzQ4ODFlYTctY2JjMi00NmU4LWExMzMtYTkwOGRiM2ZkZmRiXzAxMw==')->first();
-
         $accounts = $this->accountRepository->paginate();
         return view('dashboard.accounts.index', compact('accounts'));
     }
@@ -76,6 +94,25 @@ class AccountController extends Controller
         return view('dashboard.accounts.create', compact('proxies'));
     }
 
+
+    /**
+     * @param int $id
+     * @return Factory|View|Application
+     */
+    public function getRequests(int $id)
+    {
+        $account = $this->accountRepository->getById($id);
+
+        $resp = Api::profile($account)->getOwnProfile();
+        if ($resp['status'] === 200) {
+          $this->connectionService->getAccountRequest($account);
+        }else{
+            $this->putFlashMessage(false, 'Invalid cookie');
+        }
+        $account->load('requests','requests.connection','requests.connection.accounts','requests.connection.keys');
+
+        return view('dashboard.accounts.requests', compact('account'));
+    }
 
     /**
      * @param int $id
@@ -102,7 +139,7 @@ class AccountController extends Controller
     {
 
         $data = $request->validated();
-        if ($data['cookie_web_str']){
+        if ($data['cookie_web_str']) {
             try {
                 $data['jsessionid'] = Cookie::getJsessionid($data['cookie_web_str']);
             } catch (\Exception $exception) {
@@ -120,7 +157,7 @@ class AccountController extends Controller
         $account = $this->accountRepository->getById($id);
 
 
-        if ($beforeAccount->status === $this->accountRepository::$ACTIVE_STATUS && $account->type === $this->accountRepository::$TYPE_REAL && (int)$data['status']===$this->accountRepository::$INACTIVE_STATUS) {
+        if ($beforeAccount->status === $this->accountRepository::$ACTIVE_STATUS && $account->type === $this->accountRepository::$TYPE_REAL && (int)$data['status'] === $this->accountRepository::$INACTIVE_STATUS) {
             DeletePid::dispatch($account);
         }
 
@@ -205,7 +242,7 @@ class AccountController extends Controller
             $this->putFlashMessage(false, 'Invalid cookie');
             return redirect()->back();
         }
-        GetConversationsLastMessages::dispatch(Auth::user(),$account);
+        GetConversationsLastMessages::dispatch(Auth::user(), $account);
         $this->putFlashMessage(true, 'Your request on process');
         return redirect()->back();
     }

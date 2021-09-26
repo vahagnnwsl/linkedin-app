@@ -90,4 +90,12 @@ class Account extends Model
     }
 
 
+    /**
+     * @return HasMany
+     */
+    public function requests(): HasMany
+    {
+        return $this->hasMany(ConnectionRequest::class);
+    }
+
 }

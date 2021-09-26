@@ -6,10 +6,7 @@ namespace App\Jobs\Connections;
 use App\Linkedin\Api;
 use App\Models\Account;
 use App\Models\Connection;
-use App\Models\Log;
-use App\Models\Proxy;
 use App\Repositories\CompanyRepository;
-use App\Repositories\SkillRepository;
 use App\Repositories\ConnectionRepository;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -17,9 +14,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
 
 class GetConnectionPositions implements ShouldQueue
 {
@@ -28,7 +23,6 @@ class GetConnectionPositions implements ShouldQueue
 
     protected Account $account;
     protected Connection $linkedinUser;
-    protected Proxy $proxy;
     private ConnectionRepository $connectionRepository;
     private CompanyRepository $companyRepository;
 
@@ -41,7 +35,6 @@ class GetConnectionPositions implements ShouldQueue
     {
         $this->account = $account;
         $this->linkedinUser = $connection;
-        $this->proxy = $account->proxy;
         $this->connectionRepository = new ConnectionRepository();
         $this->companyRepository = new CompanyRepository();
     }

@@ -94,9 +94,8 @@ class MessageController extends Controller
             'date' => Carbon::now()->toDateTimeString()
         ];
 
-        $proxy = $account->proxy;
 
-        $response = Response::storeMessage(Api::conversation($account, $proxy)->writeMessage($text, $conversation->entityUrn));
+        $response = Response::storeMessage(Api::conversation($account)->writeMessage($text, $conversation->entityUrn));
 
         if ($response) {
             $data['status'] = $this->messageRepository::SENDED_STATUS;
@@ -118,9 +117,8 @@ class MessageController extends Controller
         $account = Auth::user()->account;
 
         $message = $this->messageRepository->getById($id);
-        $proxy = $account->getRandomFirstProxy();
 
-        $response = Response::storeMessage(Api::conversation($account, $proxy)->writeMessage($message->text, $message->conversation->entityUrn));
+        $response = Response::storeMessage(Api::conversation($account)->writeMessage($message->text, $message->conversation->entityUrn));
 
         if ($response) {
 

@@ -8,58 +8,59 @@ use App\Linkedin\Repositories\Conversation;
 use App\Linkedin\Repositories\Invitation;
 use App\Linkedin\Repositories\Profile;
 use App\Models\Account;
-use App\Models\Proxy;
 
 class Api
 {
 
     /**
      * @param Account $account
-     * @param Proxy|null $proxy
      * @return Auth
      */
-    public static function auth(Account $account, Proxy $proxy = null): Auth
+    public static function auth(Account $account): Auth
     {
-        return (new Auth())->setCredentials($account,$proxy);
+        $proxy = $account->proxy;
+
+        return (new Auth())->setCredentials($account, $proxy);
     }
 
     /**
      * @param Account $account
-     * @param Proxy|null $proxy
      * @return Conversation
      */
-    public static function conversation(Account $account, Proxy $proxy = null): Conversation
+    public static function conversation(Account $account): Conversation
     {
-        return (new Conversation())->setCredentials($account,$proxy);
+        $proxy = $account->proxy;
+
+        return (new Conversation())->setCredentials($account, $proxy);
     }
 
     /**
      * @param Account $account
-     * @param Proxy|null $proxy
      * @return Profile
      */
-    public static function profile(Account $account, Proxy $proxy = null): Profile
+    public static function profile(Account $account): Profile
     {
+        $proxy = $account->proxy;
         return (new Profile())->setCredentials($account, $proxy);
     }
 
     /**
      * @param Account $account
-     * @param Proxy|null $proxy
      * @return Invitation
      */
-    public static function invitation(Account $account, Proxy $proxy = null): Invitation
+    public static function invitation(Account $account): Invitation
     {
-        return (new Invitation())->setCredentials($account,$proxy);
+        $proxy = $account->proxy;
+        return (new Invitation())->setCredentials($account, $proxy);
     }
 
     /**
      * @param Account $account
-     * @param Proxy|null $proxy
      * @return Company
      */
-    public static function company(Account $account, Proxy $proxy = null): Company
+    public static function company(Account $account): Company
     {
+        $proxy = $account->proxy;
         return (new Company())->setCredentials($account, $proxy);
     }
 

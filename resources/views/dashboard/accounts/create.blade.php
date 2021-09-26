@@ -81,16 +81,16 @@
 {{--                                      </span>--}}
 {{--                                            @enderror--}}
 {{--                                        </div>--}}
-{{--                                        <div class="form-group">--}}
-{{--                                            <label for="limit_connection_request">Limit connection request *</label>--}}
-{{--                                            <input type="number" min="1" id="limit_connection_request" class="form-control" name="limit_connection_request" value="{{old('limit_connection_request')}}">--}}
+                                        <div class="form-group">
+                                            <label for="limit_connection_request">Limit connection request *</label>
+                                            <input type="number" min="1" id="limit_connection_request" class="form-control" name="limit_connection_request" value="{{old('limit_connection_request')}}">
 
-{{--                                            @error('limit_connection_request')--}}
-{{--                                            <span class="invalid-feedback d-block" role="alert">--}}
-{{--                                          <strong>{{ $message }}</strong>--}}
-{{--                                      </span>--}}
-{{--                                            @enderror--}}
-{{--                                        </div>--}}
+                                            @error('limit_connection_request')
+                                            <span class="invalid-feedback d-block" role="alert">
+                                          <strong>{{ $message }}</strong>
+                                      </span>
+                                            @enderror
+                                        </div>
 {{--                                        <div class="form-group">--}}
 {{--                                            <label for="limit_conversation">Limit conversation *</label>--}}
 {{--                                            <input type="number" min="1" id="limit_conversation" class="form-control" name="limit_conversation" value="{{old('limit_conversation')}}">--}}

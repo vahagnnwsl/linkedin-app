@@ -33,7 +33,7 @@ class AccountRequest extends FormRequest
             'status'=>'sometimes',
             'type'=>'required',
 //            'limit_conversation'=>'required|integer|min:1|max:150',
-//            'limit_connection_request'=>'required|integer|min:1|max:150',
+            'limit_connection_request'=>'sometimes|integer|min:1|max:150',
 
         ];
 

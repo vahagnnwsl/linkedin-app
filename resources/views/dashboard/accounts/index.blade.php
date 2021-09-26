@@ -144,7 +144,11 @@
                                                title="Conversations List">
                                                 <span class="text-bold text-black-50">Conversations List</span>
                                             </a>
-
+                                            <a class="dropdown-item"
+                                               href="{{route('accounts.requests',$account->id)}}"
+                                               title="Request List">
+                                                <span class="text-bold text-black-50">Request List</span>
+                                            </a>
 
                                             @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))
                                                 <a class="dropdown-item"

@@ -10,11 +10,9 @@ use App\Linkedin\Responses\Response;
 use App\Models\Account;
 use App\Models\Country;
 use App\Models\Key;
-use App\Models\Proxy;
 use App\Repositories\AccountRepository;
 use App\Repositories\ConnectionRepository;
 use App\Repositories\ConnectionRequestRepository;
-use Illuminate\Support\Facades\File;
 
 class ConnectionService
 {
@@ -43,38 +41,35 @@ class ConnectionService
 
     /**
      * @param Account $account
-     * @param Proxy $proxy
      */
-    public function getAccountConnections(Account $account, Proxy $proxy = null)
+    public function getAccountConnections(Account $account)
     {
 
-        $this->recursiveGetAccountConnections($account, $proxy, 0);
+        $this->recursiveGetAccountConnections($account, 0);
     }
 
     /**
      * @param Account $account
-     * @param Proxy|null $proxy
      */
-    public function getAccountConversations(Account $account, Proxy $proxy = null)
+    public function getAccountConversations(Account $account)
     {
 
-        $this->recursiveGetAccountConversations($account, [], $proxy,);
+        $this->recursiveGetAccountConversations($account, []);
     }
 
     /**
      * @param Account $account
-     * @param Proxy|null $proxy
      * @param int $start
      */
-    public function recursiveGetAccountConnections(Account $account, Proxy $proxy = null, int $start = 0)
+    public function recursiveGetAccountConnections(Account $account, int $start = 0)
     {
-        $result = Response::connections(Api::profile($account, $proxy)->getProfileConnections($start));
+        $result = Response::connections(Api::profile($account)->getProfileConnections($start));
 
         if ($result['success']) {
             $this->connectionRepository->updateOrCreateConnections((array)$result['data'], $account->id);
             $start += 50;
             sleep(5);
-            $this->recursiveGetAccountConnections($account, $proxy, $start);
+            $this->recursiveGetAccountConnections($account, $start);
         }
 
     }
@@ -90,9 +85,7 @@ class ConnectionService
     public function recursiveSearch(Key $key, Account $account, Country $country, array $params = [], $start = 0)
     {
 
-        $proxy = $account->proxy;
-
-        $result = (new Profile_2(Api::profile($account, $proxy)->searchPeople($key->name, $country->entityUrn, $params['companyEntityUrn'] ?? null, $start)))();
+        $result = (new Profile_2(Api::profile($account)->searchPeople($key->name, $country->entityUrn, $params['companyEntityUrn'] ?? null, $start)))();
 
         if ($result['success']) {
             $this->connectionRepository->updateOrCreateConnectionsOnTimeKeySearch((array)$result['data'], $account->id, $key->id);
@@ -106,17 +99,16 @@ class ConnectionService
 
     /**
      * @param Account $account
-     * @param Proxy|null $proxy
      * @param array $params
      */
-    public function recursiveGetAccountConversations(Account $account, array $params, Proxy $proxy = null)
+    public function recursiveGetAccountConversations(Account $account, array $params)
     {
 
-        $resp = Response::conversationsConnections(Api::conversation($account, $proxy)->getConversations($params), $account->entityUrn);
+        $resp = Response::conversationsConnections(Api::conversation($account)->getConversations($params), $account->entityUrn);
 
         if ($resp['success']) {
             $this->connectionRepository->updateOrCreateConversation($resp['data'], $account->id);
-            $this->recursiveGetAccountConversations($account, ['createdBefore' => $resp['lastActivityAt']], $proxy);
+            $this->recursiveGetAccountConversations($account, ['createdBefore' => $resp['lastActivityAt']]);
         }
 
     }
@@ -127,14 +119,12 @@ class ConnectionService
      */
     public function getAccountRequest(Account $account)
     {
-        $proxy = $account->getRandomFirstProxy();
 
-        $resp = (new Invitation(Api::invitation($account, $proxy)->getSentInvitations()))();
+        $resp = Invitation::invoke(Api::invitation($account)->getSentInvitations());
 
         if ($resp['success']) {
 
             $ides = [];
-
             foreach ($resp['data'] as $item) {
 
                 $connection = $this->connectionRepository->updateOrCreate(['entityUrn' => $item['connection']['entityUrn']], $item['connection']);
@@ -147,20 +137,13 @@ class ConnectionService
                     'connection_id' => $connection->id,
                     'status' => $this->connectionRequestRepository::$PENDING_STATUS,
                     'message' => $item['message'],
-                    'created_at' => $item['created_at']
+                    'date' => $item['created_at']
                 ]);
 
                 array_push($ides, $request->id);
             }
 
-            $connection_ides = $this->connectionRequestRepository->updateCollectionStatusAndReturnRecordsConnectionIdes($account->id, $ides);
-
-            if (count($connection_ides)) {
-                foreach ($connection_ides as $connection_id) {
-                    $this->accountRepository->attachConnection($account->id, $connection_id);
-
-                }
-            }
+            $this->connectionRequestRepository->deleteAccepted($ides, $account->id);
         }
     }
 }

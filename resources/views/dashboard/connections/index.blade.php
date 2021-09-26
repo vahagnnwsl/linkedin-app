@@ -88,7 +88,9 @@
                             <th>
                                 Keys
                             </th>
-
+                            <th>
+                                Requests
+                            </th>
                             <th class="float-right">
                                 Actions
                             </th>
@@ -113,7 +115,7 @@
                                 </td>
                                 <td>
                                     @foreach($connection->accounts as $ac)
-                                        <span  class="badge badge-secondary">  {{$ac->full_name}}</span>
+                                        <span  class="badge badge-primary">  {{$ac->full_name}}</span>
                                     @endforeach
                                 </td>
 {{--                                <td>--}}
@@ -166,7 +168,12 @@
 
                                 <td>
                                     @foreach($connection->keys as $key)
-                                        <span class="badge badge-secondary">#{{$key->name}}</span>
+                                        <span class="badge badge-success">#{{$key->name}}</span>
+                                    @endforeach
+                                </td>
+                                <td>
+                                    @foreach($connection->requests as $requests)
+                                        <span class="badge badge-warning">{{$requests->account->full_name}}</span>
                                     @endforeach
                                 </td>
 
@@ -204,6 +211,12 @@
                                                href="{{route('connections.edit',$connection->id)}}">
                                                 <span class="text-bold text-black-50">Edit</span>
                                             </a>
+                                            @if(!count($connection->requests) && $connection->accounts()->count() === 0 && $userAccount->getSendRequestCount() < $userAccount->limit_connection_request )
+                                            <a class="dropdown-item setConnectionRequest" data-connectionId="{{$connection->id}}"
+                                               href="javascript:void(0)">
+                                                <span class="text-bold text-black-50">Send request</span>
+                                            </a>
+                                            @endif
                                         </div>
                                     </div>
                                 </td>

@@ -27,4 +27,9 @@ class ConnectionRequestRepository extends Repository
 
         return $this->model()::where('account_id', $account_id)->where('status', self::$ACCEPTED_STATUS)->pluck('connection_id')->toArray();
     }
+
+    public function deleteAccepted(array $ids, int $account_id)
+    {
+        $this->model()::where('account_id', $account_id)->whereNotIn('id', $ids)->delete();
+    }
 }

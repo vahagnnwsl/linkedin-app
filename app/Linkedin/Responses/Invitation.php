@@ -21,19 +21,13 @@ class Invitation
     const KEY_INVITATION = 'com.linkedin.voyager.relationships.invitation.Invitation';
     const KEY_MINI_PROFILE = 'com.linkedin.voyager.identity.shared.MiniProfile';
 
-    public function __construct(array $data)
-    {
-        $this->data = $data;
-    }
 
-
-    public function __invoke(): array
+    public static function invoke(array $data): array
     {
 
-        if ($this->data['success'] && isset($this->data['data']) && count($this->data['data']->included)) {
+        if ($data['success'] && isset($data['data']) && count($data['data']->included)) {
 
-            $data = collect($this->data['data']->included);
-            File::put(storage_path('55.json'), json_encode($data));
+            $data = collect($data['data']->included);
 
             $invitations = $data->filter(function ($invitation) {
                 return $invitation->{self::TYPE_KEY} === self::KEY_INVITATION;
@@ -72,7 +66,7 @@ class Invitation
 
             return [
                 'success' => true,
-                'data' => $invitations->toArray()
+                'data' => [...array_values($invitations->toArray())]
             ];
         }
 

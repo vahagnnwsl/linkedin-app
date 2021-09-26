@@ -6,7 +6,6 @@ namespace App\Jobs\Connections;
 use App\Linkedin\Api;
 use App\Models\Account;
 use App\Models\Connection;
-use App\Models\Proxy;
 use App\Repositories\SkillRepository;
 use App\Repositories\ConnectionRepository;
 use Carbon\Carbon;
@@ -24,7 +23,6 @@ class GetConnectionSkills implements ShouldQueue
 
     protected Account $account;
     protected Connection $linkedinUser;
-    protected  $proxy;
     private SkillRepository $skillRepository;
     private ConnectionRepository $connectionRepository;
 
@@ -37,7 +35,6 @@ class GetConnectionSkills implements ShouldQueue
     {
         $this->account = $account;
         $this->linkedinUser = $connection;
-        $this->proxy = $account->proxy;
         $this->skillRepository = new SkillRepository();
         $this->connectionRepository = new ConnectionRepository();
     }

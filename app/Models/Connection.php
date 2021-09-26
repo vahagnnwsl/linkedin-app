@@ -113,4 +113,13 @@ class Connection extends Model
         return $this->hasMany(Status::class)->orderBy('statuses.created_at','DESC');
     }
 
+    /**
+     * @return HasMany
+     */
+    public function requests(): HasMany
+    {
+        return $this->hasMany(ConnectionRequest::class);
+    }
+
+
 }

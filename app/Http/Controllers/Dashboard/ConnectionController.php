@@ -83,9 +83,9 @@ class ConnectionController extends Controller
         $user = Auth::user();
 
 
-        if ($user->role->name === UserRepository::$ADMIN_ROLE){
+        if ($user->role->name === UserRepository::$ADMIN_ROLE) {
             $enableKeysIds = $this->keyRepository->query()->pluck('keys.id')->toArray();
-        }else{
+        } else {
             $enableKeysIds = Auth::user()->keys()->pluck('keys.id')->toArray();
         }
 
@@ -98,19 +98,19 @@ class ConnectionController extends Controller
 
         $companies = [];
 
-        if ($request->has('companies')){
+        if ($request->has('companies')) {
             $companies = $this->companyRepository->getByIds($request->get('companies'));
         }
 
-        $keys = $this->keyRepository->query()->whereIn('keys.id',$enableKeysIds)->get();
+        $keys = $this->keyRepository->query()->whereIn('keys.id', $enableKeysIds)->get();
         $connections = $this->connectionRepository->filter($data, $user);
-        $connections->load('accounts','keys');
+        $connections->load('accounts', 'keys', 'requests', 'requests.account');
         $categories = $this->connectionRepository->getCategories();
         $accounts = $this->accountRepository->getAll();
 
         $userAccount = Auth::user()->account;
 
-        return view('dashboard.connections.index', compact('connections','accounts','categories', 'keys', 'userAccount', 'relatedAccountsIdes','companies'));
+        return view('dashboard.connections.index', compact('connections', 'accounts', 'categories', 'keys', 'userAccount', 'relatedAccountsIdes', 'companies'));
     }
 
     /**
@@ -127,7 +127,7 @@ class ConnectionController extends Controller
         $categories = $this->categoryRepository->getAll();
         $keys = $this->keyRepository->getAll();
 
-        return view('dashboard.connections.edit', compact('connection', 'categories','keys'));
+        return view('dashboard.connections.edit', compact('connection', 'categories', 'keys'));
     }
 
 
@@ -169,7 +169,7 @@ class ConnectionController extends Controller
         $connection = $this->connectionRepository->getById($id);
         $proxy = $account->getRandomFirstProxy();
 
-        $data = Response::getTrackingId(Api::profile($account, $proxy)->getProfile($connection->entityUrn), $connection->entityUrn);
+        $data = Response::getTrackingId(Api::profile($account)->getProfile($connection->entityUrn), $connection->entityUrn);
 
         return response()->json($data);
     }
@@ -180,28 +180,28 @@ class ConnectionController extends Controller
      * @return JsonResponse
      * @throws GuzzleException
      */
-    public function sendInvitation(Request $request, $id): JsonResponse
+    public function sendRequest(Request $request, $id): JsonResponse
     {
         $account = Auth::user()->account;
 
-        $proxy = $account->getRandomFirstProxy();
-
         $connection = $this->connectionRepository->getById($id);
 
-        $data = Api::invitation($account, $proxy)->sendInvitation($connection->entityUrn, $request->get('trackingId'), $request->get('message'));
+        $data = Response::getTrackingId(Api::profile($account)->getProfile($connection->entityUrn), $connection->entityUrn);
 
-        if ($data['status'] === 201) {
+        if ($data['success']) {
+            $data = Api::invitation($account)->sendInvitation($connection->entityUrn, $data['trackingId'], $request->get('message'));
+            if ($data['status'] === 201) {
+                $this->connectionRequestRepository->store([
+                    'account_id' => $account->id,
+                    'connection_id' => $connection->id,
+                    'user_id' => Auth::id(),
+                    'date' => date('Y-m-d  H:m'),
+                    'message' => $request->get('message')
+                ]);
 
-            $this->connectionRequestRepository->store([
-                'account_id' => $account->id,
-                'connection_id' => $connection->id,
-                'user_id' => Auth::id(),
-                'message' => $request->get('message')
-            ]);
-
-            return response()->json([]);
+                return response()->json([]);
+            }
         }
-
         return response()->json([], 411);
     }
 
@@ -306,7 +306,7 @@ class ConnectionController extends Controller
      */
     public function addKeys(Request $request, int $id): RedirectResponse
     {
-        $this->connectionRepository->addKeys($id,$request->get('keys'));
+        $this->connectionRepository->addKeys($id, $request->get('keys'));
         $this->putFlashMessage(true, 'Successfully added');
         return redirect()->back();
     }

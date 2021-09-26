@@ -38,6 +38,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
         Route::get('/{id}/conversations/sync', [App\Http\Controllers\Dashboard\AccountController::class, 'syncConversations'])->name('accounts.syncConversations')->middleware(['role:Admin|Manager']);
         Route::get('/{id}/connections/sync', [App\Http\Controllers\Dashboard\AccountController::class, 'syncConnections'])->name('accounts.syncConnections')->middleware(['role:Admin|Manager']);
         Route::get('/{id}/requests/sync', [App\Http\Controllers\Dashboard\AccountController::class, 'syncRequests'])->name('accounts.syncRequests')->middleware(['role:Admin|Manager']);
+        Route::get('/{id}/requests', [App\Http\Controllers\Dashboard\AccountController::class, 'getRequests'])->name('accounts.requests');
         Route::get('/{id}/conversations', [App\Http\Controllers\Dashboard\AccountController::class, 'getConversations']);
         Route::get('/{id}/conversation-messages', [App\Http\Controllers\Dashboard\AccountController::class, 'syncConversationsMessages'])->name('accounts.syncConversationsMessages');
         Route::get('/{id}/conversation-last-messages', [App\Http\Controllers\Dashboard\AccountController::class, 'syncConversationsLastMessages'])->name('accounts.syncConversationsLastMessages');
@@ -86,7 +87,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
         Route::post('/{id}/statuses', [App\Http\Controllers\Dashboard\ConnectionController::class, 'addStatus'])->name('connections.addStatus');
         Route::post('/{id}/keys', [App\Http\Controllers\Dashboard\ConnectionController::class, 'addKeys'])->name('connections.addKeys');
         Route::get('/{id}/trackingId', [App\Http\Controllers\Dashboard\ConnectionController::class, 'getTrackingId']);
-        Route::post('/{id}/sendInvitation', [App\Http\Controllers\Dashboard\ConnectionController::class, 'sendInvitation']);
+        Route::post('/{id}/request', [App\Http\Controllers\Dashboard\ConnectionController::class, 'sendRequest']);
         Route::get('/{id}/messages', [App\Http\Controllers\Dashboard\ConnectionController::class, 'getMessages']);
         Route::post('/{id}/createConversation', [App\Http\Controllers\Dashboard\ConnectionController::class, 'createConversation']);
         Route::get('/getSkills', [App\Http\Controllers\Dashboard\ConnectionController::class, 'getSkills'])->name('connections.getSkills');;

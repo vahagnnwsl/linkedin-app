@@ -21,10 +21,10 @@ class CompanyService
     }
 
 
-    public function getInfoFormLinkedinAndUpdate(Company $company, Account $account,Proxy $proxy)
+    public function getInfoFormLinkedinAndUpdate(Company $company, Account $account)
     {
 
-        $resp = (new \App\Linkedin\Responses\Company(Api::company($account->login, $account->password,$proxy)->search($company->name)))();
+        $resp = (new \App\Linkedin\Responses\Company(Api::company($account)->search($company->name)))();
 
         if ($resp['success']) {
 

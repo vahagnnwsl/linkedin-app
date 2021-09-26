@@ -18,9 +18,16 @@ class ConnectionRequest extends Model
         'connection_id',
         'user_id',
         'message',
-        'status'
+        'status',
+        'date',
     ];
 
+    /**
+     * @var string[]
+     */
+    protected $casts = [
+        'date' => 'datetime:Y-m-d H:m',
+    ];
 
 
     /**

@@ -2,7 +2,7 @@
     "private": true,
     "scripts": {
         "pm2-start-linkedin": "sudo pm2 start storage/linkedin/ecosystem.json",
-        "pm2-reload-linkedin": "sudo pm2 reload storage/linkedin/ecosystem.json",
+        "pm2-reload-linkedin": "pm2 reload storage/linkedin/ecosystem.json",
         "pm2-stop-linkedin": "pm2 delete storage/linkedin/ecosystem.json",
         "dev": "npm run development",
         "development": "mix",

@@ -67,7 +67,7 @@ class AccountController extends Controller
      * @param ConnectionService $connectionService
      */
 
-    public function __construct(AccountRepository $accountRepository, ConversationRepository $conversationRepository, MessageRepository $messageRepository, ProxyRepository $proxyRepository,ConnectionService $connectionService)
+    public function __construct(AccountRepository $accountRepository, ConversationRepository $conversationRepository, MessageRepository $messageRepository, ProxyRepository $proxyRepository, ConnectionService $connectionService)
     {
         $this->accountRepository = $accountRepository;
         $this->conversationRepository = $conversationRepository;
@@ -105,11 +105,11 @@ class AccountController extends Controller
 
         $resp = Api::profile($account)->getOwnProfile();
         if ($resp['status'] === 200) {
-          $this->connectionService->getAccountRequest($account);
-        }else{
+            $this->connectionService->getAccountRequest($account);
+        } else {
             $this->putFlashMessage(false, 'Invalid cookie');
         }
-        $account->load('requests','requests.connection','requests.connection.accounts','requests.connection.keys');
+        $account->load('requests', 'requests.connection', 'requests.connection.accounts', 'requests.connection.keys');
 
         return view('dashboard.accounts.requests', compact('account'));
     }
@@ -148,7 +148,6 @@ class AccountController extends Controller
             }
         }
 
-        $beforeAccount = $this->accountRepository->getById($id);
 
 
         $this->accountRepository->update($id, $data);
@@ -157,7 +156,7 @@ class AccountController extends Controller
         $account = $this->accountRepository->getById($id);
 
 
-        if ($beforeAccount->status === $this->accountRepository::$INACTIVE_STATUS) {
+        if (!$data['status'] || (int)$data['status'] === 0) {
             DeletePid::dispatch($account);
         }
 

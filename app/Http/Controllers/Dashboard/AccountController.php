@@ -157,7 +157,7 @@ class AccountController extends Controller
         $account = $this->accountRepository->getById($id);
 
 
-        if ($beforeAccount->status === $this->accountRepository::$ACTIVE_STATUS && $account->type === $this->accountRepository::$TYPE_REAL && (int)$data['status'] === $this->accountRepository::$INACTIVE_STATUS) {
+        if ($beforeAccount->status === $this->accountRepository::$INACTIVE_STATUS) {
             DeletePid::dispatch($account);
         }
 

@@ -78,15 +78,21 @@
                         <div class="form-check">
                             <label class="form-check-label" style="cursor: pointer">
                                 <input type="radio" class="form-check-input" value="last" name="statuses"
-                                       @if(request()->get('search_in') && request()->get('statuses') === 'last') checked @endif
+                                       @if(request()->get('statuses') && request()->get('statuses') === 'last') checked @endif
                                 >Last status
                             </label>
                         </div>
                         <div class="form-check">
                             <label class="form-check-label" style="cursor: pointer">
                                 <input type="radio" class="form-check-input" value="all" name="statuses"
-                                       @if(request()->get('search_in') && request()->get('statuses') === 'all') checked @endif
-                                >All status
+                                       @if(!request()->get('statuses') || (request()->get('statuses') && request()->get('statuses') === 'all')) checked @endif
+                                >All
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label" style="cursor: pointer">
+                                <input type="radio" class="form-check-input" value="clear" name="statuses"  @if(request()->get('statuses') && request()->get('statuses') === 'clear') checked @endif
+                                >Clear
                             </label>
                         </div>
                         <hr/>
@@ -100,8 +106,13 @@
                         <div class="form-check">
                             <label class="form-check-label" style="cursor: pointer">
                                 <input type="radio" class="form-check-input" value="all" name="positions"
-                                       @if(request()->get('positions') && request()->get('positions') === 'all') checked @endif
-                                >All positions
+                                       @if(!request()->get('positions') || (request()->get('positions') && request()->get('positions') === 'all')) checked @endif
+                                >All
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label" style="cursor: pointer">
+                                <input type="radio" class="form-check-input" value="clear" name="positions"  @if(request()->get('positions') &&  request()->get('positions') === 'clear') checked @endif>Clear
                             </label>
                         </div>
                         <hr/>
@@ -122,8 +133,13 @@
                         <div class="form-check">
                             <label class="form-check-label" style="cursor: pointer">
                                 <input type="radio" class="form-check-input" value="all" name="distance"
-                                       @if(request()->get('distance') && request()->get('distance') === 'all') checked @endif
+                                       @if(!request()->get('distance') || (request()->get('distance') && request()->get('distance') === 'all')) checked @endif
                                 >All
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label" style="cursor: pointer">
+                                <input type="radio" class="form-check-input" value="clear" name="distance"  @if(request()->get('distance') && request()->get('distance') === 'clear') checked @endif>Clear
                             </label>
                         </div>
                         <hr/>
@@ -144,8 +160,13 @@
                         <div class="form-check">
                             <label class="form-check-label" style="cursor: pointer">
                                 <input type="radio" class="form-check-input" value="all" name="connections_keys"
-                                       @if(request()->get('connections_keys') &&  request()->get('connections_keys') === 'all') checked @endif
+                                       @if(!request()->get('connections_keys') || (request()->get('connections_keys') &&  request()->get('connections_keys') === 'all')) checked @endif
                                 >All
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label" style="cursor: pointer">
+                                <input type="radio" class="form-check-input" value="clear" name="connections_keys"  @if(request()->get('connections_keys') &&  request()->get('connections_keys') === 'clear') checked @endif>Clear
                             </label>
                         </div>
                     </div>

@@ -92,6 +92,12 @@ class ConnectionController extends Controller
 
         $data = $request->all();
 
+        $data['statuses'] = $data['statuses'] ?? 'all';
+        $data['positions'] = $data['positions'] ?? 'all';
+        $data['distance'] = $data['distance'] ?? 'all';
+        $data['connections_keys'] = $data['connections_keys'] ?? 'all';
+
+
         $relatedAccountsIdes = Auth::user()->unRealAccounts()->pluck('accounts.id')->toArray();
 
         $data['enableKeysIdes'] = $enableKeysIds;

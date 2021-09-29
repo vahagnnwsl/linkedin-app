@@ -165,7 +165,7 @@ class AccountController extends Controller
             }
         }else {
             $result =  shell_exec('pm2 start '. storage_path('linkedin/' . $account->login . '.json'));
-            \Illuminate\Support\Facades\Log::alert($request);
+            \Illuminate\Support\Facades\Log::alert($result);
         }
 
         $this->putFlashMessage(true, 'Successfully updated');

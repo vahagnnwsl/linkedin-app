@@ -162,8 +162,13 @@ class AccountController extends Controller
 
         if ((int)$account->status === 0) {
             StopPid::dispatch($account);
-        }else {
-            StartPid::dispatch($account);
+        } else {
+
+            if (File::exists(storage_path('linkedin/' . $account->login . '.json'))) {
+                StartPid::dispatch($account);
+            } else {
+                $this->putFlashMessage(false, 'Please run command:login-linkedin for this account');
+            }
         }
 
         $this->putFlashMessage(true, 'Successfully updated');

@@ -29,6 +29,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 
 class AccountController extends Controller
 {
@@ -109,6 +110,7 @@ class AccountController extends Controller
         } else {
             $this->putFlashMessage(false, 'Invalid cookie');
         }
+
         $account->load('requests', 'requests.connection', 'requests.connection.accounts', 'requests.connection.keys');
 
         return view('dashboard.accounts.requests', compact('account'));
@@ -126,6 +128,8 @@ class AccountController extends Controller
         if (!$account) {
             abort(404);
         }
+
+
         return view('dashboard.accounts.edit', compact('account', 'proxies'));
     }
 
@@ -148,19 +152,25 @@ class AccountController extends Controller
             }
         }
 
-
-
         $this->accountRepository->update($id, $data);
 
-        $this->putFlashMessage(true, 'Successfully updated');
         $account = $this->accountRepository->getById($id);
+        $result = true;
 
-
-        if (!$data['status'] || (int)$data['status'] === 0) {
-            DeletePid::dispatch($account);
+        if ((int)$account->status === 0) {
+            $resp = json_decode(shell_exec('pm2 id ' .$account->login));
+            if (count($resp) === 1){
+                $result =  shell_exec('pm2 stop '.$account->login);
+            }
+        }else {
+            $result =  shell_exec('pm2 start '. storage_path('linkedin/' . $account->login . '.json'));
         }
 
-        Pm2Ecosystem::dispatch();
+        $this->putFlashMessage(true, 'Successfully updated');
+        if (!$result){
+            $this->putFlashMessage(false, 'Something  went wrong shell_exec');
+        }
+
         return redirect()->route('accounts.edit', $id);
     }
 

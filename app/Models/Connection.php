@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Linkedin\Responses\Messages;
 use App\Repositories\ConnectionRequestRepository;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -63,6 +64,14 @@ class Connection extends Model
     public function conversations(): HasMany
     {
         return $this->hasMany(Conversation::class, 'connection_id');
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function messages(): HasMany
+    {
+        return $this->hasMany(Message::class, 'connection_id');
     }
 
     /**

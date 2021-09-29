@@ -23,9 +23,9 @@ const eventSourceInitDict = {
 var es = new EventSource('https://realtime.www.linkedin.com/realtime/connect', eventSourceInitDict);
 
 es.onmessage = result => {
-    const data = JSON.parse(result.data);
-    console.log(data)
+    console.log(cookie);
 
+    const data = JSON.parse(result.data);
     if (data.hasOwnProperty(key)) {
 
         var eventContent = data[key];

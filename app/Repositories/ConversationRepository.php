@@ -60,10 +60,10 @@ class ConversationRepository extends Repository
      * @param string|null $distance
      * @return mixed
      */
-    public function getByAccountId(int $account_id, int $start = 0, string $key = null, ?string $distance = 'all')
+    public function getByAccountId(int $account_id, int $start = 0, string $key = null, ?string $distance = 'all', ?string $condition = 'all')
     {
 
-        $take = $key ? 200 : 10;
+        $take = $key ? 400 : 10;
         return $this->model()::where('account_id', $account_id)->whereNotNull('connection_id')
             ->when($key, function ($query) use ($key, $distance) {
 
@@ -95,6 +95,16 @@ class ConversationRepository extends Repository
                         });
                     });
                 });
+            })->when($distance, function ($query) use ($condition) {
+                if ($condition === 'not_answered') {
+                    $query->whereHas('connection', function ($q) {
+                        $q->doesnthave('messages');
+                    })->whereHas('messages');
+                }elseif ($condition === 'answered'){
+                    $query->whereHas('connection', function ($q) {
+                        $q->whereHas('messages');
+                    });
+                }
             })->skip($start)->take($take)->orderByDesc('lastActivityAt')->get();
     }
 

@@ -25,6 +25,25 @@ Vue.component('chat-list', {
                                        v-model="distance">All
                             </label>
                         </div>
+                        <hr/>
+                        <div class="form-check-inline">
+                            <label class="form-check-label">
+                                <input type="radio" name="condition" class="form-check-input" value="answered"
+                                       v-model="condition">Answered
+                            </label>
+                        </div>
+                        <div class="form-check-inline">
+                            <label class="form-check-label">
+                                <input type="radio" name="condition" class="form-check-input" value="not_answered"
+                                       v-model="condition">Not Answered
+                            </label>
+                        </div>
+                        <div class="form-check-inline">
+                            <label class="form-check-label">
+                                <input type="radio" name="condition" class="form-check-input" value="all"
+                                       v-model="condition">All
+                            </label>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -78,6 +97,12 @@ Vue.component('chat-list', {
             start: 0,
             searchKey: '',
             distance: 'all',
+            condition: 'all',
+        }
+    },
+    watch: {
+        condition: function () {
+            this.getConversations(true)
         }
     },
     computed: {
@@ -138,9 +163,14 @@ Vue.component('chat-list', {
         },
         getConversations: function (searchable = false) {
 
-            let queryParams = this.searchKey ? '&distance=' + this.distance + '&key=' + this.searchKey : '';
+            let queryParams = '&distance=' + this.distance + '&condition=' + this.condition;
 
-            this.$http.get(`/dashboard/conversations/account/${this.account.id}?start=${this.start}${queryParams ? queryParams : ''}`)
+
+
+            queryParams = this.searchKey ? queryParams + '&key=' + this.searchKey : queryParams + '';
+
+
+            this.$http.get(`/dashboard/conversations/account/${this.account.id}?start=${this.start}${queryParams}`)
                 .then((response) => {
 
                     if (searchable) {
@@ -149,9 +179,14 @@ Vue.component('chat-list', {
 
                     this.conversations.push(...response.data.conversations)
 
-                    if (response.data.conversations.length === 0) {
+                    if (this.searchKey){
                         this.loadMoreConversation = false;
+                    }else {
+                        if (response.data.conversations.length === 0 || response.data.conversations.length < 10) {
+                            this.loadMoreConversation = false;
+                        }
                     }
+
                 })
         },
         getConversation: function (entityUrn) {

@@ -36,7 +36,7 @@ class DeletePid implements ShouldQueue
      */
     public function handle()
     {
-        shell_exec('pm2 delete '.$this->account->login);
+        shell_exec('pm2 stop '.$this->account->login);
     }
 
     /**

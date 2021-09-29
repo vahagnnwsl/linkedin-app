@@ -8,6 +8,7 @@ use App\Linkedin\Responses\Connection;
 use App\Models\Account;
 use App\Linkedin\Helper;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
 use Nesk\Puphpeteer\Puppeteer;
 
 class PuppeteerLogin extends Command
@@ -135,6 +136,35 @@ class PuppeteerLogin extends Command
         if ($resp['status'] === 200) {
             $resp = Connection::parseSingle((array)$resp['data']);
             $account->update($resp);
+
+            if (!File::exists(storage_path('linkedin'))) {
+                File::makeDirectory(storage_path('linkedin'));
+            }
+
+            if (!File::exists(storage_path('linkedin/ecosystem.json'))) {
+                File::put(storage_path('linkedin/ecosystem.json'), null);
+            }
+
+            $app = [
+                'name' => $account->login,
+                'script' => app_path('Linkedin/Node/index.js'),
+                'watch' => true,
+                'max_memory_restart' => '200M',
+                'env' => [
+                    'COOKIE' => [
+                        'str' => $account->cookie_socket_str,
+                        'crfToken' => $account->jsessionid,
+                    ],
+                    'ACCOUNT_LOGIN' => $account->login,
+                    'ACCOUNT_ID' => $account->id,
+                    'APP_URL' => env('APP_URL')
+                ],
+            ];
+
+
+            File::put(storage_path('linkedin/' . $account->login . '.json'), json_encode($app));
+
+            shell_exec('pm2 start ' . storage_path('linkedin/' . $account->login . '.json'));
         }
         $browser->close();
 

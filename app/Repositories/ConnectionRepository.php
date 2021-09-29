@@ -70,7 +70,14 @@ class ConnectionRepository extends Repository
     public function filter(array $requestData, User $user)
     {
 
-        return $this->model()::when(isset($requestData['key']), function ($query) use ($requestData) {
+
+
+//        $c = Connection::withCount('conversations')
+//        ->having('conversations_count', '>', 0)
+//        ->toSql();
+//        dd($c);
+
+        $a =  $this->model()::when(isset($requestData['key']), function ($query) use ($requestData) {
             $query
                 ->when(isset($requestData['search_in']) && count($requestData['search_in']) > 0 && in_array('occupation', $requestData['search_in']), function ($q) use ($requestData) {
                     $q->where('occupation', 'LIKE', "%" . $requestData['key'] . "%");
@@ -135,6 +142,22 @@ class ConnectionRepository extends Repository
             } else if ($requestData['connections_keys'] === 'no_keys') {
                 $query->doesnthave('keys');
             }
+        })->when(isset($requestData['contact']), function ($query) use ($requestData) {
+            if ($requestData['contact'] === 'not_answered') {
+                $query->whereHas('conversations',function ($subQuery){
+                    $subQuery->whereHas('messages');
+                })->doesnthave('messages');
+            } else if ($requestData['contact'] === 'answered') {
+                $query->whereHas('conversations',function ($subQuery){
+                    $subQuery->whereHas('messages');
+                })->whereHas('messages');;
+            } else if ($requestData['contact'] === 'month') {
+                $query->whereHas('conversations',function ($subQuery) {
+                    $subQuery->whereHas('messages')->where('conversations.lastActivityAt','<=', date('Y-m-d',strtotime('-1 months')));
+                });
+            }else if ($requestData['contact'] === 'request') {
+                $query->whereHas('requests');
+            }
         })->when($user->role->name !== UserRepository::$ADMIN_ROLE, function ($query) use ($requestData, $user) {
             $query->where(function ($subQuery) use ($requestData) {
                 $subQuery->whereHas('keys', function ($q) use ($requestData) {
@@ -153,7 +176,9 @@ class ConnectionRepository extends Repository
                     });
                 });
             });
-        })->orderby('id', 'desc')->paginate(20);
+        })->orderby('id', 'desc');
+
+        return $a->paginate(20);
     }
 
     /**

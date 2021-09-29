@@ -39,7 +39,7 @@ class StopPid extends Command
     {
         $pid = $this->option('pid');
 
-        shell_exec('pm2 stop '.$pid);
+        shell_exec('sudo pm2 stop '.$pid);
 
         return 1;
     }

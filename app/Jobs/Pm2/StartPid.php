@@ -36,7 +36,7 @@ class StartPid implements ShouldQueue
      */
     public function handle()
     {
-        shell_exec('pm2 start '.$this->account->login);
+        shell_exec('sudo pm2 start ' . storage_path('linkedin/' . $this->account->login . '.json'));
     }
 
     /**

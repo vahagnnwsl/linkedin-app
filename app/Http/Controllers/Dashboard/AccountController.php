@@ -29,6 +29,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 
@@ -156,21 +157,15 @@ class AccountController extends Controller
         $this->accountRepository->update($id, $data);
 
         $account = $this->accountRepository->getById($id);
-        $result = true;
 
         if ((int)$account->status === 0) {
-            $resp = json_decode(shell_exec('pm2 id ' .$account->login));
-            if (is_array($resp) && count($resp) === 1){
-                $result =  shell_exec('pm2 stop '.$account->login);
-            }
+            Artisan::call('command:StopPid --pid='.$account->login);
         }else {
-            shell_exec('pm2 start ' . storage_path('linkedin/' . $account->login . '.json'));
+         Artisan::call('command:StartPid --pid='.$account->login);
         }
 
         $this->putFlashMessage(true, 'Successfully updated');
-        if (!$result){
-            $this->putFlashMessage(false, 'Something  went wrong shell_exec');
-        }
+
 
         return redirect()->route('accounts.edit', $id);
     }

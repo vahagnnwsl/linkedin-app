@@ -10,7 +10,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class DeletePid implements ShouldQueue
+class StartPid implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -36,7 +36,7 @@ class DeletePid implements ShouldQueue
      */
     public function handle()
     {
-        shell_exec('pm2 stop '.$this->account->login);
+        shell_exec('pm2 start '.$this->account->login);
     }
 
     /**

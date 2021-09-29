@@ -11,6 +11,8 @@ use App\Jobs\Account\Pm2Ecosystem;
 use App\Jobs\Conversations\GetConversationsLastMessages;
 use App\Jobs\Conversations\GetConversationsMessages;
 use App\Jobs\Pm2\DeletePid;
+use App\Jobs\Pm2\StartPid;
+use App\Jobs\Pm2\StopPid;
 use App\Jobs\SyncRequestsJob;
 use App\Linkedin\Api;
 use App\Linkedin\Responses\Connection;
@@ -159,9 +161,9 @@ class AccountController extends Controller
         $account = $this->accountRepository->getById($id);
 
         if ((int)$account->status === 0) {
-            Artisan::call('command:StopPid --pid='.$account->login);
+            StopPid::dispatch($account);
         }else {
-         Artisan::call('command:StartPid --pid='.$account->login);
+            StartPid::dispatch($account);
         }
 
         $this->putFlashMessage(true, 'Successfully updated');

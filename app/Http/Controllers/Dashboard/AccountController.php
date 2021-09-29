@@ -17,6 +17,7 @@ use App\Linkedin\Responses\Connection;
 use App\Linkedin\Responses\Cookie;
 use App\Linkedin\Responses\Invitation;
 use App\Models\Conversation;
+use App\Models\Log;
 use App\Repositories\AccountRepository;
 use App\Repositories\ConversationRepository;
 use App\Repositories\MessageRepository;
@@ -164,6 +165,7 @@ class AccountController extends Controller
             }
         }else {
             $result =  shell_exec('pm2 start '. storage_path('linkedin/' . $account->login . '.json'));
+            \Illuminate\Support\Facades\Log::alert($request);
         }
 
         $this->putFlashMessage(true, 'Successfully updated');

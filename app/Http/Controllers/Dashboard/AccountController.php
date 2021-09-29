@@ -159,7 +159,7 @@ class AccountController extends Controller
 
         if ((int)$account->status === 0) {
             $resp = json_decode(shell_exec('pm2 id ' .$account->login));
-            if (count($resp) === 1){
+            if (is_array($resp) && count($resp) === 1){
                 $result =  shell_exec('pm2 stop '.$account->login);
             }
         }else {

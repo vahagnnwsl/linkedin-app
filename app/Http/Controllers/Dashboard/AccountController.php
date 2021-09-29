@@ -21,6 +21,7 @@ use App\Linkedin\Responses\Invitation;
 use App\Models\Conversation;
 use App\Models\Log;
 use App\Repositories\AccountRepository;
+use App\Repositories\ConnectionRequestRepository;
 use App\Repositories\ConversationRepository;
 use App\Repositories\MessageRepository;
 use App\Repositories\ProxyRepository;
@@ -63,6 +64,11 @@ class AccountController extends Controller
      */
     protected ConnectionService $connectionService;
 
+    /**
+     * @var ConnectionRequestRepository
+     */
+    protected $connectionRequestRepository;
+
 
     /**
      * @param AccountRepository $accountRepository
@@ -72,13 +78,14 @@ class AccountController extends Controller
      * @param ConnectionService $connectionService
      */
 
-    public function __construct(AccountRepository $accountRepository, ConversationRepository $conversationRepository, MessageRepository $messageRepository, ProxyRepository $proxyRepository, ConnectionService $connectionService)
+    public function __construct(AccountRepository $accountRepository, ConversationRepository $conversationRepository, MessageRepository $messageRepository, ProxyRepository $proxyRepository, ConnectionService $connectionService, ConnectionRequestRepository $connectionRequestRepository)
     {
         $this->accountRepository = $accountRepository;
         $this->conversationRepository = $conversationRepository;
         $this->messageRepository = $messageRepository;
         $this->proxyRepository = $proxyRepository;
         $this->connectionService = $connectionService;
+        $this->connectionRequestRepository = $connectionRequestRepository;
     }
 
     /**
@@ -115,9 +122,10 @@ class AccountController extends Controller
             $this->putFlashMessage(false, 'Invalid cookie');
         }
 
-        $account->load('requests', 'requests.connection', 'requests.connection.accounts', 'requests.connection.keys');
+        $requests = $this->connectionRequestRepository->model()::where('connection_requests.account_id', $id)->paginate(20);
+        $requests->load('connection', 'connection.accounts', 'connection.keys');
 
-        return view('dashboard.accounts.requests', compact('account'));
+        return view('dashboard.accounts.requests', compact('account', 'requests'));
     }
 
     /**

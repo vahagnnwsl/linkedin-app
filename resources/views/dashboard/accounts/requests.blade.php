@@ -69,39 +69,39 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                @foreach($account->requests as $requests)
+                                @foreach($requests as $request)
                                     <tr>
                                         <td>
-                                            {{$requests->connection->id}}
+                                            {{$request->connection->id}}
                                         </td>
                                         <td>
-                                            <img class="table-avatar" src="{{$requests->connection->image}}"
+                                            <img class="table-avatar" src="{{$request->connection->image}}"
                                                  onerror="this.src='/dist/img/lin_def_image.svg'" width="50">
                                         </td>
                                         <td>
-                                            {{$requests->connection->fullName}}
+                                            {{$request->connection->fullName}}
                                         </td>
 
                                         <td>
-                                            {{$requests->connection->occupation}}
+                                            {{$request->connection->occupation}}
                                         </td>
                                         <td>
-                                            {{$requests->date->diffForHumans()}}
+                                            {{$request->date->diffForHumans()}}
                                         </td>
                                         <td>
-                                            @foreach($requests->connection->accounts as $ac)
+                                            @foreach($request->connection->accounts as $ac)
                                                 <span  class="badge badge-secondary">  {{$ac->full_name}}</span>
                                             @endforeach
                                         </td>
 
 
                                         <td>
-                                            @foreach($requests->connection->keys as $key)
+                                            @foreach($request->connection->keys as $key)
                                                 <span class="badge badge-secondary">#{{$key->name}}</span>
                                             @endforeach
                                         </td>
                                         <td>
-                                            {{$requests->message}}
+                                            {{$request->message}}
                                         </td>
                                         <td class="float-right">
                                             <div class="dropdown dropleft">
@@ -110,21 +110,21 @@
                                                 </a>
                                                 <div class="dropdown-menu">
                                                     <a class=" dropdown-item" target="_blank"
-                                                       href="https://www.linkedin.com/in/{{$requests->connection->entityUrn}}">
+                                                       href="https://www.linkedin.com/in/{{$request->connection->entityUrn}}">
                                                         <span class="text-bold text-black-50">Got to Linkedin</span>
                                                     </a>
-                                                    <a class="getInfo dropdown-item" data-connectionId="{{$requests->connection->id}}"
+                                                    <a class="getInfo dropdown-item" data-connectionId="{{$request->connection->id}}"
                                                        href="javascript:void(0)">
                                                         <span class="text-bold text-black-50">View info</span>
                                                     </a>
                                                     @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))
                                                         <a class="dropdown-item"
-                                                           href="{{route('connections.getSkillsAndPositions',$requests->connection->id)}}">
+                                                           href="{{route('connections.getSkillsAndPositions',$request->connection->id)}}">
                                                             <span class="text-bold text-black-50">Get skills/positions</span>
                                                         </a>
                                                     @endif
                                                     <a class="dropdown-item"
-                                                       href="{{route('connections.edit',$requests->connection->id)}}">
+                                                       href="{{route('connections.edit',$request->connection->id)}}">
                                                         <span class="text-bold text-black-50">Edit</span>
                                                     </a>
                                                 </div>
@@ -140,6 +140,8 @@
                         </div>
                     </div>
                 </div>
+
+                {!! $requests->links('vendor.pagination') !!}
             </div>
         </div>
         <connection-info></connection-info>

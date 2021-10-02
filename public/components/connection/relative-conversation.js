@@ -1,4 +1,4 @@
-Vue.component('linkedin-conversation', {
+Vue.component('relative-conversation', {
 
     template: `
         <div class="modal" id="conversationModal">
@@ -76,7 +76,6 @@ Vue.component('linkedin-conversation', {
     mounted() {
         var _this = this;
         $(document).on('getConversationMessages', function (e, id) {
-            console.log(id)
             $('#conversationModal').modal('show')
             _this.conversation_id = id;
             _this.start = 0;

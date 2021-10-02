@@ -17,7 +17,7 @@ class User extends Authenticatable
      *
      * @var array
      */
-    protected  $fillable = [
+    protected $fillable = [
         'first_name',
         'last_name',
         'status',
@@ -73,7 +73,6 @@ class User extends Authenticatable
     }
 
 
-
     /**
      * @return BelongsToMany
      */
@@ -104,5 +103,10 @@ class User extends Authenticatable
     public function getRoleAttribute()
     {
         return $this->roles()->first();
+    }
+
+    public function getAvailableConversationsAttribute()
+    {
+       return $this->unRealAccounts()->pluck('accounts.id')->toArray();
     }
 }

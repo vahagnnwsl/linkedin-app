@@ -4,7 +4,7 @@
     <script src="/components/connection/request.js"></script>
     <script src="/components/connection/message.js"></script>
     <script src="/components/connection/info.js"></script>
-    <script src="/components/linkedin/conversation.js"></script>
+    <script src="/components/connection/relative-conversation.js"></script>
 
     <script>
         $(document).on("click", ".setConnectionRequest", function () {
@@ -16,7 +16,7 @@
         });
 
         $(document).on("click", ".getConversationMessages", function () {
-            $(document).trigger('getConversationMessages', $(this).attr('data-conversdationId'));
+            $(document).trigger('getConversationMessages', $(this).attr('data-conversationId'));
         });
 
         $(document).on("click", ".getInfo", function () {
@@ -45,24 +45,24 @@
 
                 <div class="card-body text-right">
                     @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))
-                    <div class="btn-group">
-                        <a href="{{route('connections.getSkills')}}"
-                           class="btn btn-outline-info"
-                           onclick="return confirm(&quot;Run job?&quot;)"
-                        >
-                            Get Each Skills
-                        </a>
-                        <a href="{{route('connections.getPositions')}}" class="btn btn-outline-info"
-                           onclick="return confirm(&quot;Run job?&quot;)"
-                        >
-                            Get Each Positions
-                        </a>
-                        <a href="{{route('connections.calcExperience')}}" class="btn btn-outline-info"
-                           onclick="return confirm(&quot;Run job?&quot;)"
-                        >
-                            Calculate experience
-                        </a>
-                    </div>
+                        <div class="btn-group">
+                            <a href="{{route('connections.getSkills')}}"
+                               class="btn btn-outline-info"
+                               onclick="return confirm(&quot;Run job?&quot;)"
+                            >
+                                Get Each Skills
+                            </a>
+                            <a href="{{route('connections.getPositions')}}" class="btn btn-outline-info"
+                               onclick="return confirm(&quot;Run job?&quot;)"
+                            >
+                                Get Each Positions
+                            </a>
+                            <a href="{{route('connections.calcExperience')}}" class="btn btn-outline-info"
+                               onclick="return confirm(&quot;Run job?&quot;)"
+                            >
+                                Calculate experience
+                            </a>
+                        </div>
                     @endif
                 </div>
                 <div class="card-body p-0">
@@ -91,6 +91,9 @@
                             <th>
                                 Requests
                             </th>
+                            <th>
+
+                            </th>
                             <th class="float-right">
                                 Actions
                             </th>
@@ -115,56 +118,9 @@
                                 </td>
                                 <td>
                                     @foreach($connection->accounts as $ac)
-                                        <span  class="badge badge-primary">  {{$ac->full_name}}</span>
+                                        <span class="badge badge-primary">  {{$ac->full_name}}</span>
                                     @endforeach
                                 </td>
-{{--                                <td>--}}
-
-{{--                                    @foreach($connection->accounts as $account)--}}
-{{--                                        @if($account->type === 2)--}}
-{{--                                            <span class="text-info text-bold">--}}
-{{--                                               {{$account->full_name}}--}}
-
-{{--                                                @if(in_array($account->id,$relatedAccountsIdes) && $relConversation = (new \App\Repositories\ConversationRepository())->getConnectionConversationByConnectionAndAccount($connection->id,$account->id))--}}
-{{--                                                    @if($relConversation)--}}
-{{--                                                        <span class="badge badge-info getConversationMessages"--}}
-{{--                                                              style="cursor: pointer"--}}
-{{--                                                              data-conversdationId="{{$relConversation->id}}"--}}
-{{--                                                              title="{{$relConversation->account->full_name}}">--}}
-{{--                                                              <i class="fa fa-envelope"></i>--}}
-{{--                                                        </span>--}}
-{{--                                                    @endif--}}
-{{--                                                @endif--}}
-{{--                                           </span>--}}
-
-{{--                                        @else--}}
-{{--                                            <span class="text-blue text-bold">--}}
-{{--                                                @if($userAccount->id === $account->id)--}}
-{{--                                                    YOUR'S--}}
-
-{{--                                                    @if($selfConversation = (new \App\Repositories\ConversationRepository())->getConnectionConversationByConnectionAndAccount($connection->id,$account->id))--}}
-
-{{--                                                        <span class="badge badge-primary getConversationMessages"--}}
-{{--                                                              data-conversdationId="{{$selfConversation->id}}"--}}
-{{--                                                              title="{{$selfConversation->account->full_name}}">--}}
-{{--                                                                  <i class="fa fa-envelope"></i>--}}
-{{--                                                        </span>--}}
-
-
-{{--                                                    @endif--}}
-{{--                                                @else--}}
-{{--                                                    {{$account->full_name}}--}}
-{{--                                                @endif--}}
-
-{{--                                            </span>--}}
-{{--                                            @endif--}}
-
-
-{{--                                            </br>--}}
-{{--                                            @endforeach--}}
-
-{{--                                </td>--}}
-
 
                                 <td>
                                     @foreach($connection->keys as $key)
@@ -176,6 +132,17 @@
                                         <span class="badge badge-warning">{{$requests->account->full_name}}</span>
                                     @endforeach
                                 </td>
+                                <td>
+                                    @foreach(\Illuminate\Support\Facades\Auth::user()->unRealAccounts as $unRealAccounts)
+                                        @if(\App\Models\Conversation::where(['connection_id'=>$connection->id,'account_id'=>$unRealAccounts->id])->exists())
+                                            <a>
+                                                <span style="cursor: pointer" class="fa fa-envelope getConversationMessages" title="{{$unRealAccounts->full_name}}" data-conversationId="{{\App\Models\Conversation::where(['connection_id'=>$connection->id,'account_id'=>$unRealAccounts->id])->first()->entityUrn}}"></span>
+                                            </a>
+                                            <br/>
+                                        @endif
+
+                                    @endforeach
+                                </td>
 
                                 <td class="float-right">
                                     <div class="dropdown dropleft">
@@ -183,16 +150,8 @@
                                             <i class="fa fa-universal-access"></i>
                                         </a>
                                         <div class="dropdown-menu">
-{{--                                            @if($connection->requestByAccount($userAccount->id)->first())--}}
-{{--                                                <h5 class="dropdown-header">Pending</h5>--}}
-{{--                                            @endif--}}
 
-{{--                                            @if($connection->canWrite($userAccount->id))--}}
-{{--                                                <a class="sendMessage dropdown-item" href="javascript:void(0)"--}}
-{{--                                                   data-connectionId="{{$connection->id}}">--}}
-{{--                                                    <span class="text-bold text-black-50">Send message</span>--}}
-{{--                                                </a>--}}
-{{--                                            @endif--}}
+
                                             <a class=" dropdown-item" target="_blank"
                                                href="https://www.linkedin.com/in/{{$connection->entityUrn}}">
                                                 <span class="text-bold text-black-50">Got to Linkedin</span>
@@ -202,20 +161,21 @@
                                                 <span class="text-bold text-black-50">View info</span>
                                             </a>
                                             @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))
-                                            <a class="dropdown-item"
-                                               href="{{route('connections.getSkillsAndPositions',$connection->id)}}">
-                                                <span class="text-bold text-black-50">Get skills/positions</span>
-                                            </a>
+                                                <a class="dropdown-item"
+                                                   href="{{route('connections.getSkillsAndPositions',$connection->id)}}">
+                                                    <span class="text-bold text-black-50">Get skills/positions</span>
+                                                </a>
                                             @endif
                                             <a class="dropdown-item"
                                                href="{{route('connections.edit',$connection->id)}}">
                                                 <span class="text-bold text-black-50">Edit</span>
                                             </a>
                                             @if(!count($connection->requests) && $connection->accounts()->count() === 0 && $userAccount->getSendRequestCount() < $userAccount->limit_connection_request )
-                                            <a class="dropdown-item setConnectionRequest" data-connectionId="{{$connection->id}}"
-                                               href="javascript:void(0)">
-                                                <span class="text-bold text-black-50">Send request</span>
-                                            </a>
+                                                <a class="dropdown-item setConnectionRequest"
+                                                   data-connectionId="{{$connection->id}}"
+                                                   href="javascript:void(0)">
+                                                    <span class="text-bold text-black-50">Send request</span>
+                                                </a>
                                             @endif
                                         </div>
                                     </div>
@@ -233,7 +193,7 @@
 
                 <send-connection-request></send-connection-request>
                 <send-message></send-message>
-                <linkedin-conversation></linkedin-conversation>
+                <relative-conversation></relative-conversation>
                 <connection-info></connection-info>
 
             </div>

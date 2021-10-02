@@ -83,6 +83,7 @@ class ConnectionController extends Controller
         $user = Auth::user();
 
 
+//        dd($user->unRealAccounts);
         if ($user->role->name === UserRepository::$ADMIN_ROLE) {
             $enableKeysIds = $this->keyRepository->query()->pluck('keys.id')->toArray();
         } else {

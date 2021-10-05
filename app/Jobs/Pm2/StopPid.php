@@ -9,6 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class StopPid implements ShouldQueue
 {
@@ -36,7 +37,14 @@ class StopPid implements ShouldQueue
      */
     public function handle()
     {
-        shell_exec('pm2 stop '.$this->account->login);
+
+
+        $resp = shell_exec('sudo pm2 stop '.$this->account->login);;
+        Log::alert($this->account->login,[
+            'stop'=>$resp
+        ]);
+
+
     }
 
     /**

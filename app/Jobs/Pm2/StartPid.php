@@ -9,6 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class StartPid implements ShouldQueue
 {
@@ -36,7 +37,11 @@ class StartPid implements ShouldQueue
      */
     public function handle()
     {
-        shell_exec('sudo pm2 start ' . storage_path('linkedin/' . $this->account->login . '.json'));
+        $resp = shell_exec('sudo pm2 start ' . storage_path('linkedin/' . $this->account->login . '.json'));
+        Log::alert($this->account->login,[
+            'start'=>$resp
+        ]);
+
     }
 
     /**

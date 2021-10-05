@@ -39,7 +39,7 @@ class StopPid implements ShouldQueue
     {
 
 
-        $resp = shell_exec('sudo pm2 stop '.$this->account->login);;
+        $resp = shell_exec('pm2 stop '.$this->account->login);;
         Log::alert($this->account->login,[
             'stop'=>$resp
         ]);

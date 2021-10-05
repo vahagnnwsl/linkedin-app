@@ -47,11 +47,11 @@ class StopPid implements ShouldQueue
             $time2 = time();
             Log::alert($this->account->login,[
                 'stop'=>$resp,
-                'time'=>  dump($time2-$time1)
+                'time'=> $time2-$time1
             ]);
         }catch (\Exception $exception){
             Log::info($this->account->login,[
-                'time'=>  dump(time()-$time1),
+                'time'=> time()-$time1,
                 'error'=>$exception->getMessage()
             ]);
         }

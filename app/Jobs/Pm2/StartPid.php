@@ -48,7 +48,7 @@ class StartPid implements ShouldQueue
             ]);
         }catch (\Exception $exception){
             Log::info($this->account->login,[
-                'time'=>  dump(time()-$time1),
+                'time'=>  time()-$time1,
                 'error'=>$exception->getMessage()
             ]);
         }

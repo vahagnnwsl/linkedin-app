@@ -10,6 +10,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use mysql_xdevapi\Exception;
 
 class StopPid implements ShouldQueue
 {
@@ -39,15 +40,27 @@ class StopPid implements ShouldQueue
     {
 
 
-        $resp = shell_exec('pm2 stop '.$this->account->login);;
-        Log::alert($this->account->login,[
-            'stop'=>$resp
-        ]);
+        $time1 = time();
+
+        try {
+            $resp = shell_exec('pm2 stop '.$this->account->login);;
+            $time2 = time();
+            Log::alert($this->account->login,[
+                'stop'=>$resp,
+                'time'=>  dump($time2-$time1)
+            ]);
+        }catch (\Exception $exception){
+            Log::info($this->account->login,[
+                'time'=>  dump(time()-$time1),
+                'error'=>$exception->getMessage()
+            ]);
+        }
+
 
 
     }
 
-    /**php artisan laravel-queue-worker.yml
+    /**
      * @return array
      */
     public function displayAttribute(): array

@@ -47,7 +47,7 @@ class StopPid implements ShouldQueue
 
     }
 
-    /**
+    /**php artisan laravel-queue-worker.yml
      * @return array
      */
     public function displayAttribute(): array

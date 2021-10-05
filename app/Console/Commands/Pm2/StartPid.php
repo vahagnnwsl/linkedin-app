@@ -39,8 +39,9 @@ class StartPid extends Command
     {
         $pid = $this->option('pid');
 
-        shell_exec('sudo pm2 start ' . storage_path('linkedin/' . $pid . '.json'));
+        $resp = shell_exec('pm2 start ' . storage_path('linkedin/' . $pid . '.json'));
 
+        dump($resp);
         return 1;
     }
 }

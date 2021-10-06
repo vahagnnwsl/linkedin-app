@@ -160,14 +160,12 @@ class PuppeteerLogin extends Command
                     'APP_URL' => env('APP_URL')
                 ],
             ];
-            dump(env('APP_URL'),'APP_URL');
 
 
             File::put(storage_path('linkedin/' . $account->login . '.json'), json_encode($app));
 
             shell_exec('pm2 start ' . storage_path('linkedin/' . $account->login . '.json'));
         }
-        dump(env('APP_URL'),'APP_URL');
 
         $browser->close();
 

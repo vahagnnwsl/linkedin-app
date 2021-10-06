@@ -182,7 +182,7 @@
                             <label class="form-check-label" style="cursor: pointer">
                                 <input type="radio" class="form-check-input" value="no_accounts" name="distance"
                                        @if(request()->get('distance') && request()->get('distance') === 'no_accounts') checked @endif
-                                >Only connections that hav not accounts
+                                >Only connections that have not accounts
                             </label>
                         </div>
                         <div class="form-check  w-100">

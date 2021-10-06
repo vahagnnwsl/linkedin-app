@@ -70,23 +70,17 @@ class ConnectionRepository extends Repository
     public function filter(array $requestData, User $user)
     {
 
-
-
-//        $c = Connection::withCount('conversations')
-//        ->having('conversations_count', '>', 0)
-//        ->toSql();
-//        dd($c);
-
-        $a =  $this->model()::when(isset($requestData['key']), function ($query) use ($requestData) {
+        $a = $this->model()::when(isset($requestData['key']), function ($query) use ($requestData) {
             $query
                 ->when(isset($requestData['search_in']) && count($requestData['search_in']) > 0 && in_array('occupation', $requestData['search_in']), function ($q) use ($requestData) {
                     $q->where('occupation', 'LIKE', "%" . $requestData['key'] . "%");
                 })
                 ->when(isset($requestData['search_in']) && count($requestData['search_in']) > 0 && in_array('skills', $requestData['search_in']), function ($q) use ($requestData) {
+
                     $q->whereHas('skills', function ($subQ) use ($requestData) {
                         $subQ->where('skills.name', 'LIKE', '%' . $requestData['key'] . '%');
                     });
-                })->when(isset($requestData['positions']), function ($q) use ($requestData) {
+                })->when(isset($requestData['positions']) && $requestData['positions'] != 'clear', function ($q) use ($requestData) {
                     $q->whereHas('positions', function ($subQ) use ($requestData) {
                         $type = $requestData['positions'] === 'all' ? [0, 1] : [1];
                         $subQ
@@ -96,7 +90,7 @@ class ConnectionRepository extends Repository
                                 $sub_q->select(DB::raw('SUM(duration)'))->having(DB::raw('SUM(duration)'), '>=', $requestData['experience'] * 12);
                             });
                     });
-                })->when(isset($requestData['statuses']), function ($q) use ($requestData) {
+                })->when(isset($requestData['statuses']) && $requestData['statuses'] != 'clear', function ($q) use ($requestData) {
                     $q->whereHas('statuses', function ($subQ) use ($requestData) {
                         $type = $requestData['statuses'] === 'all' ? [0, 1] : [1];
                         $subQ->where('statuses.comment', 'LIKE', '%' . $requestData['key'] . '%')->whereIn('is_last', $type);
@@ -144,18 +138,18 @@ class ConnectionRepository extends Repository
             }
         })->when(isset($requestData['contact']), function ($query) use ($requestData) {
             if ($requestData['contact'] === 'not_answered') {
-                $query->whereHas('conversations',function ($subQuery){
+                $query->whereHas('conversations', function ($subQuery) {
                     $subQuery->whereHas('messages');
                 })->doesnthave('messages');
             } else if ($requestData['contact'] === 'answered') {
-                $query->whereHas('conversations',function ($subQuery){
+                $query->whereHas('conversations', function ($subQuery) {
                     $subQuery->whereHas('messages');
                 })->whereHas('messages');;
             } else if ($requestData['contact'] === 'month') {
-                $query->whereHas('conversations',function ($subQuery) {
-                    $subQuery->whereHas('messages')->where('conversations.lastActivityAt','<=', date('Y-m-d',strtotime('-1 months')));
+                $query->whereHas('conversations', function ($subQuery) {
+                    $subQuery->whereHas('messages')->where('conversations.lastActivityAt', '<=', date('Y-m-d', strtotime('-1 months')));
                 });
-            }else if ($requestData['contact'] === 'request') {
+            } else if ($requestData['contact'] === 'request') {
                 $query->whereHas('requests');
             }
         })->when($user->role->name !== UserRepository::$ADMIN_ROLE, function ($query) use ($requestData, $user) {
@@ -163,16 +157,16 @@ class ConnectionRepository extends Repository
                 $subQuery->whereHas('keys', function ($q) use ($requestData) {
                     $q->whereIn('keys.id', $requestData['enableKeysIdes']);
                 });
-            })->orWhere(function ($subQuery) use ($user,$requestData) {
-                $subQuery->when(!isset($requestData['keys_ids']),function ($q) use ($user){
+            })->orWhere(function ($subQuery) use ($user, $requestData) {
+                $subQuery->when(!isset($requestData['keys_ids']), function ($q) use ($user) {
                     $q->whereHas('accounts', function ($subQ) use ($user) {
                         $subQ->where('accounts.id', $user->account->id);
                     });
                 });
-            })->orWhere(function ($subQuery) use ($user,$requestData) {
-                $subQuery->when(!isset($requestData['keys_ids']) && $user->unRealAccounts()->count(),function ($q) use ($user){
+            })->orWhere(function ($subQuery) use ($user, $requestData) {
+                $subQuery->when(!isset($requestData['keys_ids']) && $user->unRealAccounts()->count(), function ($q) use ($user) {
                     $q->whereHas('accounts', function ($subQ) use ($user) {
-                        $subQ->whereIn('accounts.id',$user->unRealAccounts()->pluck('accounts.id')->toArray());
+                        $subQ->whereIn('accounts.id', $user->unRealAccounts()->pluck('accounts.id')->toArray());
                     });
                 });
             });

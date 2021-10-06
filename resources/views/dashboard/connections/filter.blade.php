@@ -164,7 +164,7 @@
                         </div>
                         <div class="form-check w-100">
                             <label class="form-check-label" style="cursor: pointer">
-                                <input type="radio" class="form-check-input" value="clear" name="contact"  @if(request()->get('contact') && request()->get('contact') === 'clear') checked @endif>Ignore
+                                <input type="radio" class="form-check-input" value="clear" name="contact"  @if(!request()->get('contact') || ( request()->get('contact') && request()->get('contact') === 'clear')) checked @endif>Ignore
                             </label>
                         </div>
                     </div>
@@ -192,12 +192,7 @@
                                 >All connections
                             </label>
                         </div>
-                        <div class="form-check  w-100">
-                            <label class="form-check-label" style="cursor: pointer">
-                                <input type="radio" class="form-check-input" value="clear" name="distance"
-                                       @if(request()->get('distance') && request()->get('distance') === 'clear') checked @endif>Ignore
-                            </label>
-                        </div>
+
                     </div>
                     <hr/>
                     <div class="row">
@@ -223,12 +218,7 @@
                                 >All connections
                             </label>
                         </div>
-                        <div class="form-check  w-100">
-                            <label class="form-check-label" style="cursor: pointer">
-                                <input type="radio" class="form-check-input" value="clear" name="connections_keys"
-                                       @if(request()->get('connections_keys') &&  request()->get('connections_keys') === 'clear') checked @endif>Ignore
-                            </label>
-                        </div>
+
                     </div>
                 </div>
 

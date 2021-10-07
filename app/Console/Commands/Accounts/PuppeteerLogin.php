@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands\Accounts;
 
-
 use App\Linkedin\Api;
 use App\Linkedin\Responses\Connection;
 use App\Models\Account;

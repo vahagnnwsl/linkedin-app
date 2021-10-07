@@ -70,7 +70,7 @@ class ConnectionRepository extends Repository
     public function filter(array $requestData, User $user)
     {
 
-        $a = $this->model()::when(isset($requestData['key']), function ($query) use ($requestData) {
+        $data = $this->model()::when(isset($requestData['key']), function ($query) use ($requestData) {
             $query
                 ->when(isset($requestData['search_in']) && count($requestData['search_in']) > 0 && in_array('occupation', $requestData['search_in']), function ($q) use ($requestData) {
                     $q->where('occupation', 'LIKE', "%" . $requestData['key'] . "%");
@@ -170,9 +170,11 @@ class ConnectionRepository extends Repository
                     });
                 });
             });
-        })->orderby('id', 'desc');
+        })->with(['conversations' => function ($query) use($requestData) {
+              $query->whereIn('conversations.account_id',$requestData['accountsIds']);
+        }])->orderby('id', 'desc');
 
-        return $a->paginate(20);
+        return $data->paginate(20);
     }
 
     /**

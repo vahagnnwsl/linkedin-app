@@ -111,7 +111,7 @@ class Connection extends Model
      */
     public function positions(): HasMany
     {
-        return $this->hasMany(Position::class)->orderBy('positions.start_date','DESC');
+        return $this->hasMany(Position::class)->orderBy('positions.start_date', 'DESC');
     }
 
     /**
@@ -119,7 +119,7 @@ class Connection extends Model
      */
     public function statuses(): HasMany
     {
-        return $this->hasMany(Status::class)->orderBy('statuses.created_at','DESC');
+        return $this->hasMany(Status::class)->orderBy('statuses.created_at', 'DESC');
     }
 
     /**
@@ -130,5 +130,11 @@ class Connection extends Model
         return $this->hasMany(ConnectionRequest::class);
     }
 
+    public function getConversations()
+    {
+        return $this->conversations()->select('conversations.id', 'conversations.account_id', 'conversations.entityUrn')->with(['account' => function ($q) {
+            $q->select('accounts.id', 'accounts.full_name');
+        }])->get();
+    }
 
 }

@@ -20,7 +20,14 @@ class ConversationResource extends JsonResource
         return [
             'id' => $this->id,
             'entityUrn' => $this->entityUrn,
-            'connection' => $this->connection,
+            'connection' => [
+                'id'=>$this->connection->id,
+                'entityUrn'=>$this->connection->entityUrn,
+                'fullName'=>$this->connection->fullName,
+                'occupation'=>$this->connection->occupation,
+                'image'=>$this->connection->image,
+                'conversations'=>$this->connection->getConversations()
+            ],
             'account' => $this->account,
             'lastActivityAt' => $this->lastActivityAt,
             'lastMessage' => $this->messages()->orderBy('date', 'desc')->first() ? $this->messages()->orderBy('date', 'desc')->first()->text : '',

@@ -81,9 +81,8 @@ class ConnectionController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
+        $userAccount = Auth::user()->account;
 
-
-//        dd($user->unRealAccounts);
         if ($user->role->name === UserRepository::$ADMIN_ROLE) {
             $enableKeysIds = $this->keyRepository->query()->pluck('keys.id')->toArray();
         } else {
@@ -97,12 +96,12 @@ class ConnectionController extends Controller
         $data['positions'] = $data['positions'] ?? 'all';
         $data['distance'] = $data['distance'] ?? 'all';
         $data['connections_keys'] = $data['connections_keys'] ?? 'all';
-
-
-        $relatedAccountsIdes = Auth::user()->unRealAccounts()->pluck('accounts.id')->toArray();
-
+        $data['accountsIds'] = Auth::user()->unRealAccounts()->pluck('accounts.id')->toArray();
         $data['enableKeysIdes'] = $enableKeysIds;
 
+        if ($userAccount) {
+            array_push($data['accountsIds'], $userAccount->id);
+        }
         $companies = [];
 
         if ($request->has('companies')) {
@@ -115,9 +114,8 @@ class ConnectionController extends Controller
         $categories = $this->connectionRepository->getCategories();
         $accounts = $this->accountRepository->getAll();
 
-        $userAccount = Auth::user()->account;
 
-        return view('dashboard.connections.index', compact('connections', 'accounts', 'categories', 'keys', 'userAccount', 'relatedAccountsIdes', 'companies'));
+        return view('dashboard.connections.index', compact('connections', 'accounts', 'categories', 'keys', 'userAccount',  'companies'));
     }
 
     /**

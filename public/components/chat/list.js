@@ -1,50 +1,42 @@
 Vue.component('chat-list', {
     template: `
         <div class="border-right col-lg-5 col-xl-3">
-        <div class="px-4 d-none d-md-block">
+        <div class="d-md-block">
             <div class="align-items-center media">
                 <div class="media-body">
                     <form @submit.prevent="search">
-                        <input placeholder="Search..." type="text" name="key" class="my-3 form-control"
-                               v-model="searchKey">
-                        <div class="form-check-inline">
-                            <label class="form-check-label">
-                                <input type="radio" name="distance" class="form-check-input" value="connections"
-                                       v-model="distance">Connections
-                            </label>
+                        <div class="row p-1 border border-light"  style="margin-right: 0!important;margin-left: 0!important;">
+                            <div class="btn-group w-100">
+                                <button type="button" class="btn inActiveTab condition" id="condition_answered"
+                                        @click="setCondition('answered')">Answered
+                                </button>
+                                <button type="button" class="btn inActiveTab  condition" id="condition_not_answered"
+                                        @click="setCondition('not_answered')">Not Answered
+                                </button>
+                                <button type="button" class="btn activeTab condition" id="condition_all"
+                                        @click="setCondition('all')">All
+                                </button>
+                            </div>
                         </div>
-                        <div class="form-check-inline">
-                            <label class="form-check-label">
-                                <input type="radio" name="distance" class="form-check-input" value="messages"
-                                       v-model="distance">Messages
-                            </label>
-                        </div>
-                        <div class="form-check-inline">
-                            <label class="form-check-label">
-                                <input type="radio" name="distance" class="form-check-input" value="all"
-                                       v-model="distance">All
-                            </label>
-                        </div>
-                        <hr/>
-                        <div class="form-check-inline">
-                            <label class="form-check-label">
-                                <input type="radio" name="condition" class="form-check-input" value="answered"
-                                       v-model="condition">Answered
-                            </label>
-                        </div>
-                        <div class="form-check-inline">
-                            <label class="form-check-label">
-                                <input type="radio" name="condition" class="form-check-input" value="not_answered"
-                                       v-model="condition">Not Answered
-                            </label>
-                        </div>
-                        <div class="form-check-inline">
-                            <label class="form-check-label">
-                                <input type="radio" name="condition" class="form-check-input" value="all"
-                                       v-model="condition">All
-                            </label>
-                        </div>
+
+
+                       <div class="row  p-1 border border-light" style="margin-right: 0!important;margin-left: 0!important;">
+                           <input placeholder="Search..." type="text" name="key" class="my-3 form-control"
+                                  v-model="searchKey" style="border-radius: 0">
+                           <div class="btn-group btn-block ">
+                               <button type="button" class="btn inActiveTab distance" id="distance_connections"
+                                       @click="setDistance('connections')">Connections
+                               </button>
+                               <button type="button" class="btn inActiveTab  distance" id="distance_messages"
+                                       @click="setDistance('messages')">Messages
+                               </button>
+                               <button type="button" class="btn activeTab distance" id="distance_all"
+                                       @click="setDistance('all')">All
+                               </button>
+                           </div>
+                       </div>
                     </form>
+
                 </div>
             </div>
         </div>
@@ -64,8 +56,8 @@ Vue.component('chat-list', {
                         onerror="this.src='/dist/img/lin_def_image.svg'"
                         class="rounded-circle mr-1"
                         alt="Michelle Bilodeau" width="40" height="40">
-                    <div class="ml-3 media-body">{{ conversation.connection.firstName }}
-                        {{ conversation.connection.lastName }}
+                    <div class="ml-3 media-body">
+                        {{ conversation.connection.fullName }}
                         <div class="small text-black-50" :ref="'lastMessage'+conversation.id"
                              :id="'lastMessage'+conversation.id">
                             {{ conversation.lastMessage ? conversation.lastMessage.slice(0, 20) + '...' : '' }}
@@ -154,6 +146,38 @@ Vue.component('chat-list', {
 
     },
     methods: {
+
+        setCondition: function (condition) {
+
+            this.condition = condition;
+
+            const elements = document.getElementsByClassName('condition');
+            for (let el of elements) {
+                el.classList.remove('activeTab');
+                el.classList.remove('inActiveTab');
+
+                if (el.id === 'condition_' + condition) {
+                    el.classList.add('activeTab');
+                } else {
+                    el.classList.add('inActiveTab');
+                }
+            }
+        },
+        setDistance: function (distance) {
+            this.distance = distance;
+            const elements = document.getElementsByClassName('distance');
+            for (let el of elements) {
+                el.classList.remove('activeTab');
+                el.classList.remove('inActiveTab');
+
+                if (el.id === 'distance_' + distance) {
+                    el.classList.add('activeTab');
+                } else {
+                    el.classList.add('inActiveTab');
+                }
+            }
+
+        },
         search: function () {
             this.getConversations(true);
         },
@@ -164,7 +188,6 @@ Vue.component('chat-list', {
         getConversations: function (searchable = false) {
 
             let queryParams = '&distance=' + this.distance + '&condition=' + this.condition;
-
 
 
             queryParams = this.searchKey ? queryParams + '&key=' + this.searchKey : queryParams + '';
@@ -179,9 +202,9 @@ Vue.component('chat-list', {
 
                     this.conversations.push(...response.data.conversations)
 
-                    if (this.searchKey){
+                    if (this.searchKey) {
                         this.loadMoreConversation = false;
-                    }else {
+                    } else {
                         if (response.data.conversations.length === 0 || response.data.conversations.length < 10) {
                             this.loadMoreConversation = false;
                         }

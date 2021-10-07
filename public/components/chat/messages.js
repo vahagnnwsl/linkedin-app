@@ -9,15 +9,23 @@ Vue.component('chat-messages', {
                         class="rounded-circle mr-1" alt="Kathie Burton" width="40"
                         height="40">
                 </div>
-                <div class="pl-3 media-body" v-if="connection"><strong>{{ connection.firstName }}
-                    {{ connection.lastName }}</strong>
+                <div class="pl-3 media-body" v-if="connection">
+                    <strong>{{ connection.fullName }}</strong>
+                    <br/> <small class="text-black-50 font-weight-bold">{{ connection.occupation }}</small>
                 </div>
                 <div v-if="selectedConversation">
-
                     <button class="px-3 border btn btn-light btn-lg" @click="syncLastMessages(selectedConversation.id)">
                         <i class="fa fa-sync-alt float-right"></i>
                     </button>
                 </div>
+            </div>
+            <div class="position-relative py-1 text-right"
+                 v-if="selectedConversation.connection && selectedConversation.connection.conversations">
+                <span v-for="(item,index) in selectedConversation.connection.conversations" :key="index"
+                      class="badge mr-1"
+                      style="color: rgba(0,0,0,.5)!important;border: 1px solid rgba(0,0,0,.5)!important;"
+                      v-if="account.id !==item.account.id ">  {{ item.account.full_name }}</span>
+
             </div>
         </div>
         <div class="position-relative">
@@ -30,11 +38,12 @@ Vue.component('chat-messages', {
         <div class="flex-grow-0 py-3 px-4 border-top">
             <form @submit.prevent="sendMessages" v-if="entityUrn">
                 <div class="input-group">
-                    <div class="input-group-prepend" v-if="loadMore" @click="getMessages" >
-                        <button type="button" class="btn btn-outline-primary" title="Load more ..."><i class="fa fa-arrow-circle-down"></i></button>
+                    <div class="input-group-prepend" v-if="loadMore" @click="getMessages">
+                        <button type="button" class="btn btn-outline-primary" title="Load more ..."><i
+                            class="fa fa-arrow-circle-down"></i></button>
                     </div>
                     <input placeholder="Type your message" type="text" class="form-control"
-                                                v-model="form.message">
+                           v-model="form.message">
 
                     <div class="input-group-append">
                         <button class="btn btn-primary">Send</button>
@@ -43,7 +52,6 @@ Vue.component('chat-messages', {
             </form>
 
         </div>
-
 
 
         </div>
@@ -68,6 +76,7 @@ Vue.component('chat-messages', {
         let _this = this
 
         $(document).on('selectedConversation', function (e, selectedConversation) {
+            console.log(selectedConversation)
             _this.messages = [];
             _this.start = 0;
             _this.loadMore = true;

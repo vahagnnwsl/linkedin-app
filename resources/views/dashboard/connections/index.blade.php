@@ -133,15 +133,23 @@
                                     @endforeach
                                 </td>
                                 <td>
-                                    @foreach(\Illuminate\Support\Facades\Auth::user()->unRealAccounts as $unRealAccounts)
-                                        @if(\App\Models\Conversation::where(['connection_id'=>$connection->id,'account_id'=>$unRealAccounts->id])->exists())
+                                    @foreach($connection->conversations as $conversation)
+                                        @if($userAccount && $conversation->account_id ===$userAccount->id)
+                                            <a title="Go to chat" target="_blank"
+                                               href="{{route('linkedin.chat')}}#entityUrn:{{$conversation->entityUrn}}">
+                                                <i class="fa fa-envelope"></i>
+                                            </a>
+                                        @else
                                             <a>
-                                                <span style="cursor: pointer" class="fa fa-envelope getConversationMessages" title="{{$unRealAccounts->full_name}}" data-conversationId="{{\App\Models\Conversation::where(['connection_id'=>$connection->id,'account_id'=>$unRealAccounts->id])->first()->entityUrn}}"></span>
+                                                <span style="cursor: pointer"
+                                                      class="fa fa-envelope getConversationMessages"
+                                                      title=""
+                                                      data-conversationId="{{$conversation->entityUrn}}"></span>
                                             </a>
                                             <br/>
                                         @endif
-
                                     @endforeach
+
                                 </td>
 
                                 <td class="float-right">

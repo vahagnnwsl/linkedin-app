@@ -26,7 +26,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
 
     Route::get('/', [App\Http\Controllers\Dashboard\IndexController::class, 'home'])->name('dashboard.index');
 
-    Route::group(['prefix' => 'accounts'], function () {
+    Route::group(['prefix' => 'accounts','middleware'=>'role:Admin'], function () {
 
         Route::get('/', [App\Http\Controllers\Dashboard\AccountController::class, 'index'])->name('accounts.index');
 
@@ -46,7 +46,6 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
         Route::get('/{id}/conversations/{conversation_id}/messages', [App\Http\Controllers\Dashboard\AccountController::class, 'conversationMessages'])->name('accounts.conversationMessages')->middleware(['role:Admin|Manager']);
         Route::get('/{id}/checkLife', [App\Http\Controllers\Dashboard\AccountController::class, 'checkLife'])->name('accounts.checkLife')->middleware(['role:Admin|Manager']);
         Route::get('/checkAllLife', [App\Http\Controllers\Dashboard\AccountController::class, 'checkAllLife'])->middleware(['role:Admin|Manager']);
-
     });
 
     Route::group(['prefix' => 'keys','middleware'=>'role:Admin'], function () {

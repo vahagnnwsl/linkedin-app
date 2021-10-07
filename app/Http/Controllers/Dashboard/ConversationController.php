@@ -44,7 +44,7 @@ class ConversationController extends Controller
 
         $conversation = $this->conversationRepository->getById($id);
 
-        GetConversationMessages::dispatch(Auth::user(), $account, $conversation,true);
+        GetConversationMessages::dispatch(Auth::user(), $account, $conversation, true);
 
         return response()->json([]);
     }
@@ -74,9 +74,9 @@ class ConversationController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function getByAccount(int $account_id,Request $request): JsonResponse
+    public function getByAccount(int $account_id, Request $request): JsonResponse
     {
-        $conversations = new ConversationCollection($this->conversationRepository->getByAccountId($account_id, $request->get('start'), $request->get('key'),$request->get('distance'),$request->get('condition')));
+        $conversations = new ConversationCollection($this->conversationRepository->getByAccountId($account_id, $request->get('start'), $request->get('key'), $request->get('distance'), $request->get('condition')));
         return response()->json(['conversations' => $conversations]);
     }
 

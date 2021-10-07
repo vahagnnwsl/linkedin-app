@@ -476,6 +476,16 @@
         .chat-message-left {
             margin-right: auto;
         }
+        .activeTab {
+            border-bottom: 2px solid #007bff!important;
+            color: #007bff!important;
+            border-radius: 0!important;
+        }
+        .inActiveTab {
+            border-bottom: 2px solid  rgba(152,166,173,.2)!important;
+            color: #6c757d!important;
+            border-radius: 0!important;
+        }
     </style>
 
 @endpush

@@ -82,7 +82,6 @@ class ConversationService
             $this->messageRepository->updateOrCreateCollection($response['data'], $conversation->id, $user->id, $account->id, $account->entityUrn, $this->messageRepository::SENDED_STATUS, $this->messageRepository::RECEIVE_EVENT, true);
             sleep(1);
             $start++;
-            File::put(storage_path('cc/'.$start.'.json'),json_encode($response['data']));
             $this->recursiveGetConversationMessages($user, $account, $conversation, [
                 'createdBefore' => $response['lastActivityAt']
             ], $lastActivate, $start);

@@ -192,6 +192,7 @@ class Response
 
             return [
                 'lastActivityAt' => $item->lastActivityAt,
+                'lastActivityAtToDate' => Carbon::createFromTimestampMsUTC($item->lastActivityAt)->toDateTimeString(),
                 'entityUrn' => explode(':', $item->entityUrn)[3],
                 'interlocutorEntityUrn' => Helper::searchInString($item->{'*participants'}[0], ',', ')')
             ];
@@ -229,7 +230,6 @@ class Response
             'lastActivityAt' => $conversations->min('lastActivityAt'),
             'success' => true,
             'data' => array_values($filter),
-
         ];
 
     }

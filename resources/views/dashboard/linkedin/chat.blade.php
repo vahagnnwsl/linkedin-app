@@ -2,7 +2,9 @@
 
 
 @push('css')
-    <style type="text/css">svg:not(:root).svg-inline--fa {
+    <style>
+
+        svg:not(:root).svg-inline--fa {
             overflow: visible;
         }
 
@@ -13,83 +15,109 @@
             overflow: visible;
             vertical-align: -0.125em;
         }
+
         .svg-inline--fa.fa-lg {
             vertical-align: -0.225em;
         }
+
         .svg-inline--fa.fa-w-1 {
             width: 0.0625em;
         }
+
         .svg-inline--fa.fa-w-2 {
             width: 0.125em;
         }
+
         .svg-inline--fa.fa-w-3 {
             width: 0.1875em;
         }
+
         .svg-inline--fa.fa-w-4 {
             width: 0.25em;
         }
+
         .svg-inline--fa.fa-w-5 {
             width: 0.3125em;
         }
+
         .svg-inline--fa.fa-w-6 {
             width: 0.375em;
         }
+
         .svg-inline--fa.fa-w-7 {
             width: 0.4375em;
         }
+
         .svg-inline--fa.fa-w-8 {
             width: 0.5em;
         }
+
         .svg-inline--fa.fa-w-9 {
             width: 0.5625em;
         }
+
         .svg-inline--fa.fa-w-10 {
             width: 0.625em;
         }
+
         .svg-inline--fa.fa-w-11 {
             width: 0.6875em;
         }
+
         .svg-inline--fa.fa-w-12 {
             width: 0.75em;
         }
+
         .svg-inline--fa.fa-w-13 {
             width: 0.8125em;
         }
+
         .svg-inline--fa.fa-w-14 {
             width: 0.875em;
         }
+
         .svg-inline--fa.fa-w-15 {
             width: 0.9375em;
         }
+
         .svg-inline--fa.fa-w-16 {
             width: 1em;
         }
+
         .svg-inline--fa.fa-w-17 {
             width: 1.0625em;
         }
+
         .svg-inline--fa.fa-w-18 {
             width: 1.125em;
         }
+
         .svg-inline--fa.fa-w-19 {
             width: 1.1875em;
         }
+
         .svg-inline--fa.fa-w-20 {
             width: 1.25em;
         }
+
         .svg-inline--fa.fa-pull-left {
             margin-right: 0.3em;
             width: auto;
         }
+
         .svg-inline--fa.fa-pull-right {
             margin-left: 0.3em;
             width: auto;
         }
+
         .svg-inline--fa.fa-border {
             height: 1.5em;
         }
+
         .svg-inline--fa.fa-li {
             width: 2em;
         }
+
         .svg-inline--fa.fa-fw {
             width: 1.25em;
         }
@@ -111,6 +139,7 @@
             vertical-align: -0.125em;
             width: 1em;
         }
+
         .fa-layers svg.svg-inline--fa {
             -webkit-transform-origin: center center;
             transform-origin: center center;
@@ -256,6 +285,7 @@
             margin-left: 2.5em;
             padding-left: 0;
         }
+
         .fa-ul > li {
             position: relative;
         }
@@ -289,6 +319,7 @@
         .fab.fa-pull-left {
             margin-right: 0.3em;
         }
+
         .fa.fa-pull-right,
         .fas.fa-pull-right,
         .far.fa-pull-right,
@@ -328,6 +359,7 @@
                 transform: rotate(360deg);
             }
         }
+
         .fa-rotate-90 {
             -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=1)";
             -webkit-transform: rotate(90deg);
@@ -395,6 +427,7 @@
             height: 1em;
             width: 1.25em;
         }
+
         .svg-inline--fa.fa-stack-2x {
             height: 2em;
             width: 2.5em;
@@ -424,27 +457,6 @@
             width: auto;
         }
 
-        .svg-inline--fa .fa-primary {
-            fill: var(--fa-primary-color, currentColor);
-            opacity: 1;
-            opacity: var(--fa-primary-opacity, 1);
-        }
-
-        .svg-inline--fa .fa-secondary {
-            fill: var(--fa-secondary-color, currentColor);
-            opacity: 0.4;
-            opacity: var(--fa-secondary-opacity, 0.4);
-        }
-
-        .svg-inline--fa.fa-swap-opacity .fa-primary {
-            opacity: 0.4;
-            opacity: var(--fa-secondary-opacity, 0.4);
-        }
-
-        .svg-inline--fa.fa-swap-opacity .fa-secondary {
-            opacity: 1;
-            opacity: var(--fa-primary-opacity, 1);
-        }
 
         .svg-inline--fa mask .fa-primary,
         .svg-inline--fa mask .fa-secondary {
@@ -458,61 +470,87 @@
         .chat-messages {
             display: flex;
             flex-direction: column;
-            max-height: 520px;
+            max-height: 510px;
             min-height: 500px;
             overflow-y: scroll;
         }
+
         .chat-list {
             display: flex;
             flex-direction: column;
-            max-height: 520px;
-            min-height: 500px;
+            max-height: 420px;
+            min-height: 400px;
             overflow-y: scroll;
         }
+
         .chat-message-right {
             flex-direction: row-reverse;
             margin-left: auto;
         }
+
         .chat-message-left {
             margin-right: auto;
         }
+
         .activeTab {
-            border-bottom: 2px solid #007bff!important;
-            color: #007bff!important;
-            border-radius: 0!important;
+            border-bottom: 2px solid #007bff !important;
+            color: #007bff !important;
+            border-radius: 0 !important;
         }
+
         .inActiveTab {
-            border-bottom: 2px solid  rgba(152,166,173,.2)!important;
-            color: #6c757d!important;
-            border-radius: 0!important;
+            border-bottom: 2px solid rgba(152, 166, 173, .2) !important;
+            color: #6c757d !important;
+            border-radius: 0 !important;
         }
+
+        /* width */
+        ::-webkit-scrollbar {
+            width: 10px;
+            cursor: pointer;
+        }
+
+        /* Track */
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px
+        }
+
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+            background: lightgrey;
+            border-radius: 4px;
+
+        }
+
+
     </style>
 
 @endpush
 @section('sub_content')
-    <section class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1>Linkedin Chat</h1>
-                </div>
 
-            </div>
-        </div>
-    </section>
     <section class="content">
         <div class="container-fluid">
             <div class="card">
                 <div class="card-body">
+                    @if(!$account)
+                        <h2 class="text-center"><span class="text-danger">Attention! </span> On your user not connected
+                            any linkedin account
+                        </h2>
+                    @elseif(!$account->conversations()->count())
+                        <h2 class="text-center"><span class="text-danger">Attention! </span> Your linkedin user hav not
+                            started any conversation</h2>
+                    @elseif(!$account->is_online)
+                        <h2 class="text-center"><span class="text-danger">Attention! </span> Your linkedin user is
+                            offline</h2>
 
-                    @if($account && $account->conversations()->count())
-                    <div class="container-fluid">
-                        <chat-index   :account="{{json_encode($account)}}" ></chat-index>
-                    </div>
+                    @elseif(!$life)
+                        <h2 class="text-center"><span class="text-danger">Attention! </span> Your linkedin user cookie is
+                            old</h2>
                     @else
-                     <h2 class="text-center"><span class="text-danger">Attention!</span> On your user not connected any linkedin account
-                     or your user linkedin user account hav not started any conversation
-                     </h2>
+                        <div class="container-fluid">
+                            <chat-index :account="{{json_encode($account)}}"></chat-index>
+                        </div>
                     @endif
                 </div>
             </div>
@@ -532,15 +570,37 @@
     <script src="/components/chat/message.js"></script>
     <script src="/plugins/moment/moment.min.js"></script>
     <script>
-        $(document).ready(function (){
+        $(document).ready(function () {
 
-            $('body').on('mouseover','.no-send-message',function (){
-                $(this).parent().parent().parent().css('border','1px solid black')
+            $('body').on('mouseover', '.no-send-message', function () {
+                $(this).parent().parent().parent().css('border', '1px solid black')
             })
 
-            $('body').on('mouseleave','.no-send-message',function (){
-                $(this).parent().parent().parent().css('border','1px solid #f7f7f7')
+            $('body').on('mouseleave', '.no-send-message', function () {
+                $(this).parent().parent().parent().css('border', '1px solid #f7f7f7')
             })
+
+            @if($account)
+            setInterval(function () {
+                $.ajax({
+                    url: "/dashboard/accounts/{{$account->id}}/show",
+                    success: function (data) {
+                        if (data.account.is_online === 0 || !data.account.is_online) {
+                            location.reload();
+                        }
+                    }
+                });
+                $.ajax({
+                    url: "/dashboard/accounts/{{$account->id}}/checkLife",
+                    success: function (data) {
+                        if (!data.life) {
+                            location.reload();
+                        }
+                    }
+                });
+            }, 60000)
+            @endif
+
         })
     </script>
 @endpush

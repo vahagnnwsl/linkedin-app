@@ -28,7 +28,7 @@
                     <li class="nav-item">
                         <a href="{{route('jobs.index')}}"
                            class="nav-link {{request()->is('dashboard/jobs*') ?'active':''}}">
-                            <i class=" fas fa-key nav-icon"></i>
+                            <i class="fas fa-briefcase  nav-icon"></i>
                             <p>Jobs</p>
                         </a>
                     </li>
@@ -68,7 +68,7 @@
                     <li class="nav-item">
                         <a href="{{route('proxies.index')}}"
                            class="nav-link {{request()->is('dashboard/proxies*') ?'active':''}}">
-                            <i class=" fas fa-key nav-icon"></i>
+                            <i class="fas fa-code-branch nav-icon"></i>
                             <p>Proxies</p>
                         </a>
                     </li>
@@ -77,7 +77,7 @@
                     <li class="nav-item">
                         <a href="{{route('categories.index')}}"
                            class="nav-link {{request()->is('dashboard/categories*') ?'active':''}}">
-                            <i class=" fas fa-key nav-icon"></i>
+                            <i class="fas fa-align-left nav-icon"></i>
                             <p>Categories</p>
                         </a>
                     </li>
@@ -88,7 +88,7 @@
                     <li class="nav-item">
                         <a href="{{route('users.index')}}"
                            class="nav-link {{request()->is('dashboard/users*') ?'active':''}}">
-                            <i class=" fas fa-user-alt nav-icon"></i>
+                            <i class="fas fa-user-graduate   nav-icon"></i>
                             <p>Users</p>
                         </a>
                     </li>
@@ -98,7 +98,7 @@
                     <li class="nav-item">
                         <a href="{{route('accounts.index')}}"
                            class="nav-link {{request()->is('dashboard/accounts*') ?'active':''}}">
-                            <i class=" fas fa-user-tag nav-icon"></i>
+                            <i class="fas  fa-robot  nav-icon"></i>
                             <p>Accounts</p>
                         </a>
                     </li>
@@ -107,7 +107,7 @@
                 <li class="nav-item">
                     <a href="{{route('connections.index')}}"
                        class="nav-link {{request()->is('dashboard/connections*') ?'active':''}}">
-                        <i class=" fas fa-user-alt nav-icon"></i>
+                        <i class="fas fa-user-tie nav-icon"></i>
                         <p>Connections</p>
                     </a>
                 </li>
@@ -128,7 +128,7 @@
                     <li class="nav-item">
                         <a href="{{route('companies.index')}}"
                            class="nav-link {{request()->is('dashboard/companies*') ?'active':''}}">
-                            <i class=" fas fa-user-alt nav-icon"></i>
+                            <i class="fas fa-bullhorn  nav-icon"></i>
                             <p>Companies</p>
                         </a>
                     </li>
@@ -137,7 +137,7 @@
                 <li class="nav-item">
                     <a href="{{route('linkedin.chat')}}"
                        class="nav-link {{request()->is('dashboard/linkedin/chat') ?'active':''}}">
-                        <i class="nav-icon fab fa-linkedin mr-2"></i>
+                        <i class="fas fa-comment-dots  nav-icon"></i>
                         <p>Chat</p>
                     </a>
                 </li>

@@ -14,4 +14,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::post('/conversations', [App\Http\Controllers\Api\ConversationController::class,'store']);
-Route::put('/accounts/{id}', [App\Http\Controllers\Api\AccountController::class,'update']);
+Route::post('/accounts/{id}', [App\Http\Controllers\Api\AccountController::class,'update']);

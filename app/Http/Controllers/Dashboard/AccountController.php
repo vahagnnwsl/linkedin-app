@@ -145,6 +145,16 @@ class AccountController extends Controller
         return view('dashboard.accounts.edit', compact('account', 'proxies'));
     }
 
+    /**
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function show(int $id)
+    {
+        $account = $this->accountRepository->getById($id);
+        return response()->json(['account' => $account]);
+    }
+
 
     /**
      * @param AccountRequest $request
@@ -320,23 +330,22 @@ class AccountController extends Controller
         return redirect()->back();
     }
 
-
     /**
      * @param int $id
-     * @return RedirectResponse
+     * @return JsonResponse
      */
-    public function checkLife(int $id): RedirectResponse
+    public function checkLife(int $id): JsonResponse
     {
         $account = $this->accountRepository->getById($id);
         $resp = Api::profile($account)->getOwnProfile();
+        $life = false;
         if ($resp['status'] === 200) {
             $resp = Connection::parseSingle((array)$resp['data']);
             $account->update($resp);
-            $this->putFlashMessage(true, 'Life goes on ');
-        } else {
-            $this->putFlashMessage(false, 'Life does not go on');
+            $life = true;
         }
-        return redirect()->back();
+
+        return response()->json(['life' => $life]);
 
     }
 
@@ -353,6 +362,26 @@ class AccountController extends Controller
                 'id' => $account->id,
                 'success' => $resp['status'] === 200,
                 'life' => $resp['status'] === 200 ? 'Life goes on ' : 'Life does not go on',
+            ];
+        });
+
+        return response()->json($resp);
+    }
+
+    /**
+     * @return JsonResponse
+     */
+    public function checkOnline(): JsonResponse
+    {
+        $accounts = $this->accountRepository->getAll();
+
+        $resp = $accounts->map(function ($account) {
+
+            return [
+                'id' => $account->id,
+                'success' => $account->is_online,
+                'lastActivityAt' => $account->lastActivityAt ? $account->lastActivityAt->format('Y-m-d H:m:s') : '',
+                'online' => $account->is_online ? 'Online' : 'Offline'
             ];
         });
 

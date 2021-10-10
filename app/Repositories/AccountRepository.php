@@ -121,7 +121,8 @@ class AccountRepository extends Repository
      */
     public function getAllRealAccounts(int $status = 1)
     {
-        return $this->model()::where('type', self::$TYPE_REAL)->whereStatus($status)->get();
+//        return $this->model()::where('type', self::$TYPE_REAL)->whereStatus($status)->get();
+        return $this->model()::where('type', self::$TYPE_REAL)->get();
     }
 
     /**
@@ -140,6 +141,8 @@ class AccountRepository extends Repository
     {
         return $this->model()::where('type', $type)->get();
     }
+
+
 
     /**
      * @param $account_id

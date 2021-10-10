@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Collections\ConversationCollection;
 use App\Http\Resources\ConversationResource;
+use App\Linkedin\Responses\Connection;
 use App\Repositories\ConversationRepository;
 use App\Repositories\MessageRepository;
 use App\Repositories\UserRepository;
@@ -57,15 +58,22 @@ class LinkedinController extends Controller
 
 
     /**
-     * @param Request $request
-     * @return Application|Factory|View|JsonResponse
+     * @return Application|Factory|View
      */
     public function chat()
     {
 
         $account = Auth::user()->account;
-
-        return view('dashboard.linkedin.chat', compact('account'));
+        $life = false;
+        if ($account){
+            $resp = Api::profile($account)->getOwnProfile();
+            if ($resp['status'] === 200) {
+                $resp = Connection::parseSingle((array)$resp['data']);
+                $account->update($resp);
+                $life = true;
+            }
+        }
+        return view('dashboard.linkedin.chat', compact('account','life'));
     }
 
 

@@ -30,8 +30,15 @@ class Account extends Model
         'cookie_web_str',
         'cookie_socket_str',
         'proxy_id',
+        'is_online',
     ];
 
+    /**
+     * @var string[]
+     */
+    protected $casts = [
+        'lastActivityAt' => 'datetime:Y-m-d H:m'
+    ];
     /**
      * @return BelongsToMany
      */

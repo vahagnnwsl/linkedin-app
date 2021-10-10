@@ -39,7 +39,7 @@ class JobController extends Controller
         if ($type === 'process'){
             $jobs = Job::paginate(20);
         }else{
-            $jobs = FailedJob::paginate(20);
+            $jobs = FailedJob::orderBy('id','DESC')->paginate(20);
         }
 
         return view('dashboard.jobs.index', compact('jobs','type'));

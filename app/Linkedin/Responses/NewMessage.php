@@ -60,6 +60,7 @@ class NewMessage
         ];
 
         $message['entityUrn'] = explode(':', $event['backendUrn'])[3];
+
         $message['date'] = Carbon::createFromTimestampMsUTC($event['createdAt'])->toDateTimeString();
 
         if (isset($event['eventContent']['attributedBody']['text'])) {

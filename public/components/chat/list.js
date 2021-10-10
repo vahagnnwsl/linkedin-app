@@ -5,36 +5,75 @@ Vue.component('chat-list', {
             <div class="align-items-center media">
                 <div class="media-body">
                     <form @submit.prevent="search">
-                        <div class="row p-1 border border-light"  style="margin-right: 0!important;margin-left: 0!important;">
-                            <div class="btn-group w-100">
-                                <button type="button" class="btn inActiveTab condition" id="condition_answered"
-                                        @click="setCondition('answered')">Answered
-                                </button>
-                                <button type="button" class="btn inActiveTab  condition" id="condition_not_answered"
-                                        @click="setCondition('not_answered')">Not Answered
-                                </button>
-                                <button type="button" class="btn activeTab condition" id="condition_all"
-                                        @click="setCondition('all')">All
-                                </button>
+                        <div class="row p-2">
+                            <div class="col-sm-12">
+                                <input placeholder="Search..." type="text" name="key" class="my-3 form-control" v-model="searchKey" style="border-radius: 0">
+
+                            </div>
+                            <div class="col-sm-6">
+                                <!-- checkbox -->
+                                <div class="form-group">
+                                    <div class="custom-control custom-radio">
+                                        <input class="custom-control-input" type="radio" id="customRadio1" name="condition" value="answered" v-model="condition">
+                                        <label for="customRadio1" class="custom-control-label">Answered</label>
+                                    </div>
+                                    <div class="custom-control custom-radio">
+                                        <input class="custom-control-input" type="radio" id="customRadio2" name="condition" value="not_answered"  v-model="condition">
+                                        <label for="customRadio2" class="custom-control-label">Not Answered</label>
+                                    </div>
+                                    <div class="custom-control custom-radio">
+                                        <input class="custom-control-input" type="radio" id="customRadio3" name="condition" value="all"  v-model="condition">
+                                        <label for="customRadio3" class="custom-control-label">All</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <!-- radio -->
+                                <div class="form-group">
+                                    <div class="custom-control custom-radio">
+                                        <input class="custom-control-input custom-control-input-danger" type="radio" id="customRadio4" name="distance" value="connections"  v-model="distance">
+                                        <label for="customRadio4" class="custom-control-label">Connections</label>
+                                    </div>
+                                    <div class="custom-control custom-radio">
+                                        <input class="custom-control-input custom-control-input-danger" type="radio" id="customRadio5" name="distance" value="messages"  v-model="distance">
+                                        <label for="customRadio5" class="custom-control-label">Messages</label>
+                                    </div>
+                                    <div class="custom-control custom-radio">
+                                        <input class="custom-control-input custom-control-input-danger" type="radio" id="customRadio6" name="distance" value="all" v-model="distance">
+                                        <label for="customRadio6" class="custom-control-label">All</label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+<!--                        <div class="row p-1 border border-light"  style="margin-right: 0!important;margin-left: 0!important;">-->
+<!--                            <div class="btn-group w-100">-->
+<!--                                <button type="button" class="btn inActiveTab condition" id="condition_answered"-->
+<!--                                        @click="setCondition('answered')">Answered-->
+<!--                                </button>-->
+<!--                                <button type="button" class="btn inActiveTab  condition" id="condition_not_answered"-->
+<!--                                        @click="setCondition('not_answered')">Not Answered-->
+<!--                                </button>-->
+<!--                                <button type="button" class="btn activeTab condition" id="condition_all"-->
+<!--                                        @click="setCondition('all')">All-->
+<!--                                </button>-->
+<!--                            </div>-->
+<!--                        </div>-->
 
-
-                       <div class="row  p-1 border border-light" style="margin-right: 0!important;margin-left: 0!important;">
-                           <input placeholder="Search..." type="text" name="key" class="my-3 form-control"
-                                  v-model="searchKey" style="border-radius: 0">
-                           <div class="btn-group btn-block ">
-                               <button type="button" class="btn inActiveTab distance" id="distance_connections"
-                                       @click="setDistance('connections')">Connections
-                               </button>
-                               <button type="button" class="btn inActiveTab  distance" id="distance_messages"
-                                       @click="setDistance('messages')">Messages
-                               </button>
-                               <button type="button" class="btn activeTab distance" id="distance_all"
-                                       @click="setDistance('all')">All
-                               </button>
-                           </div>
-                       </div>
+<!--                       <div class="row  p-1 border border-light" style="margin-right: 0!important;margin-left: 0!important;">-->
+<!--                           <input placeholder="Search..." type="text" name="key" class="my-3 form-control"-->
+<!--                                  v-model="searchKey" style="border-radius: 0">-->
+<!--                           <div class="btn-group btn-block ">-->
+<!--                               <button type="button" class="btn inActiveTab distance" id="distance_connections"-->
+<!--                                       @click="setDistance('connections')">Connections-->
+<!--                               </button>-->
+<!--                               <button type="button" class="btn inActiveTab  distance" id="distance_messages"-->
+<!--                                       @click="setDistance('messages')">Messages-->
+<!--                               </button>-->
+<!--                               <button type="button" class="btn activeTab distance" id="distance_all"-->
+<!--                                       @click="setDistance('all')">All-->
+<!--                               </button>-->
+<!--                           </div>-->
+<!--                       </div>-->
                     </form>
 
                 </div>
@@ -122,8 +161,8 @@ Vue.component('chat-list', {
         this.getConversations()
         const _this = this;
         $(document).on('newMessage', function (e, conversationId) {
-
             setTimeout(function () {
+                console.log( 'conversation_new_message' + conversationId)
                 document.getElementById('conversation_new_message' + conversationId).style.display = 'block';
             }, 1000);
         });
@@ -207,6 +246,8 @@ Vue.component('chat-list', {
                     } else {
                         if (response.data.conversations.length === 0 || response.data.conversations.length < 10) {
                             this.loadMoreConversation = false;
+                        }else {
+                            this.loadMoreConversation = true;
                         }
                     }
 

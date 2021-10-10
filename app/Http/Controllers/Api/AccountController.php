@@ -2,24 +2,14 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Events\NewMessage;
-use App\Events\SyncConversations;
+
 use App\Http\Controllers\Controller;
-use App\Models\ConnectionRequest;
 use App\Repositories\AccountRepository;
-use App\Repositories\ConnectionRepository;
-use App\Repositories\ConversationRepository;
-use App\Repositories\MessageRepository;
-use App\Http\Resources\MessageResource;
-use App\Linkedin\Responses\Response;
 use Carbon\Carbon;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Linkedin\Api;
-use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
+
 
 class AccountController extends Controller
 {
@@ -42,12 +32,14 @@ class AccountController extends Controller
      * @param int $id
      * @return JsonResponse
      */
-    public function update(int $id): JsonResponse
+    public function update(int $id, Request $request): JsonResponse
     {
+        $is_online = $request->get('is_online') ?? 0;
         $this->accountRepository->update($id, [
-            'lastActivityAt' => Carbon::now()->toDateTimeString()
+            'lastActivityAt' => Carbon::now()->toDateTimeString(),
+            'is_online' => $is_online
         ]);
 
-        return response()->json([]);
+        return response()->json(['is_online' => $is_online]);
     }
 }

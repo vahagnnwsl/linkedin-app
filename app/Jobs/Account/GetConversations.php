@@ -62,6 +62,6 @@ class GetConversations implements ShouldQueue
      */
     public function handle()
     {
-        $this->connectionService->getAccountConversations($this->account, $this->proxy);
+        $this->connectionService->getAccountConversations($this->account);
     }
 }

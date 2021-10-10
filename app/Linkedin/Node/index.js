@@ -23,11 +23,9 @@ const eventSourceInitDict = {
 var es = new EventSource('https://realtime.www.linkedin.com/realtime/connect', eventSourceInitDict);
 
 es.onmessage = result => {
-    console.log(cookie);
 
     const data = JSON.parse(result.data);
     if (data.hasOwnProperty(key)) {
-
         var eventContent = data[key];
 
         if (eventContent.hasOwnProperty('topic')) {
@@ -37,29 +35,39 @@ es.onmessage = result => {
                 let payload = eventContent.payload;
 
                 if (payload.included.length) {
+
                     axios.post(`${process.env.APP_URL}/api/conversations`, {
                         payload: payload,
                         login: process.env.ACCOUNT_LOGIN
-                    }).then((d)=>{
-                        console.log(d.data)
+                    }).then((d) => {
                         return d.data
-                    }).catch((e)=>{
-                        console.log(e)
+                    }).catch((e) => {
+                        console.log(err.message);
                     })
                 }
             }
         }
     }
-
-
+    sentLifeInfo(1)
 };
 
 es.onerror = err => {
-    console.log('EventSource error: ', err);
+    sentLifeInfo(0)
+    console.log(err.message);
 };
 
+process.on('message', function (msg) {
 
-setInterval(function (){
-    axios.put(`${process.env.APP_URL}/api/accounts/${process.env.ACCOUNT_ID}`)
-},300000)
+    if (msg === 'shutdown') {
+        sentLifeInfo(0)
+        process.exit(0);
+    }
+});
 
+function sentLifeInfo( status ){
+    axios.post(`${process.env.APP_URL}/api/accounts/${process.env.ACCOUNT_ID}`, {
+        is_online: status
+    }).then((resp) => {
+        console.log(resp.data);
+    })
+}

@@ -3,19 +3,15 @@
 namespace App\Console\Commands;
 
 
-use App\Jobs\GetAccountConversations;
-use App\Jobs\GetConversationMessages;
-use App\Jobs\GetLastMessagesConversation;
-use App\Jobs\SearchByKey;
-
-use App\Jobs\SyncAccountConnectionsJob;
-use App\Jobs\SyncAccountConversations;
+use App\Linkedin\Api;
+use App\Models\Account;
 use App\Models\User;
-use App\Repositories\AccountRepository;
-use App\Repositories\KeyRepository;
+use App\Models\Conversation;
 
-use App\Repositories\ProxyRepository;
+use App\Services\ConversationService;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
+use Nette\Utils\Image;
 
 class GetUnRealAccountConversationMessages extends Command
 {
@@ -33,21 +29,9 @@ class GetUnRealAccountConversationMessages extends Command
      */
     protected $description = 'Command description';
 
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-
-    protected $accountsRepository;
-
-    protected $proxyRepository;
 
     public function __construct()
     {
-        $this->accountsRepository = new AccountRepository();
-        $this->proxyRepository = new ProxyRepository();
-
         parent::__construct();
     }
 
@@ -56,14 +40,21 @@ class GetUnRealAccountConversationMessages extends Command
      */
     public function handle()
     {
-        $accounts = $this->accountsRepository->getAllUnRealAccounts();
+        $user = User::first();
+        $account = Account::whereId(1)->first();
+        $conversation = Conversation::whereId(236)->first();
 
-        $accounts->map(function ($account) {
-            $conversations = $account->conversations;
-            $conversations->map(function ($conversation) use ($account) {
-                GetConversationMessages::dispatch(User::first(),$account, $conversation );
-            });
-        });
+        $b = "https:\/\/www.linkedin.com\/dms\/C4D06AQHw6hsPPOdi0g\/messaging-attachmentFile\/0\/1633890129676?m=AQJ5Z_9FowJEkwAAAXxrgz0imxIqmSC0ad-OKRE0mu6N8kUUc3dXXCvyPg&ne=1&v=beta&t=x6pmG71o8n375_OSPTp9OdkDqO5Q4xl2BEU2M6LG4ro";
+        $bc = "https://www.linkedin.com/dms/C4D06AQHw6hsPPOdi0g/messaging-attachmentFile/0/1633890129676?m=AQJ5Z_9FowJEkwAAAXxrgz0imxIqmSC0ad-OKRE0mu6N8kUUc3dXXCvyPg&ne=1&v=beta&t=x6pmG71o8n375_OSPTp9OdkDqO5Q4xl2BEU2M6LG4ro";
+
+//        $a = Api::conversation($account)->getFile($bc);
+////        File::put(storage_path('av.txt'),$a['data']);
+////        $base64_str = substr($a['data'], strpos($a['data'], ",")+1);
+////
+////        //decode base64 string
+////        $image = base64_decode($base64_str);
+//        file_put_contents(storage_path('av.webp'), $a['data']);
+        (new ConversationService())->getConversationMessages($user,$account,$conversation,false);
 
         return 1;
     }

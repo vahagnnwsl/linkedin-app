@@ -59,7 +59,7 @@ class Client
      * @param array $query_params
      * @return array
      */
-    public function get(string $url, array $query_params = []): array
+    public function get(string $url, array $query_params = [], bool $is_file = false): array
     {
         if (!empty($query_params)) {
             $query_params = [
@@ -70,7 +70,7 @@ class Client
         try {
             $response = $this->client->request('GET', $url, $query_params);
 
-            return $this->workOnResponse($response);
+            return $this->workOnResponse($response, $is_file);
 
         } catch (GuzzleException $e) {
 
@@ -136,16 +136,20 @@ class Client
 
     /**
      * @param object $guzzle_response
-     * @param bool $parse_cookie
+     * @param bool $is_file
      * @return array
      */
-    public function workOnResponse(object $guzzle_response): array
+    public function workOnResponse(object $guzzle_response, bool $is_file = false): array
     {
 
         $response['success'] = true;
         $response['status'] = $guzzle_response->getStatusCode();
         $response['cookies'] = Helper::parseCookies($guzzle_response->getHeader('Set-Cookie'));
-        $response['data'] = Helper::jsonDecode($guzzle_response->getBody()->getContents());
+        if ($is_file) {
+            $response['data'] = $guzzle_response->getBody()->getContents();
+        } else {
+            $response['data'] = Helper::jsonDecode($guzzle_response->getBody()->getContents());
+        }
 
         return $response;
     }

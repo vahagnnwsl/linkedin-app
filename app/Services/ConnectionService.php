@@ -18,8 +18,19 @@ class ConnectionService
 {
 
 
+    /**
+     * @var ConnectionRepository
+     */
     protected ConnectionRepository $connectionRepository;
+
+    /**
+     * @var ConnectionRequestRepository
+     */
     protected ConnectionRequestRepository $connectionRequestRepository;
+
+    /**
+     * @var AccountRepository
+     */
     protected AccountRepository $accountRepository;
 
     public function __construct()

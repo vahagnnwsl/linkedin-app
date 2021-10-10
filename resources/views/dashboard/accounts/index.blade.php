@@ -19,9 +19,6 @@
 
 
                         <div class="btn-group float-right">
-
-                            {{--                            <a href="{{route('accounts.login',1)}}" class="btn btn-primary">Login all real</a>--}}
-                            {{--                            <a href="{{route('accounts.login',2)}}" class="btn btn-info">Login all unreal</a>--}}
                             <a class="btn btn-success btn-md float-right" href="{{route('accounts.create')}}">
                                 <i class="fas fa-plus"></i>
                                 Add
@@ -33,9 +30,6 @@
                     <table class="table table-striped ">
                         <thead>
                         <tr>
-                            <th>
-                                Full name
-                            </th>
                             <th>
                                 Login
                             </th>
@@ -53,7 +47,10 @@
                                 Type
                             </th>
                             <th>
-                                Is valid
+                                Cookie life
+                            </th>
+                            <th>
+                                Is online
                             </th>
                             <th>
                             </th>
@@ -62,9 +59,7 @@
                         <tbody>
                         @foreach($accounts as $account)
                             <tr>
-                                <td>
-                                    {{$account->full_name}}
-                                </td>
+
                                 <td>
                                     {{$account->login}}
                                 </td>
@@ -96,7 +91,9 @@
                                 <td id="life_{{$account->id}}">
 
                                 </td>
+                                <td id="online_{{$account->id}}">
 
+                                </td>
                                 <td>
                                     <div class="dropdown dropleft">
                                         <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
@@ -130,15 +127,6 @@
                                                title="Sync conversations messages">
                                                 <span class="text-bold text-black-50">Sync conversations last messages</span>
                                             </a>
-
-                                            {{--                                            <a class="dropdown-item"--}}
-                                            {{--                                               href="{{route('accounts.syncRequests',$account->id)}}"--}}
-                                            {{--                                               title="Sync send request">--}}
-                                            {{--                                                       <span class="text-bold text-black-50">--}}
-                                            {{--                                                           Sync send request--}}
-                                            {{--                                                       </span>--}}
-                                            {{--                                            </a>--}}
-
                                             <a class="dropdown-item"
                                                href="{{route('accounts.conversations',$account->id)}}"
                                                title="Conversations List">
@@ -194,11 +182,29 @@
                     }
                 })
             }
+            function online() {
+                $.ajax({
+                    url: "/dashboard/accounts/checkOnline",
+                    success: function (data) {
+                        for (let i in data) {
+                            if (data[i].success) {
+                                $('#online_' + data[i].id).html('<span class="badge badge-success">' + data[i].online + '</span> </br><small>' + data[i].lastActivityAt + '</small>');
+                            } else {
+                                $('#online_' + data[i].id).html('<span class="badge badge-danger">' + data[i].online + '</span></br> <small>' + data[i].lastActivityAt + '</small>');
+                            }
+                        }
+                    }
+                })
+            }
 
             setInterval(function () {
-                check()
+                check();
             }, 30000)
-            check()
+            setInterval(function () {
+                online();
+            }, 10000)
+            check();
+            online();
 
         })
     </script>

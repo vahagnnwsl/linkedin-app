@@ -69,7 +69,7 @@ class KeyController extends Controller
 
         $keys = $this->keyRepository->paginate();
         $countries = $this->countryRepository->getAll();
-        $accounts = $this->accountRepository->selectForSelect2('full_name', ['status' => 1, 'type' => $this->accountRepository::$TYPE_REAL]);
+        $accounts = $this->accountRepository->selectForSelect2('full_name', [ 'type' => $this->accountRepository::$TYPE_REAL]);
 
         return view('dashboard.keys.index', compact('keys', 'countries', 'accounts'));
     }
@@ -104,7 +104,7 @@ class KeyController extends Controller
 
         $countries = $this->countryRepository->getAll();
 
-        $accounts = $this->accountRepository->selectForSelect2('full_name', ['status' => 1, 'type' => $this->accountRepository::$TYPE_REAL]);
+        $accounts = $this->accountRepository->selectForSelect2('full_name', [ 'type' => $this->accountRepository::$TYPE_REAL]);
 
 
         return view('dashboard.keys.edit', compact('key', 'countries', 'accounts'));

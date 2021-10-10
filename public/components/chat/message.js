@@ -26,10 +26,10 @@ Vue.component('chat-message', {
                         <p v-if="message.media"><img :src="message.media.url"></p>
                         <p v-if="message.attachments">
                             <template v-if="message.attachments.mediaType.includes('application') || message.attachments.mediaType.includes('text')">
-                                <a  target="_blank" :href="message.attachments.reference"> {{ message.attachments.name }}</a>
+                                <a  target="_blank" :href="message.attachments.filePath"> {{ message.attachments.name }}</a>
                             </template>
                             <template v-else>
-                                <img  :src="message.attachments.reference" width="100">
+                                <img  :src="message.attachments.filePath" width="100">
                             </template>
                         </p>
                     </div>

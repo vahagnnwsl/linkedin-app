@@ -158,4 +158,14 @@ class Conversation extends Repository
 
         return $this->client->setHeaders($this->account)->post(Constants::API_URL . '/messaging/conversations?action=create', $payload);
     }
+
+    /**
+     * @param string $url
+     * @return array
+     */
+    public function getFile(string $url)
+    {
+        return $this->client->setHeaders($this->account)->get($url, [], true);
+    }
+
 }

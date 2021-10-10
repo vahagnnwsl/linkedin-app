@@ -17,12 +17,29 @@ class GetConversationMessages implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    /**
+     * @var Account
+     */
     protected Account $account;
+
+    /**
+     * @var Conversation
+     */
     protected Conversation $conversation;
+
+    /**
+     * @var ConversationService
+     */
     protected ConversationService $conversationService;
+
+    /**
+     * @var User
+     */
     protected User $user;
-    protected $proxy;
-    protected $messageRepository;
+
+    /**
+     * @var bool
+     */
     protected bool $isLast;
 
     /**

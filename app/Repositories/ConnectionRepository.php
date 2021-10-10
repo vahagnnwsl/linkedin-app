@@ -368,11 +368,11 @@ class ConnectionRepository extends Repository
                     );
                 $this->conversationRepository->updateOrCreate(
                     [
-                        'account_id' => $account_id,
-                        'connection_id' => $connection->id,
                         'entityUrn' => $item['conversation']['entityUrn']
                     ],
                     [
+                        'account_id' => $account_id,
+                        'connection_id' => $connection->id,
                         'lastActivityAt' => Carbon::createFromTimestampMsUTC($item['conversation']['lastActivityAt'])->toDateTimeString()
                     ]
                 );

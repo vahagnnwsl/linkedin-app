@@ -14,21 +14,28 @@ Vue.component('chat-messages', {
                     <br/> <small class="text-black-50 font-weight-bold">{{ connection.occupation }}</small>
                 </div>
                 <div v-if="selectedConversation">
-                    <button class="px-3 border btn btn-light btn-lg" @click="syncLastMessages(selectedConversation.id)">
-                        <i class="fa fa-sync-alt float-right"></i>
-                    </button>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" data-offset="-52" aria-expanded="false">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <div class="dropdown-menu" role="menu" style="">
+                            <a href="#" class="dropdown-item" @click="syncLastMessages(selectedConversation.id)">Sync last messages</a>
+
+                        </div>
+                    </div>
+
                 </div>
             </div>
-            <div class="position-relative py-1 text-right"
-                 v-if="selectedConversation.connection && selectedConversation.connection.conversations">
+            <div class="position-relative py-1 text-right" v-if="selectedConversation.connection && selectedConversation.connection.conversations">
                 <span v-for="(item,index) in selectedConversation.connection.conversations" :key="index"
                       class="badge mr-1"
                       style="color: rgba(0,0,0,.5)!important;border: 1px solid rgba(0,0,0,.5)!important;"
                       v-if="account.id !==item.account.id ">  {{ item.account.full_name }}</span>
 
+
             </div>
         </div>
-        <div class="position-relative">
+        <div class="position-relative" style="height: 510px;max-height: 510px">
             <div class="chat-messages p-4" id="messages">
                 <chat-message :key="index" :message="message" :account="account"
                               v-for="(message,index) in messages"></chat-message>

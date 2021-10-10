@@ -26,11 +26,13 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
 
     Route::get('/', [App\Http\Controllers\Dashboard\IndexController::class, 'home'])->name('dashboard.index');
 
-    Route::group(['prefix' => 'accounts','middleware'=>'role:Admin'], function () {
+    Route::group(['prefix' => 'accounts'], function () {
 
         Route::get('/', [App\Http\Controllers\Dashboard\AccountController::class, 'index'])->name('accounts.index');
 
         Route::get('/create', [App\Http\Controllers\Dashboard\AccountController::class, 'create'])->name('accounts.create')->middleware('role:Admin');
+        Route::get('/{id}/show', [App\Http\Controllers\Dashboard\AccountController::class, 'show'])->name('accounts.show');
+        Route::get('/{id}/checkLife', [App\Http\Controllers\Dashboard\AccountController::class, 'checkLife'])->name('accounts.checkLife');
         Route::get('/login/{type}', [App\Http\Controllers\Dashboard\AccountController::class, 'login'])->name('accounts.login')->middleware(['role:Admin|Manager']);
         Route::post('/store', [App\Http\Controllers\Dashboard\AccountController::class, 'store'])->name('accounts.store')->middleware('role:Admin');
         Route::get('/edit/{id}', [App\Http\Controllers\Dashboard\AccountController::class, 'edit'])->name('accounts.edit')->middleware('role:Admin');
@@ -44,8 +46,8 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
         Route::get('/{id}/conversation-last-messages', [App\Http\Controllers\Dashboard\AccountController::class, 'syncConversationsLastMessages'])->name('accounts.syncConversationsLastMessages');
         Route::get('/{id}/conversations/history', [App\Http\Controllers\Dashboard\AccountController::class, 'conversations'])->name('accounts.conversations')->middleware(['role:Admin|Manager']);
         Route::get('/{id}/conversations/{conversation_id}/messages', [App\Http\Controllers\Dashboard\AccountController::class, 'conversationMessages'])->name('accounts.conversationMessages')->middleware(['role:Admin|Manager']);
-        Route::get('/{id}/checkLife', [App\Http\Controllers\Dashboard\AccountController::class, 'checkLife'])->name('accounts.checkLife')->middleware(['role:Admin|Manager']);
         Route::get('/checkAllLife', [App\Http\Controllers\Dashboard\AccountController::class, 'checkAllLife'])->middleware(['role:Admin|Manager']);
+        Route::get('/checkOnline', [App\Http\Controllers\Dashboard\AccountController::class, 'checkOnline'])->middleware(['role:Admin|Manager']);
     });
 
     Route::group(['prefix' => 'keys','middleware'=>'role:Admin'], function () {

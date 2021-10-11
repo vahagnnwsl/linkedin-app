@@ -36,7 +36,7 @@ class AccountController extends Controller
     {
         $is_online = $request->get('is_online') ?? 0;
 
-        Log::info($id,$request->all());
+        Log::alert('Id_'.$id,['req'=>$request->all()]);
         $this->accountRepository->update($id, [
             'lastActivityAt' => Carbon::now()->toDateTimeString(),
             'is_online' => $is_online

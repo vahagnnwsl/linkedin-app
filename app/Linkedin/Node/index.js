@@ -59,6 +59,7 @@ es.onerror = err => {
 
 process.on('message', function (msg) {
     sentLifeInfo(0);
+    console.log(msg);
 });
 
 function sentLifeInfo( status ){

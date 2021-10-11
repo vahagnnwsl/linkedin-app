@@ -40,7 +40,7 @@ class AccountController extends Controller
             'lastActivityAt' => Carbon::now()->toDateTimeString(),
             'is_online' => $is_online
         ]);
-        Log::alert('Id_'.$id,['req'=>$is_online]);
+        Log::alert('Id_'.$id,['online'=>$is_online]);
 
         return response()->json(['is_online' => $is_online]);
     }

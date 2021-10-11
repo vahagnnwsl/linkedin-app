@@ -380,7 +380,7 @@ class AccountController extends Controller
             return [
                 'id' => $account->id,
                 'success' => $account->is_online,
-                'lastActivityAt' => $account->lastActivityAt ? $account->lastActivityAt->format('Y-m-d H:m:s') : '',
+                'lastActivityAt' => $account->lastActivityAt ? $account->lastActivityAt->format('Y-m-d H:i:s') : '',
                 'online' => $account->is_online ? 'Online' : 'Offline'
             ];
         });

@@ -114,7 +114,6 @@ class ConnectionController extends Controller
         $categories = $this->connectionRepository->getCategories();
         $accounts = $this->accountRepository->getAll();
 
-
         return view('dashboard.connections.index', compact('connections', 'accounts', 'categories', 'keys', 'userAccount',  'companies'));
     }
 

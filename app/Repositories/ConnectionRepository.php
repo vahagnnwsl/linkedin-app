@@ -153,25 +153,25 @@ class ConnectionRepository extends Repository
                 $query->whereHas('requests');
             }
         })->when($user->role->name !== UserRepository::$ADMIN_ROLE, function ($query) use ($requestData, $user) {
-            $query->where(function ($subQuery) use ($requestData) {
-                $subQuery->whereHas('keys', function ($q) use ($requestData) {
-                    $q->whereIn('keys.id', $requestData['enableKeysIdes']);
-                });
-            })->orWhere(function ($subQuery) use ($user, $requestData) {
-                $subQuery->when(!isset($requestData['keys_ids']), function ($q) use ($user) {
-                    $q->whereHas('accounts', function ($subQ) use ($user) {
-                        $subQ->where('accounts.id', $user->account->id);
+
+            $query->where(function ($subQuery) use ($requestData, $user) {
+                $subQuery->where(function ($sub_q) use ($requestData, $user) {
+                    $sub_q->when(count($requestData['enableKeysIdes']), function ($q) use ($requestData, $user) {
+                        $q->whereHas('keys', function ($sub_q) use ($requestData) {
+                            $sub_q->whereIn('keys.id', $requestData['enableKeysIdes']);
+                        });
                     });
-                });
-            })->orWhere(function ($subQuery) use ($user, $requestData) {
-                $subQuery->when(!isset($requestData['keys_ids']) && $user->unRealAccounts()->count(), function ($q) use ($user) {
-                    $q->whereHas('accounts', function ($subQ) use ($user) {
-                        $subQ->whereIn('accounts.id', $user->unRealAccounts()->pluck('accounts.id')->toArray());
+                })->orWhere(function ($sub_q) use ($user) {
+                    $accountsIds = $user->unRealAccounts()->pluck('accounts.id')->toArray();
+                    array_push($accountsIds, $user->account->id);
+                    $sub_q->whereHas('accounts', function ($q) use ($accountsIds) {
+                        $q->whereIn('accounts.id', $accountsIds);
                     });
                 });
             });
-        })->with(['conversations' => function ($query) use($requestData) {
-              $query->whereIn('conversations.account_id',$requestData['accountsIds']);
+
+        })->with(['conversations' => function ($query) use ($requestData) {
+            $query->whereIn('conversations.account_id', $requestData['accountsIds']);
         }])->orderby('id', 'desc');
 
         return $data->paginate(20);

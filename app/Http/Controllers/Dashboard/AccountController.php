@@ -376,7 +376,7 @@ class AccountController extends Controller
      */
     public function checkOnline(): JsonResponse
     {
-        $accounts = $this->accountRepository->model()::where(['status'=>$this->accountRepository::$ACTIVE_STATUS])->get();
+        $accounts = $this->accountRepository->getAll();
 
         $resp = $accounts->map(function ($account) {
 

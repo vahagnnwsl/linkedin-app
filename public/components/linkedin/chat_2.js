@@ -112,7 +112,7 @@ Vue.component('linkedin-history-chat', {
                             </div>
 
                         </div>
-                        <button v-if="messages.length" @click="getConversationMessages(selectedConversation.id)"
+                        <button v-if="messages.length" @click="getConversationMessages(selectedConversation.entityUrn)"
                                 class="btn btn-default"
                                 style="float: right" title="load more messages"><i class="fa fa-arrow-circle-down"></i>
                         </button>
@@ -129,6 +129,7 @@ Vue.component('linkedin-history-chat', {
         return {
             selectedConversation: {
                 id: '',
+                entityUrn: '',
                 connection: null
             },
             conversations: [],
@@ -180,8 +181,9 @@ Vue.component('linkedin-history-chat', {
             this.messageStart = 0;
             this.messages = [];
             this.selectedConversation.id = conversation.id;
+            this.selectedConversation.entityUrn = conversation.entityUrn;
             this.selectedConversation.connection = conversation.connection;
-            this.getConversationMessages(conversation.id)
+            this.getConversationMessages(conversation.entityUrn)
         },
         getConversationMessages: function (id) {
             this.$refs['conversation_new_message' +id][0].style.display = 'none';

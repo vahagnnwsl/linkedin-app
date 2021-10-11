@@ -537,13 +537,15 @@
                         <h2 class="text-center"><span class="text-danger">Attention! </span> On your user not connected
                             any linkedin account
                         </h2>
+                    @elseif(!$account->status)
+                        <h2 class="text-center"><span class="text-danger">Attention! </span> Your linkedin user is inactive
+                        </h2>
                     @elseif(!$account->conversations()->count())
                         <h2 class="text-center"><span class="text-danger">Attention! </span> Your linkedin user hav not
                             started any conversation</h2>
                     @elseif(!$account->is_online)
                         <h2 class="text-center"><span class="text-danger">Attention! </span> Your linkedin user is
                             offline</h2>
-
                     @elseif(!$life)
                         <h2 class="text-center"><span class="text-danger">Attention! </span> Your linkedin user cookie is
                             old</h2>

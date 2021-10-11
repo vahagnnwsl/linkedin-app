@@ -2,30 +2,40 @@
 
 namespace App\Linkedin\Responses;
 
-use App\Linkedin\Constants;
-use App\Linkedin\DTO\AbstractDTO;
-use App\Linkedin\DTO\Message;
-use App\Linkedin\DTO\Profile;
+use App\Linkedin\Api;
+
 use App\Linkedin\Helper;
+use App\Models\Account;
 use Carbon\Carbon;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 
 
 class NewMessage
 {
 
+    /**
+     * @var array
+     */
     protected $data;
-    protected $login;
+
+    /**
+     * @var Account
+     */
+    protected Account $account;
 
     const TYPE_MINI_PROFILE = 'com.linkedin.voyager.identity.shared.MiniProfile';
     const TYPE_KEY = '$type';
     const MESSAGE_TYPE = 'com.linkedin.voyager.messaging.Event';
 
-    public function __construct(array $data, string $login)
+    /**
+     * @param array $data
+     * @param Account $account
+     */
+    public function __construct(array $data, Account $account)
     {
         $this->data = $data;
-        $this->login = $login;
+        $this->account = $account;
     }
 
 
@@ -73,10 +83,26 @@ class NewMessage
 
         if (isset($event['eventContent']['attachments'])) {
             $message['attachments'] = $event['eventContent']['attachments'][0];
+
+            try {
+                $resp = Api::conversation($this->account)->getFile($message['attachments']['reference']);
+                if ($resp['success']) {
+                    if (!File::exists(storage_path('app/public/conversations'))) {
+                        File::makeDirectory(storage_path('app/public/conversations'));
+                    }
+                    if (!File::exists(storage_path('app/public/conversations/'.$conversation['entityUrn']))) {
+                        File::makeDirectory(storage_path('app/public/conversations/'.$conversation['entityUrn']));
+                    }
+                    file_put_contents(storage_path('app/public/conversations/'.$conversation['entityUrn'].'/'.$message['attachments']['name']), $resp['data']);
+                    $message['attachments']['filePath'] = '/storage/conversations/'.$conversation['entityUrn'].'/'.$message['attachments']['name'];
+                }
+            }catch (\Exception $exception){
+                Log::error($conversation['entityUrn'],['error'=>$exception->getMessage()]);
+            }
         }
 
         return [
-            'login' => $this->login,
+            'login' => $this->account->login,
             'message' => $message,
             'writer' => $writer,
             'conversation' => $conversation

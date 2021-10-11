@@ -65,9 +65,10 @@ class ConversationController extends Controller
 
         $request = $request->all();
 
-        $data = (new NewMessageResponse($request['payload']['included'], $request['login']))();
+        $account = $this->accountRepository->getByLogin($request['login']);
 
-        $account = $this->accountRepository->getByLogin($data['login']);
+        $data = (new NewMessageResponse($request['payload']['included'], $account))();
+
 
         $conversationData = $data['conversation'];
 

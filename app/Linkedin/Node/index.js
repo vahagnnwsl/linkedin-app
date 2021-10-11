@@ -1,6 +1,7 @@
 const key = 'com.linkedin.realtimefrontend.DecoratedEvent';
 const EventSource = require('eventsource');
 const axios = require('axios');
+const fs = require('fs');
 const cookie = JSON.parse(process.env.COOKIE);
 
 const eventSourceInitDict = {
@@ -53,15 +54,10 @@ es.onmessage = result => {
 
 es.onerror = err => {
     sentLifeInfo(0)
-    console.log(err.message);
 };
 
 process.on('message', function (msg) {
-
-    if (msg === 'shutdown') {
-        sentLifeInfo(0)
-        process.exit(0);
-    }
+    sentLifeInfo(0);
 });
 
 function sentLifeInfo( status ){

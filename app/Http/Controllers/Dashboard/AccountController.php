@@ -354,7 +354,7 @@ class AccountController extends Controller
      */
     public function checkAllLife(): JsonResponse
     {
-        $accounts = $this->accountRepository->query()::where([
+        $accounts = $this->accountRepository->model()::where([
             'status'=>$this->accountRepository::$ACTIVE_STATUS,
             'type'=>$this->accountRepository::$TYPE_REAL,
         ])->get();
@@ -376,7 +376,7 @@ class AccountController extends Controller
      */
     public function checkOnline(): JsonResponse
     {
-        $accounts = $this->accountRepository->query()::where(['status'=>$this->accountRepository::$ACTIVE_STATUS])->get();
+        $accounts = $this->accountRepository->model()::where(['status'=>$this->accountRepository::$ACTIVE_STATUS])->get();
 
         $resp = $accounts->map(function ($account) {
 

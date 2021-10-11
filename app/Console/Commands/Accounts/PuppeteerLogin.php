@@ -149,6 +149,7 @@ class PuppeteerLogin extends Command
                 'script' => app_path('Linkedin/Node/index.js'),
                 'watch' => false,
                 'max_memory_restart' => '200M',
+                'shutdown_with_message'=> true,
                 'env' => [
                     'COOKIE' => [
                         'str' => $account->cookie_socket_str,

@@ -14,8 +14,8 @@ Vue.component('linkedin-history-chat', {
                         </div>
                         <p class="name-time">
                                         <span class="name">
-                                            {{ conversation.connection.firstName }}
-                                            {{ conversation.connection.lastName }}
+                                            {{ conversation.connection.fullName }}
+
                                         </span>
                             <br/>
                             <span style="font-size: 11px;margin-right: 5px">

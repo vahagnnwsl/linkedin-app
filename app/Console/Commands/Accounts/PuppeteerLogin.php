@@ -69,6 +69,7 @@ class PuppeteerLogin extends Command
     public function handle(): int
     {
 
+
         $accounts = Account::pluck('login')->toArray();
 
         $choice = $this->choice('Login as ?', $accounts);
@@ -157,10 +158,10 @@ class PuppeteerLogin extends Command
                     ],
                     'ACCOUNT_LOGIN' => $account->login,
                     'ACCOUNT_ID' => $account->id,
-                    'APP_URL' => env('APP_URL')
+                    'APP_URL' => config('app.url')
                 ],
             ];
-
+            dump(config('app.url'));
 
             File::put(storage_path('linkedin/' . $account->login . '.json'), json_encode($app));
 

@@ -176,18 +176,7 @@ class AccountController extends Controller
 
         $this->accountRepository->update($id, $data);
 
-        $account = $this->accountRepository->getById($id);
 
-        if ((int)$account->status === 0) {
-            StopPid::dispatch($account);
-        } else {
-
-            if (File::exists(storage_path('linkedin/' . $account->login . '.json'))) {
-                StartPid::dispatch($account);
-            } else {
-                $this->putFlashMessage(false, 'Please run command:login-linkedin for this account');
-            }
-        }
 
         $this->putFlashMessage(true, 'Successfully updated');
 
@@ -384,11 +373,39 @@ class AccountController extends Controller
                 'id' => $account->id,
                 'success' => $account->is_online,
                 'lastActivityAt' => $account->lastActivityAt ? $account->lastActivityAt->timezone('Asia/Yerevan')->format('Y-m-d H:i:s') : '',
-                'online' => $account->is_online ? 'Online' : 'Offline'
+                'online' => $account->is_online ? 'Online' : 'Offline',
             ];
         });
 
         return response()->json($resp);
     }
 
+    /**
+     * @param int $id
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function setOnlineParameter(int $id,Request $request): JsonResponse
+    {
+        $account = $this->accountRepository->getById($id);
+
+         $resp = [
+            'success'=> true,
+            'msg' =>'Successfully started',
+             'status' => $request->status
+        ];
+
+        if ((int)$request->status === 1) {
+            if (File::exists(storage_path('linkedin/' . $account->login . '.json'))) {
+                StartPid::dispatch($account);
+            } else {
+                $resp['msg'] = 'Please run command:login-linkedin for this account';
+                $resp['success'] = false;
+            }
+        } else {
+            StopPid::dispatch($account);
+            $resp['msg'] = 'Successfully stopped';
+        }
+        return response()->json($resp);
+    }
 }

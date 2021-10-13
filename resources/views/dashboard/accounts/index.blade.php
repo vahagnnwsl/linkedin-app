@@ -91,8 +91,14 @@
                                 <td id="life_{{$account->id}}">
 
                                 </td>
-                                <td id="online_{{$account->id}}">
-
+                                <td >
+                                   <p id="online_{{$account->id}}"></p>
+                                    <div class="form-group">
+                                        <div class="custom-control custom-switch">
+                                            <input type="checkbox" class="custom-control-input customSwitch" data_account_id="{{$account->id}}" id="customSwitch{{$account->id}}">
+                                            <label class="custom-control-label" for="customSwitch{{$account->id}}"></label>
+                                        </div>
+                                    </div>
                                 </td>
                                 <td>
                                     <div class="dropdown dropleft">
@@ -168,6 +174,32 @@
 @push('js')
     <script>
         $(document).ready(function () {
+
+            $('.customSwitch').change(function (){
+                var id = $(this).attr('data_account_id');
+                if ($(this).is(':checked')) {
+                    // Do something...
+                    setOnline(id,1)
+                }else {
+                    setOnline(id,0)
+                }
+            })
+
+            function setOnline(accountId,status){
+                $.ajax({
+                    url: "/dashboard/accounts/"+accountId+"/setOnlineParameter?status="+status,
+                    success: function (data) {
+                        if (data.success){
+                            toastr.success(data.msg);
+                        }else {
+                            toastr.error(data.msg);
+                        }
+                    },error:function (){
+                        toastr.error('something  went wrong');
+
+                    }
+                })
+            }
             function check() {
                 $.ajax({
                     url: "/dashboard/accounts/checkAllLife",
@@ -188,8 +220,11 @@
                     success: function (data) {
                         for (let i in data) {
                             if (data[i].success) {
+                                $('#customSwitch'+ data[i].id).attr('checked','checked');
                                 $('#online_' + data[i].id).html('<span class="badge badge-success">' + data[i].online + '</span> </br><small>' + data[i].lastActivityAt + '</small>');
                             } else {
+                                $('#customSwitch'+ data[i].id).removeAttr('checked');
+
                                 $('#online_' + data[i].id).html('<span class="badge badge-danger">' + data[i].online + '</span></br> <small>' + data[i].lastActivityAt + '</small>');
                             }
                         }

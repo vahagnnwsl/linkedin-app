@@ -537,18 +537,7 @@
                         <h2 class="text-center"><span class="text-danger">Attention! </span> On your user not connected
                             any linkedin account
                         </h2>
-                    @elseif(!$account->status)
-                        <h2 class="text-center"><span class="text-danger">Attention! </span> Your linkedin user is inactive
-                        </h2>
-                    @elseif(!$account->conversations()->count())
-                        <h2 class="text-center"><span class="text-danger">Attention! </span> Your linkedin user hav not
-                            started any conversation</h2>
-                    @elseif(!$account->is_online)
-                        <h2 class="text-center"><span class="text-danger">Attention! </span> Your linkedin user is
-                            offline</h2>
-                    @elseif(!$life)
-                        <h2 class="text-center"><span class="text-danger">Attention! </span> Your linkedin user cookie is
-                            old</h2>
+
                     @else
                         <div class="container-fluid">
                             <chat-index :account="{{json_encode($account)}}"></chat-index>
@@ -574,6 +563,25 @@
     <script>
         $(document).ready(function () {
 
+            var online = {{$account->is_onlin ?? 0}};
+            var life = {{ $life ??false }};
+            @if(!$account->is_online || !$life)
+                 setTimeout(function (){
+                check(online,life)
+            },1000)
+            @endif
+
+
+               function check(online , life){
+                   console.log(online,life)
+
+                   if (!online || !life){
+                         $('.sendMessageGroup').hide()
+                     }else {
+                         $('.sendMessageGroup').show()
+                     }
+            }
+
             $('body').on('mouseover', '.no-send-message', function () {
                 $(this).parent().parent().parent().css('border', '1px solid black')
             })
@@ -587,17 +595,17 @@
                 $.ajax({
                     url: "/dashboard/accounts/{{$account->id}}/show",
                     success: function (data) {
-                        if (data.account.is_online === 0 || !data.account.is_online) {
-                            location.reload();
-                        }
+                        var p = data.account.is_online  === 1 ? true:false
+                        online = p
+                        check(p,life)
+
                     }
                 });
                 $.ajax({
                     url: "/dashboard/accounts/{{$account->id}}/checkLife",
                     success: function (data) {
-                        if (!data.life) {
-                            location.reload();
-                        }
+                        life = data.life
+                        check(online,data.life)
                     }
                 });
             }, 60000)

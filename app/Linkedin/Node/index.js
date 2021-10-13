@@ -3,6 +3,7 @@ const EventSource = require('eventsource');
 const axios = require('axios');
 const fs = require('fs');
 const cookie = JSON.parse(process.env.COOKIE);
+let condition = true;
 
 const eventSourceInitDict = {
     headers: {
@@ -49,16 +50,20 @@ es.onmessage = result => {
             }
         }
     }
-    sentLifeInfo(1)
+    if (condition){
+        sentLifeInfo(1)
+    }
 };
 
 es.onerror = err => {
-    sentLifeInfo(0)
+    sentLifeInfo(0);
+    condition = false;
     console.log(err);
 };
 
 process.on('message', function (msg) {
     sentLifeInfo(0);
+    condition = false;
     console.log(msg);
 });
 

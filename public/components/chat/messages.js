@@ -44,15 +44,15 @@ Vue.component('chat-messages', {
         </div>
         <div class="flex-grow-0 py-3 px-4 border-top">
             <form @submit.prevent="sendMessages" v-if="entityUrn">
-                <div class="input-group">
+                <div class="input-group" >
                     <div class="input-group-prepend" v-if="loadMore" @click="getMessages">
                         <button type="button" class="btn btn-outline-primary" title="Load more ..."><i
                             class="fa fa-arrow-circle-down"></i></button>
                     </div>
-                    <input placeholder="Type your message" type="text" class="form-control"
-                           v-model="form.message">
+                    <input placeholder="Type your message" type="text" class="form-control sendMessageGroup"
+                           v-model="form.message" >
 
-                    <div class="input-group-append">
+                    <div class="input-group-append sendMessageGroup">
                         <button class="btn btn-primary">Send</button>
                     </div>
                 </div>

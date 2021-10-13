@@ -48,6 +48,8 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
         Route::get('/{id}/conversations/{conversation_id}/messages', [App\Http\Controllers\Dashboard\AccountController::class, 'conversationMessages'])->name('accounts.conversationMessages')->middleware(['role:Admin|Manager']);
         Route::get('/checkAllLife', [App\Http\Controllers\Dashboard\AccountController::class, 'checkAllLife'])->middleware(['role:Admin|Manager']);
         Route::get('/checkOnline', [App\Http\Controllers\Dashboard\AccountController::class, 'checkOnline'])->middleware(['role:Admin|Manager']);
+        Route::get('/{id}/setOnlineParameter', [App\Http\Controllers\Dashboard\AccountController::class, 'setOnlineParameter'])->middleware(['role:Admin|Manager']);
+
     });
 
     Route::group(['prefix' => 'keys','middleware'=>'role:Admin'], function () {

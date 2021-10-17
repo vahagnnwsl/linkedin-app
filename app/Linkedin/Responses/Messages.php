@@ -71,7 +71,7 @@ class Messages
 
         if ($lastActivate) {
             $messages = $messages->filter(function ($item) use ($lastActivate) {
-                return $item['createdAt'] > $lastActivate ;
+                return $item['date'] > $lastActivate ;
             });
 
             if (!count($messages)) {

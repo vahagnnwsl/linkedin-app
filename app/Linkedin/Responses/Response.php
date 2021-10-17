@@ -178,7 +178,7 @@ class Response
      * @param string $user_linkedin_entityUrn
      * @return array
      */
-    public static function conversationsConnections(array $data, string $user_linkedin_entityUrn): array
+    public static function conversationsConnections(array $data, string $user_linkedin_entityUrn, $lastActivityAt = null): array
     {
         if (!count($data['data']->included)) {
             return [
@@ -222,14 +222,26 @@ class Response
         });
 
 
-        $filter =  $interlocutors->filter(function ($interlocutor) use ($user_linkedin_entityUrn) {
+        $filter = $interlocutors->filter(function ($interlocutor) use ($user_linkedin_entityUrn) {
             return $user_linkedin_entityUrn !== $interlocutor['connection']['entityUrn'] && !is_null($interlocutor['conversation']) && $interlocutor['conversation']['interlocutorEntityUrn'] !== 'UNKNOWN';
-        })->toArray();
+        })->sortByDesc('conversation.lastActivityAt');
 
+        if ($lastActivityAt) {
+            $filter = $filter->filter(function ($interlocutor) use ($lastActivityAt) {
+                return $interlocutor['conversation']['lastActivityAtToDate'] > $lastActivityAt;
+            });
+
+            if ($filter->count() === 0) {
+                return [
+                    'success' => false
+                ];
+            }
+        }
+        $filter = $filter->toArray();
         return [
             'lastActivityAt' => $conversations->min('lastActivityAt'),
             'success' => true,
-            'data' => array_values($filter),
+            'data' => array_values($filter)
         ];
 
     }
@@ -364,7 +376,7 @@ class Response
     {
         if ($data['success'] && isset($data['data']) && isset($data['data']->data)) {
             return [
-                'entityUrn' => explode(':',$data['data']->data->value->conversationUrn)[3],
+                'entityUrn' => explode(':', $data['data']->data->value->conversationUrn)[3],
                 'lastActivityAt' => Carbon::createFromTimestampMsUTC($data['data']->data->value->createdAt)->toDateTimeString(),
                 'success' => true
             ];

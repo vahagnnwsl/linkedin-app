@@ -54,7 +54,7 @@ class ConversationService
         if ($isLast) {
             $lastMessage = $conversation->messages()->orderBy('date', 'DESC')->first();
             if ($lastMessage && $lastMessage->date) {
-                $lastActivate = $lastMessage->date->timestamp * 1000;
+                $lastActivate = $lastMessage->date->toDateTimeString();
             }
         }
 
@@ -74,7 +74,7 @@ class ConversationService
         $response = Api::conversation($account)->getConversationMessages($conversation->entityUrn, $query_params);
 
         if ($response['success']) {
-            $response = Messages::invoke($account,$response['data'], $conversation->entityUrn, $lastActivate);
+            $response = Messages::invoke($account, $response['data'], $conversation->entityUrn, $lastActivate);
         }
 
 
@@ -94,19 +94,18 @@ class ConversationService
      */
     public function getConversationLastEvents(Account $account): Collection
     {
-        $conversations = $this->recursiveGetConversationLastEvents($account);
 
-        $conversations = collect($conversations)->filter(function ($conversation) {
-            $nativeConversation = $this->conversationRepository->getByEntityUrn($conversation['conversation']['entityUrn']);
-            if (!$nativeConversation || ($nativeConversation && $nativeConversation->lastActivityAt < $conversation['conversation']['lastActivityAtToDate'])) {
-                return true;
-            }
-            return false;
-        });
+        $lastActivityAt = null;
+        $lastConversation = $account->conversations()->orderBy('conversations.lastActivityAt', 'desc')->first();
+        if ($lastConversation) {
+            $lastActivityAt = $lastConversation->lastActivityAt->toDateTimeString();
+        }
+
+        $conversations = $this->recursiveGetConversationLastEvents($account, [], [], $lastActivityAt, 0);
 
         if (count($conversations)) {
-            $entityUrns = $conversations->pluck('conversation.entityUrn')->toArray();
-            $this->connectionRepository->updateOrCreateConversation(array_values($conversations->toArray()), $account->id);
+            $entityUrns = collect($conversations)->pluck('conversation.entityUrn')->toArray();
+            $this->connectionRepository->updateOrCreateConversation($conversations, $account->id);
             return $this->conversationRepository->model()::whereIn('entityUrn', $entityUrns)->get();
         }
 
@@ -120,15 +119,15 @@ class ConversationService
      * @param int $start
      * @return array
      */
-    public function recursiveGetConversationLastEvents(Account $account, array $conversations = [], array $params = [], int $start = 0)
+    public function recursiveGetConversationLastEvents(Account $account, array $conversations = [], array $params = [], $lastActivityAt = null, int $start = 0)
     {
 
-        $resp = Response::conversationsConnections(Api::conversation($account)->getConversations($params), $account->entityUrn);
+        $resp = Response::conversationsConnections(Api::conversation($account)->getConversations($params), $account->entityUrn, $lastActivityAt);
 
         if ($resp['success']) {
             array_push($conversations, ...$resp['data']);
             $start++;
-            return $this->recursiveGetConversationLastEvents($account, $conversations, ['createdBefore' => $resp['lastActivityAt']], $start);
+            return $this->recursiveGetConversationLastEvents($account, $conversations, ['createdBefore' => $resp['lastActivityAt']], $lastActivityAt, $start);
         }
         return $conversations;
     }

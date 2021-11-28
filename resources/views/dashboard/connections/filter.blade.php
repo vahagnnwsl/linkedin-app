@@ -18,7 +18,27 @@
     <div class="card-body" style="display: block;" data-select2-id="31">
         <form method="GET" action="{{url(request()->path())}}">
             <div class="row">
+                <div class="col-md-12">
+                    <select class="form-control" id="searches">
+                        <option value="" selected > Select one</option>
 
+                    @foreach($searches as $search)
+                            <option value="{{$search->hash}}"  {{$search->hash === $hash ? 'selected': ''}}>
+                                @foreach($search->params as $key=> $val)
+                                    {{$key}} -
+                                    @if(is_array($val))
+                                        @foreach($val as  $v)
+                                            {{$v}} ,
+                                        @endforeach
+                                    @else
+                                        {{$val}} /
+                                    @endif
+
+                                @endforeach
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
                 <div class="col-md-4">
                     <label for="keys_ids">Companies</label>
                     <select multiple="multiple" class="select2Company form-control" data-placeholder="Select something"
@@ -36,7 +56,7 @@
                             id="keys_ids" name="keys_ids[]">
                         @foreach($keys as $key)
                             <option
-                                @if(request()->get('keys_ids') && count(request()->get('keys_ids')) && in_array($key->id,request()->get('keys_ids'))) selected
+                                @if(isset($req['keys_ids']) && count($req['keys_ids']) && in_array($key->id,$req['keys_ids'])) selected
                                 @endif value="{{$key->id}}">{{$key->name}}</option>
                         @endforeach
                     </select>
@@ -48,7 +68,7 @@
                             id="categories" name="categories[]">
                         @foreach($categories as $category)
                             <option
-                                @if(request()->get('categories') && count(request()->get('categories')) && in_array($category->id,request()->get('categories'))) selected
+                                @if(isset($req['categories']) && count($req['categories']) && in_array($category->id,$req['categories'])) selected
                                 @endif value="{{$category->id}}"
                                 data-badge=""
 
@@ -67,27 +87,27 @@
                 <div class="col-md-4">
                     <label for="keys_ids">Keyword</label>
                     <input type="text" class="form-control" name="key" placeholder="Type keyword"
-                           value="{{request()->get('key')}}">
+                           value="{{$req['key']??''}}">
                     <hr/>
                     <div class="form-group pl-2">
                         <div class="form-check">
                             <label class="form-check-label" style="cursor: pointer">
                                 <input type="radio" class="form-check-input" value="last" name="statuses"
-                                       @if(request()->get('statuses') && request()->get('statuses') === 'last') checked @endif
+                                       @if(isset($req['statuses']) && $req['statuses'] === 'last') checked @endif
                                 >Last status
                             </label>
                         </div>
                         <div class="form-check">
                             <label class="form-check-label" style="cursor: pointer">
                                 <input type="radio" class="form-check-input" value="all" name="statuses"
-                                       @if(!request()->get('statuses') || (request()->get('statuses') && request()->get('statuses') === 'all')) checked @endif
+                                       @if(!isset($req['statuses']) || (isset($req['statuses']) && $req['statuses'] === 'all')) checked @endif
                                 >All statuses
                             </label>
                         </div>
                         <div class="form-check">
                             <label class="form-check-label" style="cursor: pointer">
                                 <input type="radio" class="form-check-input" value="clear" name="statuses"
-                                       @if(request()->get('statuses') && request()->get('statuses') === 'clear') checked @endif
+                                       @if(isset($req['statuses']) && $req['statuses'] === 'clear') checked @endif
                                 >Ignore
                             </label>
                         </div>
@@ -97,28 +117,28 @@
                         <div class="form-check">
                             <label class="form-check-label" style="cursor: pointer">
                                 <input type="radio" class="form-check-input" value="last" name="positions"
-                                       @if(request()->get('positions') &&  request()->get('positions') === 'last') checked @endif
+                                       @if(isset($req['positions']) &&  $req['positions'] === 'last') checked @endif
                                 >Last positions
                             </label>
                         </div>
                         <div class="form-check">
                             <label class="form-check-label" style="cursor: pointer">
                                 <input type="radio" class="form-check-input" value="all" name="positions"
-                                       @if(!request()->get('positions') || (request()->get('positions') && request()->get('positions') === 'all')) checked @endif
+                                       @if(!isset($req['positions']) || ($req['positions'] && $req['positions'] === 'all')) checked @endif
                                 >All positions
                             </label>
                         </div>
                         <div class="form-check">
                             <label class="form-check-label" style="cursor: pointer">
                                 <input type="radio" class="form-check-input" value="clear" name="positions"
-                                       @if(request()->get('positions') &&  request()->get('positions') === 'clear') checked @endif>Ignore
+                                       @if(isset($req['positions']) &&  $req['positions'] === 'clear') checked @endif>Ignore
                             </label>
                         </div>
                         <hr/>
                         <div class="form-check mt-2">
                             <label class="form-check-label" style="cursor: pointer">
                                 <input type="checkbox" class="form-check-input" value="occupation" name="search_in[]"
-                                       @if(request()->get('search_in') && count(request()->get('search_in')) && in_array('occupation',request()->get('search_in'))) checked @endif
+                                       @if(isset($req['search_in']) && count($req['search_in']) && in_array('occupation',$req['search_in'])) checked @endif
                                 >Occupation
                             </label>
                         </div>
@@ -127,7 +147,7 @@
                             <label class="form-check-label" style="cursor: pointer">
                                 <input type="checkbox" class="form-check-input" value="skills" name="search_in[]"
                                        id="skills"
-                                       @if(request()->get('search_in') && count(request()->get('search_in')) && in_array('skills',request()->get('search_in'))) checked @endif>Skills
+                                       @if(isset($req['search_in']) && count($req['search_in']) && in_array('skills',$req['search_in'])) checked @endif>Skills
                             </label>
                         </div>
 
@@ -138,33 +158,33 @@
                     <div class="row">
                         <label for="keys_ids">Name</label>
                         <input type="text" class="form-control" name="name" placeholder="Type name"
-                               value="{{request()->get('name')}}">
+                               value="{{$req['name'] ?? ''}}">
                     </div>
                     <hr/>
                     <div class="row">
                         <div class="form-check w-100">
                             <label class="form-check-label" style="cursor: pointer">
-                                <input type="radio" class="form-check-input" value="not_answered" name="contact"  @if(request()->get('contact') && request()->get('contact') === 'not_answered') checked @endif>Connection not answered
+                                <input type="radio" class="form-check-input" value="not_answered" name="contact"  @if(isset($req['contact']) && $req['contact'] === 'not_answered') checked @endif>Connection not answered
                             </label>
                         </div>
                         <div class="form-check w-100">
                             <label class="form-check-label" style="cursor: pointer">
-                                <input type="radio" class="form-check-input" value="answered" name="contact"  @if(request()->get('contact') && request()->get('contact') === 'answered') checked @endif>Connection  answered
+                                <input type="radio" class="form-check-input" value="answered" name="contact"  @if(isset($req['contact']) && $req['contact'] === 'answered') checked @endif>Connection  answered
                             </label>
                         </div>
                         <div class="form-check w-100">
                             <label class="form-check-label" style="cursor: pointer">
-                                <input type="radio" class="form-check-input" value="month" name="contact"  @if(request()->get('contact') && request()->get('contact') === 'month') checked @endif>Past  30 days
+                                <input type="radio" class="form-check-input" value="month" name="contact"  @if(isset($req['contact']) && $req['contact'] === 'month') checked @endif>Past  30 days
                             </label>
                         </div>
                         <div class="form-check w-100">
                             <label class="form-check-label" style="cursor: pointer">
-                                <input type="radio" class="form-check-input" value="request" name="contact" @if(request()->get('contact') && request()->get('contact') === 'request') checked @endif>Connection send request
+                                <input type="radio" class="form-check-input" value="request" name="contact" @if(isset($req['contact']) && $req['contact'] === 'request') checked @endif>Connection send request
                             </label>
                         </div>
                         <div class="form-check w-100">
                             <label class="form-check-label" style="cursor: pointer">
-                                <input type="radio" class="form-check-input" value="clear" name="contact"  @if(!request()->get('contact') || ( request()->get('contact') && request()->get('contact') === 'clear')) checked @endif>Ignore
+                                <input type="radio" class="form-check-input" value="clear" name="contact"  @if(!isset($req['contact']) || ( isset($req['contact']) && $req['contact'] === 'clear')) checked @endif>Ignore
                             </label>
                         </div>
                     </div>
@@ -174,21 +194,21 @@
                         <div class="form-check w-100">
                             <label class="form-check-label" style="cursor: pointer">
                                 <input type="radio" class="form-check-input" value="accounts" name="distance"
-                                       @if(request()->get('distance') &&  request()->get('distance') === 'accounts') checked @endif
+                                       @if(isset($req['distance']) &&  $req['distance'] === 'accounts') checked @endif
                                 >Only accounts connections
                             </label>
                         </div>
                         <div class="form-check  w-100">
                             <label class="form-check-label" style="cursor: pointer">
                                 <input type="radio" class="form-check-input" value="no_accounts" name="distance"
-                                       @if(request()->get('distance') && request()->get('distance') === 'no_accounts') checked @endif
+                                       @if(isset($req['distance']) && $req['distance'] === 'no_accounts') checked @endif
                                 >Only connections that have not accounts
                             </label>
                         </div>
                         <div class="form-check  w-100">
                             <label class="form-check-label" style="cursor: pointer">
                                 <input type="radio" class="form-check-input" value="all" name="distance"
-                                       @if(!request()->get('distance') || (request()->get('distance') && request()->get('distance') === 'all')) checked @endif
+                                       @if(!isset($req['distance']) || (isset($req['distance']) && $req['distance'] === 'all')) checked @endif
                                 >All connections
                             </label>
                         </div>
@@ -200,21 +220,21 @@
                         <div class="form-check  w-100">
                             <label class="form-check-label" style="cursor: pointer">
                                 <input type="radio" class="form-check-input" value="have_keys" name="connections_keys"
-                                       @if(request()->get('connections_keys') &&  request()->get('connections_keys') === 'have_keys') checked @endif
+                                       @if(isset($req['connections_keys']) &&  $req['connections_keys'] === 'have_keys') checked @endif
                                 >Only connections have keys
                             </label>
                         </div>
                         <div class="form-check  w-100">
                             <label class="form-check-label" style="cursor: pointer">
                                 <input type="radio" class="form-check-input" value="no_keys" name="connections_keys"
-                                       @if(request()->get('connections_keys') &&  request()->get('connections_keys') === 'no_keys') checked @endif
+                                       @if(isset($req['connections_keys']) &&  $req['connections_keys'] === 'no_keys') checked @endif
                                 >Only connections have no keys
                             </label>
                         </div>
                         <div class="form-check  w-100">
                             <label class="form-check-label" style="cursor: pointer">
                                 <input type="radio" class="form-check-input" value="all" name="connections_keys"
-                                       @if(!request()->get('connections_keys') || (request()->get('connections_keys') &&  request()->get('connections_keys') === 'all')) checked @endif
+                                       @if(!isset($req['connections_keys']) || (isset($req['connections_keys']) &&  $req['connections_keys'] === 'all')) checked @endif
                                 >All connections
                             </label>
                         </div>
@@ -229,7 +249,7 @@
                             id="accounts" name="accounts[]">
                         @foreach($accounts as $ac)
                             <option
-                                @if(request()->get('accounts') && count(request()->get('accounts')) && in_array($ac->id,request()->get('accounts'))) selected
+                                @if(isset($req['accounts']) && count($req['accounts']) && in_array($ac->id,$req['accounts'])) selected
                                 @endif value="{{$ac->id}}"
 
 
@@ -241,11 +261,11 @@
                     <div class="row">
                         <div class="form-group w-100">
                             <label for="formControlRange">Experience</label>
-                            <input name="experience" type="range" value="{{request()->get('experience')??0}}"
+                            <input name="experience" type="range" value="{{$req['experience']??0}}"
                                    class="form-control-range" id="formControlRange"
                                    onInput="$('#rangeval').html($(this).val()+' years')" min="0" max="10" step="0.5">
                             <span
-                                id="rangeval">{{request()->get('experience')?request()->get('experience').' years':''}}<!-- Default value --></span>
+                                id="rangeval">{{isset($req['experience'])?$req['experience'].' years':''}}<!-- Default value --></span>
                         </div>
                     </div>
                 </div>
@@ -276,6 +296,11 @@
     <script>
 
         $(function () {
+
+            $('#searches').change(function () {
+
+                window.location.href ='{{url(request()->path())}}'+'?hash='+$(this).val()
+            });
 
             $('.select2').select2({
                 multiple: true,

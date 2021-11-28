@@ -46,6 +46,12 @@
                 <div class="card-body text-right">
                     @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))
                         <div class="btn-group">
+                            <a href="{{route('connections.exportCvs',[ 'hash'=>$hash?? request()->hash ])}}"
+                               class="btn btn-outline-info"
+                               onclick="return confirm(&quot;Export cvs?&quot;)"
+                            >
+                               Export CVS
+                            </a>
                             <a href="{{route('connections.getSkills')}}"
                                class="btn btn-outline-info"
                                onclick="return confirm(&quot;Run job?&quot;)"

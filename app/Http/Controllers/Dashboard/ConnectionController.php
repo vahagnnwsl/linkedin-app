@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Exports\ConnectionExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StatusRequest;
 use App\Jobs\Connections\CalcExperience;
@@ -11,6 +12,7 @@ use App\Jobs\Connections\GetConnectionsPositions;
 use App\Jobs\Connections\GetConnectionsSkills;
 use App\Linkedin\Api;
 use App\Linkedin\Responses\Response;
+use App\Models\Search;
 use App\Repositories\AccountRepository;
 use App\Repositories\CategoryRepository;
 use App\Repositories\CompanyRepository;
@@ -28,6 +30,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
+use PDF;
 
 class ConnectionController extends Controller
 {
@@ -76,10 +80,12 @@ class ConnectionController extends Controller
     }
 
     /**
-     * @return Application|Factory|View
+     * @param $request
+     * @return array
      */
-    public function index(Request $request)
+    public function prepareGetAll($request, $paginate = true): array
     {
+
         $user = Auth::user();
         $userAccount = Auth::user()->account;
 
@@ -90,31 +96,69 @@ class ConnectionController extends Controller
         }
 
 
-        $data = $request->all();
-
-        $data['statuses'] = $data['statuses'] ?? 'all';
-        $data['positions'] = $data['positions'] ?? 'all';
-        $data['distance'] = $data['distance'] ?? 'all';
-        $data['connections_keys'] = $data['connections_keys'] ?? 'all';
-        $data['accountsIds'] = Auth::user()->unRealAccounts()->pluck('accounts.id')->toArray();
-        $data['enableKeysIdes'] = $enableKeysIds;
+        $request['statuses'] = $request['statuses'] ?? 'all';
+        $request['positions'] = $request['positions'] ?? 'all';
+        $request['distance'] = $request['distance'] ?? 'all';
+        $request['connections_keys'] = $request['connections_keys'] ?? 'all';
+        $request['accountsIds'] = Auth::user()->unRealAccounts()->pluck('accounts.id')->toArray();
+        $request['enableKeysIdes'] = $enableKeysIds;
 
         if ($userAccount) {
-            array_push($data['accountsIds'], $userAccount->id);
+            array_push($request['accountsIds'], $userAccount->id);
         }
         $companies = [];
 
-        if ($request->has('companies')) {
-            $companies = $this->companyRepository->getByIds($request->get('companies'));
+        if (isset($request['companies']) && count($request['companies']) > 0) {
+            $companies = $this->companyRepository->getByIds($request['companies']);
         }
 
         $keys = $this->keyRepository->query()->whereIn('keys.id', $enableKeysIds)->get();
-        $connections = $this->connectionRepository->filter($data, $user);
+        $connections = $this->connectionRepository->filter($request, $user, $paginate);
+
+        return [
+            'connections' => $connections,
+            'keys' => $keys,
+            'companies' => $companies,
+            'userAccount' => $userAccount,
+        ];
+    }
+
+    /**
+     * @return Application|Factory|View
+     */
+    public function index(Request $request)
+    {
+
+        $hash = '';
+
+        $req = $request->all();
+        $searchParams = Arr::except($req, ['page', 'hash' ]);
+
+        if (count($searchParams)){
+            $hash = md5(json_encode($searchParams));
+            Search::updateOrCreate([ 'hash'=> $hash],[ 'hash'=> $hash, 'params' => $searchParams]);
+        }
+
+        if (isset($req['hash'])){
+            $search = Search::where(['hash'=>$req['hash']])->first();
+            $req = $search->params;
+            $hash = $search->hash;
+        }
+
+        $data = $this->prepareGetAll($req);
+
+        $connections = $data['connections'];
         $connections->load('accounts', 'keys', 'requests', 'requests.account');
+
+        $keys = $data['keys'];
+        $userAccount = $data['userAccount'];
+        $companies = $data['companies'];
+
         $categories = $this->connectionRepository->getCategories();
         $accounts = $this->accountRepository->getAll();
+        $searches = Search::orderBy('created_at','desc')->get();
 
-        return view('dashboard.connections.index', compact('connections', 'accounts', 'categories', 'keys', 'userAccount',  'companies'));
+        return view('dashboard.connections.index', compact('req','hash','connections', 'accounts', 'categories', 'keys', 'userAccount', 'companies','searches'));
     }
 
     /**
@@ -313,5 +357,19 @@ class ConnectionController extends Controller
         $this->connectionRepository->addKeys($id, $request->get('keys'));
         $this->putFlashMessage(true, 'Successfully added');
         return redirect()->back();
+    }
+
+    public function exportCvs(Request $request): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    {
+
+
+        $search = Search::where(['hash'=>$request->hash])->first();
+
+        $searchParams = Arr::except($search->params, ['page', 'hash' ]);
+
+        $data = $this->prepareGetAll($searchParams,false);
+
+        return Excel::download(new ConnectionExport($data['connections'],$search), date('d-m-Y') . '-connections.xlsx');
+
     }
 }

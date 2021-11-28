@@ -67,7 +67,7 @@ class ConnectionRepository extends Repository
         return $this->model()::where('entityUrn', $entityUrn)->first('id');
     }
 
-    public function filter(array $requestData, User $user)
+    public function filter(array $requestData, User $user, $paginate= true)
     {
 
         $data = $this->model()::when(isset($requestData['key']), function ($query) use ($requestData) {
@@ -110,10 +110,14 @@ class ConnectionRepository extends Repository
                 $subQuery->whereIn('positions.company_id', $requestData['companies']);
             });
         })->when(isset($requestData['name']), function ($query) use ($requestData) {
-            $query->where('firstName', 'LIKE', "%" . $requestData['name'] . "%")
-                ->orWhere('lastName', 'LIKE', "%" . $requestData['name'] . "%")
-                ->orWhere(DB::raw(' CONCAT(firstName," ", lastName)'), 'LIKE', "%" . $requestData['name'] . "%")
-                ->orWhere(DB::raw(' CONCAT(lastName," ", firstName)'), 'LIKE', "%" . $requestData['name'] . "%");
+
+            $query->where(function ($subQuery) use($requestData) {
+                $subQuery->where('firstName', 'LIKE', "%" . $requestData['name'] . "%")
+                    ->orWhere('lastName', 'LIKE', "%" . $requestData['name'] . "%")
+                    ->orWhere(DB::raw(' CONCAT(firstName," ", lastName)'), 'LIKE', "%" . $requestData['name'] . "%")
+                    ->orWhere(DB::raw(' CONCAT(lastName," ", firstName)'), 'LIKE', "%" . $requestData['name'] . "%");
+            });
+
         })->when(!isset($requestData['key']) && isset($requestData['experience']) && $requestData['experience'] > 0, function ($query) use ($requestData) {
             $query->whereHas('positions', function ($subQ) use ($requestData) {
                 $subQ
@@ -174,7 +178,11 @@ class ConnectionRepository extends Repository
             $query->whereIn('conversations.account_id', $requestData['accountsIds']);
         }])->orderby('id', 'desc');
 
-        return $data->paginate(20);
+        if ($paginate){
+            return $data->paginate(20);
+        }
+        return $data->get();
+
     }
 
     /**

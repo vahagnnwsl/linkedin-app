@@ -8,6 +8,7 @@ use App\Jobs\SearchByKeyAndCompany;
 use App\Jobs\SyncLastMessagesForOneAccount;
 use App\Linkedin\Api;
 use App\Linkedin\Responses\Profile_2;
+use App\Models\Search;
 use App\Repositories\CompanyRepository;
 use App\Repositories\CountryRepository;
 use App\Repositories\KeyRepository;
@@ -17,6 +18,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 
@@ -81,4 +83,17 @@ class SearchController extends Controller
         return redirect()->back();
     }
 
+
+    /**
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function store(Request $request) {
+        $request = $request->all();
+        $hash = md5(json_encode($request['params']));
+        Search::updateOrCreate([ 'hash'=> $hash ],[ 'hash'=> $hash, 'params' => json_decode($request['params']), 'name' => $request['name'] ]);
+        $this->putFlashMessage(true, 'Successfully saved');
+
+        return redirect()->back();
+    }
 }

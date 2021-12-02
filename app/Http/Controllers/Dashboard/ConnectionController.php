@@ -123,24 +123,16 @@ class ConnectionController extends Controller
         ];
     }
 
-    /**
-     * @return Application|Factory|View
-     */
     public function index(Request $request)
     {
 
-        $hash = '';
 
         $req = $request->all();
-        $searchParams = Arr::except($req, ['page', 'hash' ]);
-
-        if (count($searchParams)){
-            $hash = md5(json_encode($searchParams));
-            Search::updateOrCreate([ 'hash'=> $hash],[ 'hash'=> $hash, 'params' => $searchParams]);
-        }
+        $hash = '';
 
         if (isset($req['hash'])){
             $search = Search::where(['hash'=>$req['hash']])->first();
+            if (!$search) return redirect()->route('connections.index');
             $req = $search->params;
             $hash = $search->hash;
         }
@@ -158,7 +150,7 @@ class ConnectionController extends Controller
         $accounts = $this->accountRepository->getAll();
         $searches = Search::orderBy('created_at','desc')->get();
 
-        return view('dashboard.connections.index', compact('req','hash','connections', 'accounts', 'categories', 'keys', 'userAccount', 'companies','searches'));
+        return view('dashboard.connections.index', compact('req','hash', 'connections', 'accounts', 'categories', 'keys', 'userAccount', 'companies','searches'));
     }
 
     /**
@@ -369,7 +361,7 @@ class ConnectionController extends Controller
 
         $data = $this->prepareGetAll($searchParams,false);
 
-        return Excel::download(new ConnectionExport($data['connections'],$search), date('d-m-Y') . '-connections.xlsx');
+        return Excel::download(new ConnectionExport($data['connections'], $search), date('d-m-Y') . '-connections.xlsx');
 
     }
 }

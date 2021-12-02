@@ -15,6 +15,7 @@ class Search extends Model
     protected $fillable = [
         'params',
         'hash',
+        'name',
     ];
 
     protected $casts = [

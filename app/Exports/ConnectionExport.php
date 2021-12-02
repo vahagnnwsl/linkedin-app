@@ -51,7 +51,7 @@ class ConnectionExport implements FromCollection, WithMapping, WithHeadings
             $connection->occupation,
             'https://www.linkedin.com/in/' . $connection->entityUrn,
             $connection->image,
-            json_encode($this->search->params),
+            $this->search->name,
         ];
     }
 }

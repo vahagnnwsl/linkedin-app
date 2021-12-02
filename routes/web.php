@@ -66,7 +66,6 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
         Route::post('/store', [App\Http\Controllers\Dashboard\ProxyController::class, 'store'])->name('proxies.store');
         Route::get('/{id}/edit', [App\Http\Controllers\Dashboard\ProxyController::class, 'edit'])->name('proxies.edit');
         Route::put('/update/{id}', [App\Http\Controllers\Dashboard\ProxyController::class, 'update'])->name('proxies.update');
-
     });
 
     Route::group(['prefix' => 'users','middleware'=>'role:Admin'], function () {
@@ -182,5 +181,8 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
         Route::post('/profiles/invitations/{id}/reply', [App\Http\Controllers\Dashboard\LinkedinController::class, 'replyInvitation']);
     });
 
+    Route::group(['prefix' => 'searches'], function () {
+        Route::post('/', [App\Http\Controllers\Dashboard\SearchController::class, 'store'])->name('searches.store');
 
+    });
 });

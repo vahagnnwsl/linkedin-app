@@ -5,7 +5,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Search in Linkedin </h1>
+                    <h1>Searches</h1>
                 </div>
             </div>
         </div><!-- /.container-fluid -->
@@ -13,45 +13,72 @@
     <section class="content">
         <div class="container-fluid">
             <div class="card">
-                <form method="POST" action="{{route('search.linkedin')}}" class="w-100 p-2">
-                    @csrf
-                    <div class="row">
-                        <div class="col-md-4">
-                            <select class="form-control" name="key_id" required>
-                                <option value="" selected>Select one</option>
-                                @foreach($keys as $key)
-                                    <option value="{{$key->id}}">{{ $key->name }}</option>
+                <table class="table table-striped ">
+                    <thead>
+                    <tr>
+                        <th> # </th>
+                        <th> User </th>
+                        <th> Name</th>
+                        <th> Keys</th>
+                        <th></th>
 
-                                @endforeach
-                            </select>
-                        </div>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach($searches as $search)
+                        <tr>
+                            <td>
+                                # {{$search->id}}
+                            </td>
+                            <td>
+                                {{$search->user->email}}
+                            </td>
+                            <td>
+                                {{$search->name}}
+                            </td>
+                            <td>
+                                <button data-toggle="collapse" data-target="#demo{{$search->id}}">Show</button>
 
-                        <div class="col-md-4">
-                            <select class="form-control" name="company_id"  required>
-                                <option value="" selected>Select one</option>
-                                @foreach($companies as $company)
-                                    <option value="{{$company->id}}">{{ $company->name }}</option>
+                                <div id="demo{{$search->id}}" class="collapse">
+                                    @foreach($search->params as $key=> $val)
+                                        {{$key}} -
+                                        @if(is_array($val))
+                                            @foreach($val as  $v)
+                                                {{$v}} ,
+                                            @endforeach
+                                        @else
+                                            {{$val}} /
+                                        @endif
 
-                                @endforeach
-                            </select>
-                        </div>
+                                    @endforeach
+                                </div>
+                            </td>
 
-                        <div class="col-md-4">
-                            <select class="form-control" name="country_id"  required>
-                                <option value="" selected>Select one</option>
-                                @foreach($countries as $country)
-                                    <option value="{{$country->id}}">{{ $country->name }}</option>
+                            <td>
+                                <form method="POST"
+                                      action="{{ route('searches.destroy',  $search->id) }}"
+                                      accept-charset="UTF-8"
+                                      style="display:inline">
+                                    {{ method_field('DELETE') }}
+                                    {{ csrf_field() }}
+                                    <button type="submit" class="btn btn-danger btn-sm"
+                                            title="Delete Permission"
+                                            onclick="return confirm(&quot;Confirm delete?&quot;)">
+                                        <i class="fas fa-trash"> </i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
 
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-12 mt-2">
-                            <button class="btn btn-primary float-right">Submit</button>
-                        </div>
-                    </div>
-                </form>
+                    @endforeach
+
+                    </tbody>
+                </table>
+                {!! $searches->appends($_GET)->links('vendor.pagination') !!}
+
             </div>
         </div>
+
 
     </section>
 

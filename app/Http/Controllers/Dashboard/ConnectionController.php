@@ -22,9 +22,6 @@ use App\Repositories\ConversationRepository;
 use App\Repositories\KeyRepository;
 use App\Repositories\UserRepository;
 use GuzzleHttp\Exception\GuzzleException;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\View\Factory;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -148,7 +145,12 @@ class ConnectionController extends Controller
 
         $categories = $this->connectionRepository->getCategories();
         $accounts = $this->accountRepository->getAll();
-        $searches = Search::orderBy('created_at','desc')->get();
+
+        if (Auth::user()->role->name === UserRepository::$ADMIN_ROLE) {
+            $searches = Search::orderBy('created_at','desc')->get();
+        }else{
+            $searches = Search::where('user_id',Auth::id())->orderBy('created_at','desc')->get();
+        }
 
         return view('dashboard.connections.index', compact('req','hash', 'connections', 'accounts', 'categories', 'keys', 'userAccount', 'companies','searches'));
     }

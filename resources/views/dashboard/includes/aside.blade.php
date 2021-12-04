@@ -34,6 +34,14 @@
                     </li>
                 @endif
 
+                    <li class="nav-item">
+                        <a href="{{route('searches.index')}}"
+                           class="nav-link {{request()->is('dashboard/searches*') ?'active':''}}">
+                            <i class=" fas fa-search nav-icon"></i>
+                            <p>Searches</p>
+                        </a>
+                    </li>
+
 {{--                @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))--}}
 {{--                    <li class="nav-item">--}}
 {{--                        <a href="{{route('logs.index')}}"--}}

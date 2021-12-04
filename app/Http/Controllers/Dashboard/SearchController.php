@@ -12,6 +12,7 @@ use App\Models\Search;
 use App\Repositories\CompanyRepository;
 use App\Repositories\CountryRepository;
 use App\Repositories\KeyRepository;
+use App\Repositories\UserRepository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -59,11 +60,19 @@ class SearchController extends Controller
     public function index()
     {
 
-        $keys = $this->keyRepository->getAll();
-        $companies = $this->companyRepository->getParsed();
-        $countries = $this->countryRepository->getAll();
+        if (Auth::user()->role->name === UserRepository::$ADMIN_ROLE) {
+            $searches = Search::orderBy('created_at','desc')->paginate(20);
+        }else{
+            $searches = Search::where('user_id',Auth::id())->orderBy('created_at','desc')->paginate(20);
+        }
 
-        return view('dashboard.search.index', compact('keys', 'companies', 'countries'));
+        return view('dashboard.search.index', compact('searches'));
+    }
+
+    public function destroy($id ) {
+        Search::destroy($id);
+        $this->putFlashMessage(true, 'Successfully deleted');
+        return redirect()->back();
     }
 
 
@@ -91,7 +100,7 @@ class SearchController extends Controller
     public function store(Request $request) {
         $request = $request->all();
         $hash = md5(json_encode($request['params']));
-        Search::updateOrCreate([ 'hash'=> $hash ],[ 'hash'=> $hash, 'params' => json_decode($request['params']), 'name' => $request['name'] ]);
+        Search::updateOrCreate([ 'hash'=> $hash, 'user_id' => Auth::id() ],[ 'hash'=> $hash, 'params' => json_decode($request['params']), 'name' => $request['name'], 'user_id' => Auth::id()  ]);
         $this->putFlashMessage(true, 'Successfully saved');
 
         return redirect()->back();

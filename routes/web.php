@@ -183,6 +183,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
 
     Route::group(['prefix' => 'searches'], function () {
         Route::post('/', [App\Http\Controllers\Dashboard\SearchController::class, 'store'])->name('searches.store');
-
+        Route::get('/', [App\Http\Controllers\Dashboard\SearchController::class, 'index'])->name('searches.index');
+        Route::delete('/{id}', [App\Http\Controllers\Dashboard\SearchController::class, 'destroy'])->name('searches.destroy');
     });
 });

@@ -355,15 +355,25 @@ class ConnectionController extends Controller
 
     public function exportCvs(Request $request): \Symfony\Component\HttpFoundation\BinaryFileResponse
     {
+        $searchKey = '';
+        $searchParams = [];
 
+        if ($request->has('hash') && $request->get('hash')){
+            $search = Search::where(['hash'=>$request->hash])->first();
+            $searchParams = Arr::except($search->params, ['page', 'hash' ]);
+            $searchKey = $search->name;
+        }else{
+            if (count($request->all())){
+                $searchParams = Arr::except($request->all(), ['page', 'hash' ]);
+                $searchKey =  Arr::dot($request->all());
+            }
+        }
 
-        $search = Search::where(['hash'=>$request->hash])->first();
-
-        $searchParams = Arr::except($search->params, ['page', 'hash' ]);
 
         $data = $this->prepareGetAll($searchParams,false);
 
-        return Excel::download(new ConnectionExport($data['connections'], $search), date('d-m-Y') . '-connections.xlsx');
+
+        return Excel::download(new ConnectionExport($data['connections'], $searchKey), date('d-m-Y') . '-connections.xlsx');
 
     }
 }

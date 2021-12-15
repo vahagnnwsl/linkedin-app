@@ -46,7 +46,7 @@
                 <div class="card-body text-right">
                     @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))
                         <div class="btn-group">
-                            <a href="{{route('connections.exportCvs',[ 'hash'=>$hash?? request()->hash ])}}"
+                            <a href="{{route('connections.exportCvs',$hash ? [ 'hash'=>$hash ]: $req )}}"
                                class="btn btn-outline-info"
                                onclick="return confirm(&quot;Export cvs?&quot;)"
                             >

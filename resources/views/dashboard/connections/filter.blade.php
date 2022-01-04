@@ -141,7 +141,30 @@
                                        @if(isset($req['search_in']) && count($req['search_in']) && in_array('skills',$req['search_in'])) checked @endif>Skills
                             </label>
                         </div>
+                        <hr/>
+                        <div class="form-check mt-2">
+                            <label class="form-check-label" style="cursor: pointer">
+                                <input type="radio" class="form-check-input" value="open" name="carrier_interest"
+                                       @if(isset($req['carrier_interest']) &&  $req['carrier_interest'] === 'open') checked @endif
+                                >Open to work
+                            </label>
+                        </div>
 
+                        <div class="form-check">
+                            <label class="form-check-label" style="cursor: pointer">
+                                <input type="radio" class="form-check-input" value="close" name="carrier_interest"
+                                       id="skills"
+                                       @if(isset($req['carrier_interest']) &&  $req['carrier_interest'] === 'close') checked @endif>
+                                Close to work
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label" style="cursor: pointer">
+                                <input type="radio" class="form-check-input" value="ignore" name="carrier_interest"
+                                       @if(!isset($req['carrier_interest']) || ($req['carrier_interest'] && $req['carrier_interest'] === 'ignore')) checked @endif>
+                                Ignore
+                            </label>
+                        </div>
                     </div>
                 </div>
 

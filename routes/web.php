@@ -97,6 +97,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
         Route::get('/calcExperience', [App\Http\Controllers\Dashboard\ConnectionController::class, 'calcExperience'])->name('connections.calcExperience');;
         Route::get('/{id}/getSkillsAndPositions', [App\Http\Controllers\Dashboard\ConnectionController::class, 'getSkillsAndPositions'])->name('connections.getSkillsAndPositions');;
         Route::get('/exportCvs', [App\Http\Controllers\Dashboard\ConnectionController::class, 'exportCvs'])->name('connections.exportCvs');
+        Route::get('/carrierInterest', [App\Http\Controllers\Dashboard\ConnectionController::class, 'carrierInterest'])->name('connections.carrierInterest');;
 
     });
 

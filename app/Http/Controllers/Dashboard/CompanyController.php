@@ -53,7 +53,9 @@ class CompanyController extends Controller
         if ($request->ajax()) {
             return $this->companyRepository->searchByName($request->get('search'));
         }
-        $companies = $this->companyRepository->paginate();
+        $companies = $this->companyRepository->model()::when($request->has('key'),function ($q) use ($request) {
+            $q->where('name', 'LIKE','%'.$request->get('key').'%');
+        })->paginate();
 
         $countries = $this->countryRepository->getAll();
 

@@ -140,6 +140,12 @@ class ConnectionRepository extends Repository
             } else if ($requestData['connections_keys'] === 'no_keys') {
                 $query->doesnthave('keys');
             }
+        })->when(isset($requestData['carrier_interest']), function ($query) use ($requestData) {
+            if ($requestData['carrier_interest'] === 'open') {
+                $query->where(['career_interest' => 1 ]);
+            } else if ($requestData['carrier_interest'] === 'close') {
+                $query->where(['career_interest' => 0 ]);
+            }
         })->when(isset($requestData['contact']), function ($query) use ($requestData) {
             if ($requestData['contact'] === 'not_answered') {
                 $query->whereHas('conversations', function ($subQuery) {

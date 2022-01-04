@@ -10,7 +10,8 @@ Vue.component('chat-messages', {
                         height="40">
                 </div>
                 <div class="pl-3 media-body" v-if="connection">
-                    <strong>{{ connection.fullName }}</strong>
+                    <strong></strong>
+                    <a target="_blank" :href="'https://www.linkedin.com/in/'+connection.entityUrn"><span class="text-bold text-blue">{{ connection.fullName }}</span></a>
                     <br/> <small class="text-black-50 font-weight-bold">{{ connection.occupation }}</small>
                 </div>
                 <div v-if="selectedConversation">

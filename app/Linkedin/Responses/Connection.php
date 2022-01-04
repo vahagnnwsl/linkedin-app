@@ -6,6 +6,7 @@ use App\Linkedin\Constants;
 use App\Linkedin\Helper;
 use Carbon\Carbon;
 use Carbon\CarbonInterval;
+use Illuminate\Support\Facades\File;
 
 class Connection
 {
@@ -22,11 +23,11 @@ class Connection
         $resp = [];
 
 
-
         if ($data['success']) {
             $options = $data['data']->included;
 
             $options = collect($options)->groupBy('$type');
+            File::put(storage_path('a.json'), json_encode($options));
 
             foreach ($options as $key => $option) {
 
@@ -79,6 +80,20 @@ class Connection
             'entityUrn'=>  explode(':',$data['included'][0]->entityUrn)[3],
 //            'publicIdentifier'=>  $data['included'][0]->publicIdentifier,
         ];
+    }
+
+    public static function careerInterest(array $data): bool
+    {
+        $careerInterest = false;
+        if ($data['success'] && isset($data['data']->data) && isset($data['data']->data->elements) ) {
+                foreach ($data['data']->data->elements as $element) {
+                    if ($element->cardActionTracking === 'CAREER_INTEREST') {
+                        $careerInterest = true;
+                        break;
+                    }
+                }
+        }
+        return $careerInterest;
     }
 }
 

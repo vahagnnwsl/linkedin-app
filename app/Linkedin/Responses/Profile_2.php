@@ -49,7 +49,6 @@ class Profile_2
 
             $profiles = collect($included)->groupBy('$type');
 
-            File::put(storage_path('b.json'), json_encode($profiles));
 
 
             $data = $profiles['com.linkedin.voyager.dash.search.EntityResultViewModel'];

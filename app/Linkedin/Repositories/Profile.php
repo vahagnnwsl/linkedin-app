@@ -68,6 +68,16 @@ class Profile extends Repository
     }
 
     /**
+     * @param string $public_identifier
+     * @return array
+     */
+    public function getOpportunityCards(string $public_identifier): array
+    {
+        return $this->client->setHeaders($this->account)->get(Constants::API_URL . '/identity/profiles/' . $public_identifier . '/opportunityCards?q=topCard');
+    }
+
+
+    /**
      * @param string $key
      * @param string $country_id
      * @param string|null $company_id

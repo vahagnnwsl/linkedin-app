@@ -30,7 +30,8 @@ class Connection extends Model
         'skill_parsed_date',
         'position_parsed_date',
         'account_id',
-        'until_disabled'
+        'until_disabled',
+        'career_interest'
     ];
 
     /**

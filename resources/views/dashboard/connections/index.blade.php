@@ -46,11 +46,18 @@
                 <div class="card-body text-right">
                     @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))
                         <div class="btn-group">
+
                             <a href="{{route('connections.exportCvs',$hash ? [ 'hash'=>$hash ]: $req )}}"
                                class="btn btn-outline-info"
                                onclick="return confirm(&quot;Export cvs?&quot;)"
                             >
                                Export CVS
+                            </a>
+                            <a href="{{route('connections.carrierInterest')}}"
+                               class="btn btn-outline-info"
+                               onclick="return confirm(&quot;Run job?&quot;)"
+                            >
+                                Get Each Carrier interest
                             </a>
                             <a href="{{route('connections.getSkills')}}"
                                class="btn btn-outline-info"
@@ -95,6 +102,9 @@
                                 Keys
                             </th>
                             <th>
+                                Open to work
+                            </th>
+                            <th>
                                 Requests
                             </th>
                             <th>
@@ -132,6 +142,14 @@
                                     @foreach($connection->keys as $key)
                                         <span class="badge badge-success">#{{$key->name}}</span>
                                     @endforeach
+                                </td>
+                                <td>
+                                 @if($connection->career_interest)
+                                        <span class="badge badge-success">Open</span>
+                                    @else
+                                        <span class="badge badge-danger">Close</span>
+
+                                    @endif
                                 </td>
                                 <td>
                                     @foreach($connection->requests as $requests)

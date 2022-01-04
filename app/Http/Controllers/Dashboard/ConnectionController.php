@@ -6,7 +6,9 @@ use App\Exports\ConnectionExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StatusRequest;
 use App\Jobs\Connections\CalcExperience;
+use App\Jobs\Connections\GetConnectionCareerInterest;
 use App\Jobs\Connections\GetConnectionPositions;
+use App\Jobs\Connections\GetConnectionsCareerInterest;
 use App\Jobs\Connections\GetConnectionSkills;
 use App\Jobs\Connections\GetConnectionsPositions;
 use App\Jobs\Connections\GetConnectionsSkills;
@@ -292,6 +294,16 @@ class ConnectionController extends Controller
         return redirect()->back();
     }
 
+    public function carrierInterest(): RedirectResponse
+    {
+        $account = Auth::user()->account;
+        GetConnectionsCareerInterest::dispatch($account);
+        $this->putFlashMessage(true, 'Successfully run job');
+
+        return redirect()->back();
+    }
+
+
     /**
      * @return RedirectResponse
      */
@@ -315,6 +327,7 @@ class ConnectionController extends Controller
         $connection = $this->connectionRepository->getById($id);
         GetConnectionPositions::dispatch($account, $connection);
         GetConnectionSkills::dispatch($account, $connection);
+        GetConnectionCareerInterest::dispatch($account, $connection);
         $this->putFlashMessage(true, 'Successfully run job');
         return redirect()->back();
     }

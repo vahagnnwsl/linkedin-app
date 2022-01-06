@@ -67,7 +67,7 @@
                         </div>
                     @endif
                 </div>
-                <div class="card-body p-0 table-responsive" style="min-height: 400px">
+                <div class="card-body p-0 table-responsive" style="min-height: 1000px">
                     <table class="table table-striped ">
                         <thead>
                         <tr>
@@ -200,12 +200,12 @@
                                                             </a>
                                                         @endif
                                                         <li>
-                                                            <a class="dropdown-item  dropdown-menu-left" href="#">
+                                                            <a class="dropdown-item" href="#">
                                                                 <span class="text-bold text-black-50">
                                                                     Sync conversations messages
                                                                 </span>
                                                             </a>
-                                                            <ul class="submenu submenu-left dropdown-menu   dropdown-menu-left">
+                                                            <ul class="submenu submenu-left dropdown-menu">
                                                                 <li>
                                                                     <a class="dropdown-item"
                                                                        href="{{route('accounts.syncConversationsMessages',$account->id)}}"
@@ -246,61 +246,9 @@
                                                     </ul>
                                                 </li>
                                             </ul>
-                                        </div> <!-- navbar-collapse.// -->
+                                        </div>
                                     </nav>
-                                    {{--                                    <div class="dropdown dropleft">--}}
-                                    {{--                                        <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">--}}
-                                    {{--                                            <i class="fa fa-universal-access"></i>--}}
-                                    {{--                                        </a>--}}
-                                    {{--                                        <div class="dropdown-menu">--}}
 
-                                    {{--                                            <a class="dropdown-item"--}}
-                                    {{--                                               href="{{route('accounts.checkLife',$account->id)}}"--}}
-                                    {{--                                               title="Sync Conversations">--}}
-                                    {{--                                                <span class="text-bold text-black-50">   Check life</span>--}}
-                                    {{--                                            </a>--}}
-
-                                    {{--                                            <a class="dropdown-item"--}}
-                                    {{--                                               href="{{route('accounts.syncConversations',$account->id)}}"--}}
-                                    {{--                                               title="Sync Conversations">--}}
-                                    {{--                                                <span class="text-bold text-black-50">   Sync Conversations</span>--}}
-                                    {{--                                            </a>--}}
-
-                                    {{--                                            <a class="dropdown-item"--}}
-                                    {{--                                               href="{{route('accounts.syncConnections',$account->id)}}"--}}
-                                    {{--                                               title="Sync Connections">--}}
-                                    {{--                                                <span class="text-bold text-black-50">     Sync Connections</span>--}}
-                                    {{--                                            </a>--}}
-                                    {{--                                            <a class="dropdown-item"--}}
-                                    {{--                                               href="{{route('accounts.syncConversationsMessages',$account->id)}}"--}}
-                                    {{--                                               title="Sync conversations messages">--}}
-                                    {{--                                                <span class="text-bold text-black-50">Sync conversations messages</span>--}}
-                                    {{--                                            </a>--}}
-                                    {{--                                            <a class="dropdown-item"--}}
-                                    {{--                                               href="{{route('accounts.syncConversationsLastMessages',$account->id)}}"--}}
-                                    {{--                                               title="Sync conversations messages">--}}
-                                    {{--                                                <span class="text-bold text-black-50">Sync conversations last messages</span>--}}
-                                    {{--                                            </a>--}}
-                                    {{--                                            <a class="dropdown-item"--}}
-                                    {{--                                               href="{{route('accounts.conversations',$account->id)}}"--}}
-                                    {{--                                               title="Conversations List">--}}
-                                    {{--                                                <span class="text-bold text-black-50">Conversations List</span>--}}
-                                    {{--                                            </a>--}}
-                                    {{--                                            <a class="dropdown-item"--}}
-                                    {{--                                               href="{{route('accounts.requests',$account->id)}}"--}}
-                                    {{--                                               title="Request List">--}}
-                                    {{--                                                <span class="text-bold text-black-50">Request List</span>--}}
-                                    {{--                                            </a>--}}
-
-                                    {{--                                            @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))--}}
-                                    {{--                                                <a class="dropdown-item"--}}
-                                    {{--                                                   href="{{route('accounts.edit',$account->id)}}"--}}
-                                    {{--                                                   title="Edit">--}}
-                                    {{--                                                    <span class="text-bold text-black-50">  Edit</span>--}}
-                                    {{--                                                </a>--}}
-                                    {{--                                            @endif--}}
-                                    {{--                                        </div>--}}
-                                    {{--                                    </div>--}}
                                 </td>
                             </tr>
 

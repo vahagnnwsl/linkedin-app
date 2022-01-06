@@ -84,17 +84,19 @@ class NewMessage
         if (isset($event['eventContent']['attachments'])) {
             $message['attachments'] = $event['eventContent']['attachments'][0];
 
+
             try {
                 $resp = Api::conversation($this->account)->getFile($message['attachments']['reference']);
+                $folderName = md5($conversation['entityUrn']);
                 if ($resp['success']) {
                     if (!File::exists(storage_path('app/public/conversations'))) {
                         File::makeDirectory(storage_path('app/public/conversations'));
                     }
-                    if (!File::exists(storage_path('app/public/conversations/'.$conversation['entityUrn']))) {
-                        File::makeDirectory(storage_path('app/public/conversations/'.$conversation['entityUrn']));
+                    if (!File::exists(storage_path('app/public/conversations/'.$folderName))) {
+                        File::makeDirectory(storage_path('app/public/conversations/'.$folderName));
                     }
-                    file_put_contents(storage_path('app/public/conversations/'.$conversation['entityUrn'].'/'.$message['attachments']['name']), $resp['data']);
-                    $message['attachments']['filePath'] = '/storage/conversations/'.$conversation['entityUrn'].'/'.$message['attachments']['name'];
+                    file_put_contents(storage_path('app/public/conversations/'.$folderName.'/'.$message['attachments']['name']), $resp['data']);
+                    $message['attachments']['filePath'] = '/storage/conversations/'.$folderName.'/'.$message['attachments']['name'];
                 }
             }catch (\Exception $exception){
                 Log::error($conversation['entityUrn'],['error'=>$exception->getMessage()]);

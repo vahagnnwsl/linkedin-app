@@ -1,5 +1,46 @@
 @extends('dashboard.layouts')
+@push('css')
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <style>
+        @media (min-width: 992px) {
+            .dropdown-menu .dropdown-toggle:after {
+                border-top: .3em solid transparent;
+                border-right: 0;
+                border-bottom: .3em solid transparent;
+                border-left: .3em solid;
+            }
 
+            .dropdown-menu .dropdown-menu {
+                margin-left: 0;
+                margin-right: 0;
+            }
+
+            .dropdown-menu li {
+                position: relative;
+            }
+
+            .nav-item .submenu {
+                display: none;
+                position: absolute;
+                left: 100%;
+                top: -7px;
+            }
+
+            .nav-item .submenu-left {
+                right: 100%;
+                left: auto;
+            }
+
+            .dropdown-menu > li:hover {
+                background-color: #f1f1f1
+            }
+
+            .dropdown-menu > li:hover > .submenu {
+                display: block;
+            }
+        }
+    </style>
+@endpush
 @section('sub_content')
     <section class="content-header">
         <div class="container-fluid">
@@ -74,85 +115,192 @@
 
                                 <td>
                                     @if($account->status)
-                                        <span class="badge badge-success"><em style="letter-spacing: 2px">ACTIVE</em></span>
+                                        <span class="badge badge-success"><em
+                                                style="letter-spacing: 2px">ACTIVE</em></span>
                                     @else
-                                        <span class="badge badge-danger"><em style="letter-spacing: 2px">INACTIVE</em></span>
+                                        <span class="badge badge-danger"><em
+                                                style="letter-spacing: 2px">INACTIVE</em></span>
 
                                     @endif
                                 </td>
                                 <td>
                                     @if($account->type===1)
-                                        <span class="badge badge-primary"><em style="letter-spacing: 2px">REAL</em></span>
+                                        <span class="badge badge-primary"><em
+                                                style="letter-spacing: 2px">REAL</em></span>
                                     @else
-                                        <span class="badge badge-info"><em style="letter-spacing: 2px">UNREAL</em></span>
+                                        <span class="badge badge-info"><em
+                                                style="letter-spacing: 2px">UNREAL</em></span>
 
                                     @endif
                                 </td>
                                 <td id="life_{{$account->id}}">
 
                                 </td>
-                                <td >
-                                   <p id="online_{{$account->id}}"></p>
+                                <td>
+                                    <p id="online_{{$account->id}}"></p>
                                     <div class="form-group">
                                         <div class="custom-control custom-switch">
-                                            <input type="checkbox" class="custom-control-input customSwitch" data_account_id="{{$account->id}}" id="customSwitch{{$account->id}}">
-                                            <label class="custom-control-label" for="customSwitch{{$account->id}}"></label>
+                                            <input type="checkbox" class="custom-control-input customSwitch"
+                                                   data_account_id="{{$account->id}}" id="customSwitch{{$account->id}}">
+                                            <label class="custom-control-label"
+                                                   for="customSwitch{{$account->id}}"></label>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="dropdown dropleft">
-                                        <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
-                                            <i class="fa fa-universal-access"></i>
-                                        </a>
-                                        <div class="dropdown-menu">
-                                            <a class="dropdown-item"
-                                               href="{{route('accounts.checkLife',$account->id)}}"
-                                               title="Sync Conversations">
-                                                <span class="text-bold text-black-50">   Check life</span>
-                                            </a>
+                                    <nav class="navbar navbar-expand-lg ">
 
-                                            <a class="dropdown-item"
-                                               href="{{route('accounts.syncConversations',$account->id)}}"
-                                               title="Sync Conversations">
-                                                <span class="text-bold text-black-50">   Sync Conversations</span>
-                                            </a>
 
-                                            <a class="dropdown-item"
-                                               href="{{route('accounts.syncConnections',$account->id)}}"
-                                               title="Sync Connections">
-                                                <span class="text-bold text-black-50">     Sync Connections</span>
-                                            </a>
-                                            <a class="dropdown-item"
-                                               href="{{route('accounts.syncConversationsMessages',$account->id)}}"
-                                               title="Sync conversations messages">
-                                                <span class="text-bold text-black-50">Sync conversations messages</span>
-                                            </a>
-                                            <a class="dropdown-item"
-                                               href="{{route('accounts.syncConversationsLastMessages',$account->id)}}"
-                                               title="Sync conversations messages">
-                                                <span class="text-bold text-black-50">Sync conversations last messages</span>
-                                            </a>
-                                            <a class="dropdown-item"
-                                               href="{{route('accounts.conversations',$account->id)}}"
-                                               title="Conversations List">
-                                                <span class="text-bold text-black-50">Conversations List</span>
-                                            </a>
-                                            <a class="dropdown-item"
-                                               href="{{route('accounts.requests',$account->id)}}"
-                                               title="Request List">
-                                                <span class="text-bold text-black-50">Request List</span>
-                                            </a>
+                                        <div class="collapse navbar-collapse">
 
-                                            @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))
-                                                <a class="dropdown-item"
-                                                   href="{{route('accounts.edit',$account->id)}}"
-                                                   title="Edit">
-                                                    <span class="text-bold text-black-50">  Edit</span>
-                                                </a>
-                                            @endif
-                                        </div>
-                                    </div>
+                                            <ul class="navbar-nav ml-auto">
+                                                <li class="nav-item dropdown">
+                                                    <a class="nav-link  dropdown-toggle" href="#" data-toggle="dropdown"
+                                                       aria-expanded="false">
+                                                        <i class="fa fa-universal-access"></i>
+                                                    </a>
+                                                    <ul class="dropdown-menu dropdown-menu-right">
+                                                        <a class="dropdown-item"
+                                                           href="{{route('accounts.checkLife',$account->id)}}"
+                                                           title="Sync Conversations">
+                                                            <span class="text-bold text-black-50">   Check life</span>
+                                                        </a>
+
+                                                        <a class="dropdown-item"
+                                                           href="{{route('accounts.syncConversations',$account->id)}}"
+                                                           title="Sync Conversations">
+                                                            <span
+                                                                class="text-bold text-black-50">   Sync Conversations</span>
+                                                        </a>
+
+                                                        <a class="dropdown-item"
+                                                           href="{{route('accounts.syncConnections',$account->id)}}"
+                                                           title="Sync Connections">
+                                                            <span
+                                                                class="text-bold text-black-50">     Sync Connections</span>
+                                                        </a>
+
+                                                        <a class="dropdown-item"
+                                                           href="{{route('accounts.conversations',$account->id)}}"
+                                                           title="Conversations List">
+                                                            <span
+                                                                class="text-bold text-black-50">Conversations List</span>
+                                                        </a>
+                                                        <a class="dropdown-item"
+                                                           href="{{route('accounts.requests',$account->id)}}"
+                                                           title="Request List">
+                                                            <span class="text-bold text-black-50">Request List</span>
+                                                        </a>
+
+                                                        @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))
+                                                            <a class="dropdown-item"
+                                                               href="{{route('accounts.edit',$account->id)}}"
+                                                               title="Edit">
+                                                                <span class="text-bold text-black-50">  Edit</span>
+                                                            </a>
+                                                        @endif
+                                                        <li>
+                                                            <a class="dropdown-item  dropdown-menu-left" href="#">
+                                                                <span class="text-bold text-black-50">
+                                                                    Sync conversations messages
+                                                                </span>
+                                                            </a>
+                                                            <ul class="submenu submenu-left dropdown-menu   dropdown-menu-left">
+                                                                <li>
+                                                                    <a class="dropdown-item"
+                                                                       href="{{route('accounts.syncConversationsMessages',$account->id)}}"
+                                                                       title="Sync conversations messages">
+                                                                        <span class="text-bold text-black-50">All messages</span>
+                                                                    </a>
+                                                                </li>
+                                                                <li>
+                                                                    <a class="dropdown-item"
+                                                                       href="{{route('accounts.syncConversationsLastMessages',$account->id)}}"
+                                                                       title="Sync conversations messages">
+                                                                        <span class="text-bold text-black-50">Last messages</span>
+                                                                    </a>
+                                                                </li>
+                                                                <li>
+                                                                    <a class="dropdown-item"
+                                                                       href="{{route('accounts.syncConversationsMessages',['limit'=>20,'id'=>$account->id])}}"
+                                                                       title="Sync conversations messages">
+                                                                        <span class="text-bold text-black-50">Last 20 connections </span>
+                                                                    </a>
+                                                                </li>
+                                                                <li>
+                                                                    <a class="dropdown-item"
+                                                                       href="{{route('accounts.syncConversationsMessages',['limit'=>50,'id'=>$account->id])}}"
+                                                                       title="Sync conversations messages">
+                                                                        <span class="text-bold text-black-50">Last 50 connections </span>
+                                                                    </a>
+                                                                </li>
+                                                                <li>
+                                                                    <a class="dropdown-item"
+                                                                       href="{{route('accounts.syncConversationsMessages',['limit'=>100,'id'=>$account->id])}}"
+                                                                       title="Sync conversations messages">
+                                                                        <span class="text-bold text-black-50">Last 100 connections </span>
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </div> <!-- navbar-collapse.// -->
+                                    </nav>
+                                    {{--                                    <div class="dropdown dropleft">--}}
+                                    {{--                                        <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">--}}
+                                    {{--                                            <i class="fa fa-universal-access"></i>--}}
+                                    {{--                                        </a>--}}
+                                    {{--                                        <div class="dropdown-menu">--}}
+
+                                    {{--                                            <a class="dropdown-item"--}}
+                                    {{--                                               href="{{route('accounts.checkLife',$account->id)}}"--}}
+                                    {{--                                               title="Sync Conversations">--}}
+                                    {{--                                                <span class="text-bold text-black-50">   Check life</span>--}}
+                                    {{--                                            </a>--}}
+
+                                    {{--                                            <a class="dropdown-item"--}}
+                                    {{--                                               href="{{route('accounts.syncConversations',$account->id)}}"--}}
+                                    {{--                                               title="Sync Conversations">--}}
+                                    {{--                                                <span class="text-bold text-black-50">   Sync Conversations</span>--}}
+                                    {{--                                            </a>--}}
+
+                                    {{--                                            <a class="dropdown-item"--}}
+                                    {{--                                               href="{{route('accounts.syncConnections',$account->id)}}"--}}
+                                    {{--                                               title="Sync Connections">--}}
+                                    {{--                                                <span class="text-bold text-black-50">     Sync Connections</span>--}}
+                                    {{--                                            </a>--}}
+                                    {{--                                            <a class="dropdown-item"--}}
+                                    {{--                                               href="{{route('accounts.syncConversationsMessages',$account->id)}}"--}}
+                                    {{--                                               title="Sync conversations messages">--}}
+                                    {{--                                                <span class="text-bold text-black-50">Sync conversations messages</span>--}}
+                                    {{--                                            </a>--}}
+                                    {{--                                            <a class="dropdown-item"--}}
+                                    {{--                                               href="{{route('accounts.syncConversationsLastMessages',$account->id)}}"--}}
+                                    {{--                                               title="Sync conversations messages">--}}
+                                    {{--                                                <span class="text-bold text-black-50">Sync conversations last messages</span>--}}
+                                    {{--                                            </a>--}}
+                                    {{--                                            <a class="dropdown-item"--}}
+                                    {{--                                               href="{{route('accounts.conversations',$account->id)}}"--}}
+                                    {{--                                               title="Conversations List">--}}
+                                    {{--                                                <span class="text-bold text-black-50">Conversations List</span>--}}
+                                    {{--                                            </a>--}}
+                                    {{--                                            <a class="dropdown-item"--}}
+                                    {{--                                               href="{{route('accounts.requests',$account->id)}}"--}}
+                                    {{--                                               title="Request List">--}}
+                                    {{--                                                <span class="text-bold text-black-50">Request List</span>--}}
+                                    {{--                                            </a>--}}
+
+                                    {{--                                            @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))--}}
+                                    {{--                                                <a class="dropdown-item"--}}
+                                    {{--                                                   href="{{route('accounts.edit',$account->id)}}"--}}
+                                    {{--                                                   title="Edit">--}}
+                                    {{--                                                    <span class="text-bold text-black-50">  Edit</span>--}}
+                                    {{--                                                </a>--}}
+                                    {{--                                            @endif--}}
+                                    {{--                                        </div>--}}
+                                    {{--                                    </div>--}}
                                 </td>
                             </tr>
 
@@ -172,34 +320,64 @@
     </section>
 @endsection
 @push('js')
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"
+            type="text/javascript"></script>
+    <script type="text/javascript">
+        /// some script
+
+        // jquery ready start
+        $(document).ready(function () {
+            // jQuery code
+
+            //////////////////////// Prevent closing from click inside dropdown
+            $(document).on('click', '.dropdown-menu', function (e) {
+                e.stopPropagation();
+            });
+
+            // make it as accordion for smaller screens
+            if ($(window).width() < 992) {
+                $('.dropdown-menu a').click(function (e) {
+                    e.preventDefault();
+                    if ($(this).next('.submenu').length) {
+                        $(this).next('.submenu').toggle();
+                    }
+                    $('.dropdown').on('hide.bs.dropdown', function () {
+                        $(this).find('.submenu').hide();
+                    })
+                });
+            }
+
+        }); // jquery end
+    </script>
     <script>
         $(document).ready(function () {
 
-            $('.customSwitch').change(function (){
+            $('.customSwitch').change(function () {
                 var id = $(this).attr('data_account_id');
                 if ($(this).is(':checked')) {
                     // Do something...
-                    setOnline(id,1)
-                }else {
-                    setOnline(id,0)
+                    setOnline(id, 1)
+                } else {
+                    setOnline(id, 0)
                 }
             })
 
-            function setOnline(accountId,status){
+            function setOnline(accountId, status) {
                 $.ajax({
-                    url: "/dashboard/accounts/"+accountId+"/setOnlineParameter?status="+status,
+                    url: "/dashboard/accounts/" + accountId + "/setOnlineParameter?status=" + status,
                     success: function (data) {
-                        if (data.success){
+                        if (data.success) {
                             toastr.success(data.msg);
-                        }else {
+                        } else {
                             toastr.error(data.msg);
                         }
-                    },error:function (){
+                    }, error: function () {
                         toastr.error('something  went wrong');
 
                     }
                 })
             }
+
             function check() {
                 $.ajax({
                     url: "/dashboard/accounts/checkAllLife",
@@ -214,16 +392,17 @@
                     }
                 })
             }
+
             function online() {
                 $.ajax({
                     url: "/dashboard/accounts/checkOnline",
                     success: function (data) {
                         for (let i in data) {
                             if (data[i].success) {
-                                $('#customSwitch'+ data[i].id).attr('checked','checked');
+                                $('#customSwitch' + data[i].id).attr('checked', 'checked');
                                 $('#online_' + data[i].id).html('<span class="badge badge-success">' + data[i].online + '</span> </br><small>' + data[i].lastActivityAt + '</small>');
                             } else {
-                                $('#customSwitch'+ data[i].id).removeAttr('checked');
+                                $('#customSwitch' + data[i].id).removeAttr('checked');
 
                                 $('#online_' + data[i].id).html('<span class="badge badge-danger">' + data[i].online + '</span></br> <small>' + data[i].lastActivityAt + '</small>');
                             }

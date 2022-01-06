@@ -240,15 +240,18 @@ class AccountController extends Controller
      * @param int $id
      * @return RedirectResponse
      */
-    public function syncConversationsMessages(int $id): RedirectResponse
+    public function syncConversationsMessages(int $id,Request $request): RedirectResponse
     {
+
+        $limit = $request->get('limit') || null;
+
         $account = $this->accountRepository->getById($id);
         $resp = Api::profile($account)->getOwnProfile();
         if ($resp['status'] !== 200) {
             $this->putFlashMessage(false, 'Invalid cookie');
             return redirect()->back();
         }
-        GetConversationsMessages::dispatch(Auth::user(), $account);
+        GetConversationsMessages::dispatch(Auth::user(), $account,$limit);
         $this->putFlashMessage(true, 'Your request on process');
         return redirect()->back();
     }

@@ -17,15 +17,18 @@ class GetConversationsMessages implements ShouldQueue
 
     protected Account $account;
     protected User $user;
+    protected $limit;
 
     /**
      * @param User $user
      * @param Account $account
+     * @param null $limit
      */
-    public function __construct(User $user,Account $account)
+    public function __construct(User $user,Account $account,$limit = null)
     {
         $this->user = $user;
         $this->account = $account;
+        $this->limit = $limit;
     }
 
     /**
@@ -41,7 +44,14 @@ class GetConversationsMessages implements ShouldQueue
 
     public function handle(): int
     {
-        $this->account->conversations->map(function ($conversation){
+
+        if ($this->limit){
+           $conversation = $this->account->conversations()->take($this->limit)->orderBy('lastActivityAt','DESC')->get();
+        }else{
+            $conversation = $this->account->connections()->get();
+        }
+
+        $conversation->map(function ($conversation){
             GetConversationMessages::dispatch($this->user,$this->account,$conversation);
         });
 

@@ -66,6 +66,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
         Route::post('/store', [App\Http\Controllers\Dashboard\ProxyController::class, 'store'])->name('proxies.store');
         Route::get('/{id}/edit', [App\Http\Controllers\Dashboard\ProxyController::class, 'edit'])->name('proxies.edit');
         Route::put('/update/{id}', [App\Http\Controllers\Dashboard\ProxyController::class, 'update'])->name('proxies.update');
+        Route::get('/{id}/check', [App\Http\Controllers\Dashboard\ProxyController::class, 'check'])->name('proxies.check');
     });
 
     Route::group(['prefix' => 'users','middleware'=>'role:Admin'], function () {

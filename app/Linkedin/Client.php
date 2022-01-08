@@ -27,15 +27,13 @@ class Client
 
         $config = [];
 
-//        if ($proxy) {
-//            if ($proxy->login && $proxy->password) {
-//                $config['proxy'] = "{$proxy->type}://{$proxy->login}:{$proxy->password}@{$proxy->ip}:{$proxy->port}";
-//
-//            } else {
-//                $config['proxy'] = "{$proxy->type}://{$proxy->ip}:{$proxy->port}";
-//
-//            }
-//        }
+        if ($proxy) {
+            if ($proxy->login && $proxy->password) {
+                $config['proxy'] = "{$proxy->type}://{$proxy->login}:{$proxy->password}@{$proxy->ip}:{$proxy->port}";
+            } else {
+                $config['proxy'] = "{$proxy->type}://{$proxy->ip}:{$proxy->port}";
+            }
+        }
 
         $headers = [];
 

@@ -26,6 +26,7 @@ use App\Repositories\ConversationRepository;
 use App\Repositories\MessageRepository;
 use App\Repositories\ProxyRepository;
 use App\Services\ConnectionService;
+use GuzzleHttp\Client;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -86,6 +87,23 @@ class AccountController extends Controller
         $this->proxyRepository = $proxyRepository;
         $this->connectionService = $connectionService;
         $this->connectionRequestRepository = $connectionRequestRepository;
+    }
+
+    public function check($proxy): bool
+    {
+        if ($proxy->login && $proxy->password) {
+            $config['proxy'] = "{$proxy->type}://{$proxy->login}:{$proxy->password}@{$proxy->ip}:{$proxy->port}";
+        } else {
+            $config['proxy'] = "{$proxy->type}://{$proxy->ip}:{$proxy->port}";
+        }
+        $client = new Client($config);
+
+        try {
+            $client->get("https://api.ipify.org?format=json");
+            return true;
+        } catch (\Exception $exception) {
+            return false;
+        }
     }
 
     /**
@@ -177,7 +195,6 @@ class AccountController extends Controller
         $this->accountRepository->update($id, $data);
 
 
-
         $this->putFlashMessage(true, 'Successfully updated');
 
 
@@ -205,6 +222,18 @@ class AccountController extends Controller
     public function syncConversations($id): RedirectResponse
     {
         $account = $this->accountRepository->getById($id);
+
+        $proxy = $account->proxy;
+        if (!$proxy) {
+            $this->putFlashMessage(false, 'Account has not proxy');
+            return redirect()->back();
+        }
+
+        $success = $this->check($proxy);
+        if (!$success) {
+            $this->putFlashMessage(false, 'Invalid proxy');
+            return redirect()->back();
+        }
         $resp = Api::profile($account)->getOwnProfile();
         if ($resp['status'] !== 200) {
             $this->putFlashMessage(false, 'Invalid cookie');
@@ -224,6 +253,17 @@ class AccountController extends Controller
     {
 
         $account = $this->accountRepository->getById($id);
+        $proxy = $account->proxy;
+        if (!$proxy) {
+            $this->putFlashMessage(false, 'Account has not proxy');
+            return redirect()->back();
+        }
+
+        $success = $this->check($proxy);
+        if (!$success) {
+            $this->putFlashMessage(false, 'Invalid proxy');
+            return redirect()->back();
+        }
         $resp = Api::profile($account)->getOwnProfile();
         if ($resp['status'] !== 200) {
             $this->putFlashMessage(false, 'Invalid cookie');
@@ -240,18 +280,29 @@ class AccountController extends Controller
      * @param int $id
      * @return RedirectResponse
      */
-    public function syncConversationsMessages(int $id,Request $request): RedirectResponse
+    public function syncConversationsMessages(int $id, Request $request): RedirectResponse
     {
 
         $limit = $request->get('limit') || null;
 
         $account = $this->accountRepository->getById($id);
+        $proxy = $account->proxy;
+        if (!$proxy) {
+            $this->putFlashMessage(false, 'Account has not proxy');
+            return redirect()->back();
+        }
+
+        $success = $this->check($proxy);
+        if (!$success) {
+            $this->putFlashMessage(false, 'Invalid proxy');
+            return redirect()->back();
+        }
         $resp = Api::profile($account)->getOwnProfile();
         if ($resp['status'] !== 200) {
             $this->putFlashMessage(false, 'Invalid cookie');
             return redirect()->back();
         }
-        GetConversationsMessages::dispatch(Auth::user(), $account,$limit);
+        GetConversationsMessages::dispatch(Auth::user(), $account, $limit);
         $this->putFlashMessage(true, 'Your request on process');
         return redirect()->back();
     }
@@ -259,6 +310,17 @@ class AccountController extends Controller
     public function syncConversationsLastMessages(int $id): RedirectResponse
     {
         $account = $this->accountRepository->getById($id);
+        $proxy = $account->proxy;
+        if (!$proxy) {
+            $this->putFlashMessage(false, 'Account has not proxy');
+            return redirect()->back();
+        }
+
+        $success = $this->check($proxy);
+        if (!$success) {
+            $this->putFlashMessage(false, 'Invalid proxy');
+            return redirect()->back();
+        }
         $resp = Api::profile($account)->getOwnProfile();
         if ($resp['status'] !== 200) {
             $this->putFlashMessage(false, 'Invalid cookie');
@@ -310,7 +372,17 @@ class AccountController extends Controller
     public function syncRequests(int $id): RedirectResponse
     {
         $account = $this->accountRepository->getById($id);
+        $proxy = $account->proxy;
+        if (!$proxy) {
+            $this->putFlashMessage(false, 'Account has not proxy');
+            return redirect()->back();
+        }
 
+        $success = $this->check($proxy);
+        if (!$success) {
+            $this->putFlashMessage(false, 'Invalid proxy');
+            return redirect()->back();
+        }
         $resp = Api::profile($account)->getOwnProfile();
         if ($resp['status'] !== 200) {
             $this->putFlashMessage(false, 'Invalid cookie');
@@ -329,6 +401,15 @@ class AccountController extends Controller
     public function checkLife(int $id): JsonResponse
     {
         $account = $this->accountRepository->getById($id);
+        $proxy = $account->proxy;
+        if (!$proxy) {
+            return response()->json(['life' => 'Account has not proxy']);
+        }
+
+        $success = $this->check($proxy);
+        if (!$success) {
+            return response()->json(['life' => 'Invalid proxy']);
+        }
         $resp = Api::profile($account)->getOwnProfile();
         $life = false;
         if ($resp['status'] === 200) {
@@ -347,12 +428,32 @@ class AccountController extends Controller
     public function checkAllLife(): JsonResponse
     {
         $accounts = $this->accountRepository->model()::where([
-            'status'=>$this->accountRepository::$ACTIVE_STATUS,
-            'type'=>$this->accountRepository::$TYPE_REAL,
+            'status' => $this->accountRepository::$ACTIVE_STATUS,
+            'type' => $this->accountRepository::$TYPE_REAL,
         ])->get();
 
         $resp = $accounts->map(function ($account) {
+            $proxy = $account->proxy;
+
+            if (!$proxy) {
+                return [
+                    'id' => $account->id,
+                    'success' => false,
+                    'life' => 'Account has not proxy',
+                ];
+            }
+
+            $success = $this->check($proxy);
+            if (!$success) {
+                return [
+                    'id' => $account->id,
+                    'success' => false,
+                    'life' => 'Invalid proxy',
+                ];
+            }
+
             $resp = Api::profile($account)->getOwnProfile();
+
             return [
                 'id' => $account->id,
                 'success' => $resp['status'] === 200,
@@ -388,14 +489,14 @@ class AccountController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function setOnlineParameter(int $id,Request $request): JsonResponse
+    public function setOnlineParameter(int $id, Request $request): JsonResponse
     {
         $account = $this->accountRepository->getById($id);
 
-         $resp = [
-            'success'=> true,
-            'msg' =>'Successfully started',
-             'status' => $request->status
+        $resp = [
+            'success' => true,
+            'msg' => 'Successfully started',
+            'status' => $request->status
         ];
 
         if ((int)$request->status === 1) {

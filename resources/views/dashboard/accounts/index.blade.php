@@ -134,7 +134,7 @@
                                     @endif
                                 </td>
                                 <td id="life_{{$account->id}}">
-
+                                    <img src="/Spinner.gif" width="50">
                                 </td>
                                 <td>
                                     <p id="online_{{$account->id}}"></p>

@@ -3,22 +3,15 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\KeyRequest;
 use App\Http\Requests\ProxyRequest;
-use App\Jobs\LinkedinSearchByKey;
-use App\Jobs\LinkedinSearchByKeyAndCountry;
-use App\Jobs\SearchByKeyAndCompany;
-use App\Repositories\AccountRepository;
-use App\Repositories\CountryRepository;
-use App\Repositories\KeyRepository;
 use App\Repositories\ProxyRepository;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Auth;
+use GuzzleHttp\Client;
 
 
 class ProxyController extends Controller
@@ -42,10 +35,34 @@ class ProxyController extends Controller
 
 
     /**
+     * @param int $id
+     * @return JsonResponse
+     * @throws GuzzleException
+     */
+    public function check(int $id): JsonResponse
+    {
+        $proxy = $this->proxyRepository->getById($id);
+        if ($proxy->login && $proxy->password) {
+            $config['proxy'] = "{$proxy->type}://{$proxy->login}:{$proxy->password}@{$proxy->ip}:{$proxy->port}";
+        } else {
+            $config['proxy'] = "{$proxy->type}://{$proxy->ip}:{$proxy->port}";
+        }
+        $client = new Client($config);
+
+        try {
+            $res = $client->get("https://api.ipify.org?format=json");
+            return response()->json(json_decode($res->getBody()->getContents()));
+        } catch (\Exception $exception) {
+            return response()->json(['error' => $exception->getMessage()],401);
+        }
+    }
+
+    /**
      * @return Application|Factory|View
      */
     public function index()
     {
+
 
         $proxies = $this->proxyRepository->paginate();
 

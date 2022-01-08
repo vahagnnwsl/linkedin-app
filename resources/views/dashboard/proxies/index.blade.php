@@ -46,6 +46,9 @@
                                     Type
                                 </th>
                                 <th >
+                                    Is worked
+                                </th>
+                                <th >
 
                                 </th>
                             </tr>
@@ -71,6 +74,9 @@
                                     </td>
                                     <td>
                                         {{$proxy->type}}
+                                    </td>
+                                    <td id="life_{{$proxy->id}}">
+                                     <img src="/Spinner.gif" width="50">
                                     </td>
                                     <td style="text-align: right">
                                         <a class="btn btn-primary btn-sm" href="{{route('proxies.edit',$proxy->id)}}"
@@ -145,3 +151,23 @@
         </div>
     </div>
 @endsection
+
+@push('js')
+    <script>
+        function check(id) {
+            $.ajax({
+                url: "/dashboard/proxies/"+id+"/check",
+                success: function (data) {
+                        $('#life_' + id).html('<span class="badge badge-success">worked</span>');
+
+                },
+                error: function (e){
+                    $('#life_' +id).html('<span class="badge badge-danger">error</span>');
+                }
+            })
+        }
+        @foreach($proxies as $p)
+            check({{$p->id}})
+        @endforeach
+    </script>
+@endpush

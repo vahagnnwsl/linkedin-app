@@ -11,14 +11,25 @@ Vue.component('connection-full-info', {
                 </div>
                 <div class="modal-body">
 
-                    <h4 class="text-blue text-center text-capitalize">profile</h4>
-                    <pre id="json-renderer1" class="json-body"></pre>
+                    <h4 class="text-blue text-center text-capitalize">
+                        profile
+                        <button v-on:click="copyCode('json-renderer1')" class="btn btn-primary" style="float: right!important;"  value="1">Copy json</button>
+                    </h4>
+                    <textarea id="json-renderer1" style="overflow-y: scroll;max-height: 100px;width: 100%">{{ profile }}</textarea>
 
-                    <h4 class="text-blue text-center text-capitalize">skills and positions</h4>
-                    <pre id="json-renderer2" class="json-body"></pre>
+                    <h4 class="text-blue text-center text-capitalize">
+                        skills and positions
+                        <button v-on:click="copyCode('json-renderer2')" class="btn btn-primary" style="float: right!important;"  value="1">Copy json</button>
 
-                    <h4 class="text-blue text-center text-capitalize">opportunity</h4>
-                    <pre id="json-renderer3" class="json-body"></pre>
+                    </h4>
+                    <textarea id="json-renderer2" style="overflow-y: scroll;max-height: 100px;width: 100%">{{ skills }}</textarea>
+
+                    <h4 class="text-blue text-center text-capitalize">
+                        opportunity
+                        <button v-on:click="copyCode('json-renderer3')" class="btn btn-primary" style="float: right!important;"  value="1">Copy json</button>
+
+                    </h4>
+                    <textarea id="json-renderer3" style="overflow-y: scroll;max-height: 100px;width: 100%">{{ opportunity }}</textarea>
 
 
                 </div>
@@ -29,7 +40,9 @@ Vue.component('connection-full-info', {
 
     data: function () {
         return {
-
+            skills: {},
+            profile: {},
+            opportunity: {},
         }
     },
     mounted() {
@@ -37,9 +50,9 @@ Vue.component('connection-full-info', {
         let _this = this
 
         $(document).on('getConnectionFullInfo', function (e, id) {
-            $('#json-renderer1').html(null);
-            $('#json-renderer2').html(null);
-            $('#json-renderer3').html(null);
+            _this.profile = {};
+            _this.skills = {};
+            _this.opportunity = {};
             _this.getInfo(id);
         });
 
@@ -49,23 +62,31 @@ Vue.component('connection-full-info', {
             this.$http.get(`/dashboard/connections/${id}/fullInfo`).then((data) => {
 
 
-                $('#json-renderer1').jsonBrowse(data.data.profile,{
-                    collapsed:true,
-                    withQuotes:true
-
-                });
-                $('#json-renderer2').jsonBrowse(data.data.skills,{
-                    collapsed:true
-                });
-                $('#json-renderer3').jsonBrowse(data.data.opportunity,{
-                    collapsed:true
-                });
+                this.profile = data.data.profile;
+                this.skills = data.data.skills;
+                this.opportunity = data.data.opportunity;
 
                 $('#fullInfoModal').modal('show')
 
             }).catch(() => {
                 toastr.error('Something went wrong');
             })
-        }
+        },
+        copyCode: function (id) {
+
+
+            var copyTextarea = document.getElementById(id);
+            copyTextarea.focus();
+            copyTextarea.select();
+
+            try {
+                var successful = document.execCommand('copy');
+                toastr.success(' copied');
+
+            } catch (err) {
+                toastr.success('error');
+            }
+            //this.cStype = 'hidden';
+        },
     }
 })

@@ -1,12 +1,12 @@
 @extends('dashboard.layouts')
 
 @push('css')
-    <link rel="stylesheet" href="/plugins/json-browse/jquery.json-browse.js"></li>
+{{--    <link rel="stylesheet" href="/plugins/json-browse/jquery.json-browse.js"></li>--}}
 @endpush
 
 
 @push('js')
-    <script src="/plugins/json-browse/jquery.json-browse.js"></script>
+{{--    <script src="/plugins/json-browse/jquery.json-browse.js"></script>--}}
     <script src="/components/connection/request.js"></script>
     <script src="/components/connection/message.js"></script>
     <script src="/components/connection/info.js"></script>

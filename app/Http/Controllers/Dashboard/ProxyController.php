@@ -39,7 +39,7 @@ class ProxyController extends Controller
      * @return JsonResponse
      * @throws GuzzleException
      */
-    public function check(int $id): JsonResponse
+    public function checkLife(int $id): JsonResponse
     {
         $proxy = $this->proxyRepository->getById($id);
         if ($proxy->login && $proxy->password) {

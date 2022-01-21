@@ -18,6 +18,21 @@ class Connection
     const POSITION_KEY = 'com.linkedin.voyager.identity.profile.Position';
 
 
+    public static function parseOnlyGroupBy(array $data){
+        $options = [];
+
+
+        if ($data['success']) {
+            $options = $data['data']->included;
+
+            $options = collect($options)->groupBy('$type');
+
+
+        }
+
+        return $options;
+    }
+
     public static function parse(array $data, $parse = null)
     {
         $resp = [];
@@ -27,7 +42,6 @@ class Connection
             $options = $data['data']->included;
 
             $options = collect($options)->groupBy('$type');
-            File::put(storage_path('a.json'), json_encode($options));
 
             foreach ($options as $key => $option) {
 

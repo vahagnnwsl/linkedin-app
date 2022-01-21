@@ -129,8 +129,8 @@ class ConnectionController extends Controller
         $req = $request->all();
         $hash = '';
 
-        if (isset($req['hash'])){
-            $search = Search::where(['hash'=>$req['hash']])->first();
+        if (isset($req['hash'])) {
+            $search = Search::where(['hash' => $req['hash']])->first();
             if (!$search) return redirect()->route('connections.index');
             $req = $search->params;
             $hash = $search->hash;
@@ -149,12 +149,12 @@ class ConnectionController extends Controller
         $accounts = $this->accountRepository->getAll();
 
         if (Auth::user()->role->name === UserRepository::$ADMIN_ROLE) {
-            $searches = Search::orderBy('created_at','desc')->get();
-        }else{
-            $searches = Search::where('user_id',Auth::id())->orderBy('created_at','desc')->get();
+            $searches = Search::orderBy('created_at', 'desc')->get();
+        } else {
+            $searches = Search::where('user_id', Auth::id())->orderBy('created_at', 'desc')->get();
         }
 
-        return view('dashboard.connections.index', compact('req','hash', 'connections', 'accounts', 'categories', 'keys', 'userAccount', 'companies','searches'));
+        return view('dashboard.connections.index', compact('req', 'hash', 'connections', 'accounts', 'categories', 'keys', 'userAccount', 'companies', 'searches'));
     }
 
     /**
@@ -174,6 +174,32 @@ class ConnectionController extends Controller
         return view('dashboard.connections.edit', compact('connection', 'categories', 'keys'));
     }
 
+    public function fullInfo(int $id): JsonResponse
+    {
+        $connection = $this->connectionRepository->getById($id);
+        $account = Auth::user()->account;
+        $proxy = $account->proxy;
+        if (!$proxy) {
+            return \response()->json(['msg' => 'Account has not proxy'], 401);
+        }
+
+        $success = $this->check($proxy);
+        if (!$success) {
+            return \response()->json(['msg' => 'Invalid proxy'], 401);
+        }
+        $resp = Api::profile($account)->getOwnProfile();
+        if ($resp['status'] !== 200) {
+            return \response()->json(['msg' => 'Invalid cookie'], 401);
+        }
+
+        $skills = Api::profile($account)->getProfileSkills($connection->entityUrn);
+        $profile = Api::profile($account)->getProfile($connection->entityUrn);
+        $opportunity = Api::profile($account)->getOpportunityCards($connection->entityUrn);
+        $skills = \App\Linkedin\Responses\Connection::parseOnlyGroupBy($skills);
+        $profile = \App\Linkedin\Responses\Connection::parseOnlyGroupBy($profile);
+        $opportunity = \App\Linkedin\Responses\Connection::parseOnlyGroupBy($opportunity);
+        return \response()->json(['skills' => $skills, 'profile' => $profile, 'opportunity' => $opportunity]);
+    }
 
     /**
      * @param int $id
@@ -371,19 +397,19 @@ class ConnectionController extends Controller
         $searchKey = '';
         $searchParams = [];
 
-        if ($request->has('hash') && $request->get('hash')){
-            $search = Search::where(['hash'=>$request->hash])->first();
-            $searchParams = Arr::except($search->params, ['page', 'hash' ]);
+        if ($request->has('hash') && $request->get('hash')) {
+            $search = Search::where(['hash' => $request->hash])->first();
+            $searchParams = Arr::except($search->params, ['page', 'hash']);
             $searchKey = $search->name;
-        }else{
-            if (count($request->all())){
-                $searchParams = Arr::except($request->all(), ['page', 'hash' ]);
-                $searchKey =  Arr::dot($request->all());
+        } else {
+            if (count($request->all())) {
+                $searchParams = Arr::except($request->all(), ['page', 'hash']);
+                $searchKey = Arr::dot($request->all());
             }
         }
 
 
-        $data = $this->prepareGetAll($searchParams,false);
+        $data = $this->prepareGetAll($searchParams, false);
 
 
         return Excel::download(new ConnectionExport($data['connections'], $searchKey), date('d-m-Y') . '-connections.xlsx');

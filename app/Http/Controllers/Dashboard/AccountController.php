@@ -89,23 +89,6 @@ class AccountController extends Controller
         $this->connectionRequestRepository = $connectionRequestRepository;
     }
 
-    public function check($proxy): bool
-    {
-        if ($proxy->login && $proxy->password) {
-            $config['proxy'] = "{$proxy->type}://{$proxy->login}:{$proxy->password}@{$proxy->ip}:{$proxy->port}";
-        } else {
-            $config['proxy'] = "{$proxy->type}://{$proxy->ip}:{$proxy->port}";
-        }
-        $client = new Client($config);
-
-        try {
-            $client->get("https://api.ipify.org?format=json");
-            return true;
-        } catch (\Exception $exception) {
-            return false;
-        }
-    }
-
     /**
      * @return Application|Factory|View
      */

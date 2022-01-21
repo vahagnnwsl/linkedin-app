@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use GuzzleHttp\Client;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -23,5 +24,22 @@ class Controller extends BaseController
             session()->flash('error', $msg ??'Something went wrong');
         }
 
+    }
+
+    public function check($proxy): bool
+    {
+        if ($proxy->login && $proxy->password) {
+            $config['proxy'] = "{$proxy->type}://{$proxy->login}:{$proxy->password}@{$proxy->ip}:{$proxy->port}";
+        } else {
+            $config['proxy'] = "{$proxy->type}://{$proxy->ip}:{$proxy->port}";
+        }
+        $client = new Client($config);
+
+        try {
+            $client->get("https://api.ipify.org?format=json");
+            return true;
+        } catch (\Exception $exception) {
+            return false;
+        }
     }
 }

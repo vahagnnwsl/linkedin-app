@@ -50,7 +50,6 @@ class Profile_2
             $profiles = collect($included)->groupBy('$type');
 
 
-
             $data = $profiles['com.linkedin.voyager.dash.search.EntityResultViewModel'];
 
 
@@ -62,12 +61,18 @@ class Profile_2
                     'lastName' => explode(' ', $item->title->text)[1] ?? '',
                     'entityUrn' => Helper::searchInString($item->entityUrn, 'fsd_profile:', ',SEARCH_SRP'),
                     'distance' => $item->entityCustomTrackingInfo->memberDistance,
+                    'career_interest' => 0,
                 ];
 
 
                 try {
                     if (isset($item->image) && isset($item->image->attributes) && count($item->image->attributes)) {
-                        $a['image'] = $item->image->attributes[0]->detailDataUnion->nonEntityProfilePicture->vectorImage->rootUrl . $item->image->attributes[0]->detailDataUnion->nonEntityProfilePicture->vectorImage->artifacts[0]->fileIdentifyingUrlPathSegment;
+                        $root = $item->image->attributes[0]->detailDataUnion->nonEntityProfilePicture->vectorImage->rootUrl;
+                        $str = Helper::searchInString($root, 'profile-', 'shrink_');
+                        if (isset($str) && $str === 'framedphoto-'){
+                            $a['career_interest'] = 1;
+                        }
+                        $a['image'] = $root . $item->image->attributes[0]->detailDataUnion->nonEntityProfilePicture->vectorImage->artifacts[0]->fileIdentifyingUrlPathSegment;
                     }
                 } catch (\Exception $exception) {
                     $a['image'] = '';
@@ -78,7 +83,6 @@ class Profile_2
                 ];
 
             })->toArray();
-
 
             return [
                 'success' => true,

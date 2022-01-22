@@ -353,6 +353,7 @@ class ConnectionController extends Controller
         $connection = $this->connectionRepository->getById($id);
         GetConnectionPositions::dispatch($account, $connection);
         GetConnectionSkills::dispatch($account, $connection);
+        GetConnectionCareerInterest::dispatch($account, $connection);
         $this->putFlashMessage(true, 'Successfully run job');
         return redirect()->back();
     }

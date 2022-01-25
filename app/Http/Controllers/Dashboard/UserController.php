@@ -101,13 +101,13 @@ class UserController extends Controller
 
         $this->userRepository->syncRelation($id, 'roles', [$data['role_id']]);
 
-        $this->userRepository->syncRelation($id, 'keys', $data['keys_ides']??[]);
+        $this->userRepository->syncRelation($id, 'keys', $data['keys_ides'] ?? []);
 
         if (isset($data['account_id'])) {
             $this->userRepository->syncRelation($id, 'accounts', [$data['account_id']]);
         }
 
-        $this->userRepository->syncRelation($id, 'unRealAccounts', $data['unreal_accounts_ides']??[]);
+        $this->userRepository->syncRelation($id, 'unRealAccounts', $data['unreal_accounts_ides'] ?? []);
 
 
         $this->putFlashMessage(true, 'Successfully updated');
@@ -149,7 +149,7 @@ class UserController extends Controller
     {
         $user = $this->userRepository->getById($id);
 
-        return view('dashboard.users.password',compact('user'));
+        return view('dashboard.users.password', compact('user'));
     }
 
     /**
@@ -157,10 +157,10 @@ class UserController extends Controller
      * @param PasswordRequest $request
      * @return RedirectResponse
      */
-    public function updatePassword(int $id,PasswordRequest $request): RedirectResponse
+    public function updatePassword(int $id, PasswordRequest $request): RedirectResponse
     {
 
-        $this->userRepository->update($id,['password'=>bcrypt($request->get('password'))]);
+        $this->userRepository->update($id, ['password' => bcrypt($request->get('password'))]);
 
         $this->putFlashMessage(true, 'Successfully updated');
 
@@ -180,5 +180,17 @@ class UserController extends Controller
         return redirect('/dashboard');
     }
 
+
+    /**
+     * @param int $id
+     * @return RedirectResponse
+     */
+    public function destroy(int $id): RedirectResponse
+    {
+        $this->userRepository->delete($id);
+        $this->putFlashMessage(true, 'successfully');
+
+        return redirect()->back();
+    }
 
 }

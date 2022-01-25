@@ -49,6 +49,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
         Route::get('/checkAllLife', [App\Http\Controllers\Dashboard\AccountController::class, 'checkAllLife'])->middleware(['role:Admin|Manager']);
         Route::get('/checkOnline', [App\Http\Controllers\Dashboard\AccountController::class, 'checkOnline'])->middleware(['role:Admin|Manager']);
         Route::get('/{id}/setOnlineParameter', [App\Http\Controllers\Dashboard\AccountController::class, 'setOnlineParameter'])->middleware(['role:Admin|Manager']);
+        Route::delete('/{id}', [App\Http\Controllers\Dashboard\AccountController::class, 'destroy'])->name('accounts.destroy');
 
     });
 
@@ -59,6 +60,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
         Route::get('/{id}/search', [App\Http\Controllers\Dashboard\KeyController::class, 'search'])->name('keys.search');
         Route::get('/{id}/searchByCompanies', [App\Http\Controllers\Dashboard\KeyController::class, 'searchByCompanies'])->name('keys.searchByCompanies');
         Route::put('/{id}/update', [App\Http\Controllers\Dashboard\KeyController::class, 'update'])->name('keys.update');
+        Route::delete('/{id}', [App\Http\Controllers\Dashboard\KeyController::class, 'destroy'])->name('keys.destroy');
     });
 
     Route::group(['prefix' => 'proxies','middleware'=>'role:Admin'], function () {
@@ -67,6 +69,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
         Route::get('/{id}/edit', [App\Http\Controllers\Dashboard\ProxyController::class, 'edit'])->name('proxies.edit');
         Route::put('/update/{id}', [App\Http\Controllers\Dashboard\ProxyController::class, 'update'])->name('proxies.update');
         Route::get('/{id}/check', [App\Http\Controllers\Dashboard\ProxyController::class, 'checkLife'])->name('proxies.check');
+        Route::delete('/{id}', [App\Http\Controllers\Dashboard\ProxyController::class, 'destroy'])->name('proxies.destroy');
     });
 
     Route::group(['prefix' => 'users','middleware'=>'role:Admin'], function () {
@@ -79,6 +82,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
         Route::get('/{id}/login', [App\Http\Controllers\Dashboard\UserController::class, 'login'])->name('users.login');
         Route::get('/{id}/password', [App\Http\Controllers\Dashboard\UserController::class, 'updatePasswordForm'])->name('users.updatePasswordForm');
         Route::put('/{id}/password', [App\Http\Controllers\Dashboard\UserController::class, 'updatePassword'])->name('users.updatePassword');
+        Route::delete('/{id}', [App\Http\Controllers\Dashboard\UserController::class, 'destroy'])->name('users.destroy');
 
     });
 

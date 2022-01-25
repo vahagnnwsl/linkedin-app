@@ -495,4 +495,16 @@ class AccountController extends Controller
         }
         return response()->json($resp);
     }
+
+    /**
+     * @param int $id
+     * @return RedirectResponse
+     */
+    public function destroy(int $id): RedirectResponse
+    {
+        $this->accountRepository->delete($id);
+        $this->putFlashMessage(true, 'Successful');
+
+        return redirect()->back();
+    }
 }

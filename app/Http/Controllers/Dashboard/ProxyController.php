@@ -110,4 +110,16 @@ class ProxyController extends Controller
 
         return view('dashboard.proxies.edit', compact('proxy'));
     }
+
+    /**
+     * @param int $id
+     * @return RedirectResponse
+     */
+    public function destroy(int $id): RedirectResponse
+    {
+        $this->proxyRepository->delete($id);
+        $this->putFlashMessage(true, 'Successfully');
+
+        return redirect()->back();
+    }
 }

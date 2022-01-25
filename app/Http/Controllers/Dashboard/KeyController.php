@@ -154,4 +154,15 @@ class KeyController extends Controller
         $this->putFlashMessage(true, 'Successfully run job');
         return redirect()->back();
     }
+
+    /**
+     * @param int $id
+     * @return RedirectResponse
+     */
+    public function destroy(int $id): RedirectResponse
+    {
+        $this->keyRepository->delete($id);
+        $this->putFlashMessage(true, 'Successfully run job');
+        return redirect()->back();
+    }
 }

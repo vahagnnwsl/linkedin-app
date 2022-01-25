@@ -101,7 +101,18 @@
                                                title="Edit">
                                                 <i class="fas fa-user-edit"></i>
                                             </a>
-
+                                            <form method="POST"
+                                                  action="{{ route('users.destroy',  $user->id) }}"
+                                                  accept-charset="UTF-8"
+                                                  style="display:inline">
+                                                {{ method_field('DELETE') }}
+                                                {{ csrf_field() }}
+                                                <button type="submit" class="btn btn-danger btn-sm"
+                                                        title="Delete Permission"
+                                                        onclick="return confirm(&quot;Confirm delete?&quot;)">
+                                                    <i class="fas fa-trash"> </i>
+                                                </button>
+                                            </form>
                                         @endif
                                     </div>
                                 </td>

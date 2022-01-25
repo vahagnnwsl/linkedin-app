@@ -37,11 +37,24 @@ class JobController extends Controller
 
         $type = $request->get('type') ?? 'process';
         if ($type === 'process'){
-            $jobs = Job::paginate(20);
+            $jobs = Job::paginate(50);
         }else{
-            $jobs = FailedJob::orderBy('id','DESC')->paginate(20);
+            $jobs = FailedJob::orderBy('id','DESC')->paginate(50);
         }
 
         return view('dashboard.jobs.index', compact('jobs','type'));
+    }
+
+    public function delete(Request $request){
+        $type = $request->get('type');
+        $ids = $request->get('jobs');
+        if ($type === 'process') {
+            Job::destroy($ids);
+        }else{
+            FailedJob::destroy($ids);
+        }
+        $this->putFlashMessage(true, 'Successfully deleted');
+
+        return response()->json();
     }
 }

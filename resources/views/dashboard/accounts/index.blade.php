@@ -191,6 +191,18 @@
                                                            title="Request List">
                                                             <span class="text-bold text-black-50">Request List</span>
                                                         </a>
+                                                        <form method="POST"
+                                                              action="{{ route('accounts.destroy',  $account->id) }}"
+                                                              accept-charset="UTF-8"
+                                                              style="display:inline">
+                                                            {{ method_field('DELETE') }}
+                                                            {{ csrf_field() }}
+                                                            <button type="submit" class="dropdown-item"
+                                                                    title="Delete Permission"
+                                                                    onclick="return confirm(&quot;Confirm delete?&quot;)">
+                                                                   <span class="text-bold text-black-50"> Delete</span>
+                                                            </button>
+                                                        </form>
 
                                                         @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))
                                                             <a class="dropdown-item"

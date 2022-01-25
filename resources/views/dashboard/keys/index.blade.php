@@ -89,13 +89,25 @@
                                            title="Run Job">
                                             <i class="fas fa-running"></i>
                                         </a>
-                                        <a class="btn btn-danger btn-sm"
+                                        <a class="btn btn-success btn-sm"
                                            onclick="return confirm(&quot;Run job?&quot;)"
                                            href="{{route('keys.searchByCompanies',$key->id)}}"
                                            title="Run Job with companies">
                                             <i class="fas fa-running"></i>
                                             <i class="fas fa-award"></i>
                                         </a>
+                                        <form method="POST"
+                                              action="{{ route('keys.destroy',  $key->id) }}"
+                                              accept-charset="UTF-8"
+                                              style="display:inline">
+                                            {{ method_field('DELETE') }}
+                                            {{ csrf_field() }}
+                                            <button type="submit" class="btn btn-danger btn-sm"
+                                                    title="Delete Permission"
+                                                    onclick="return confirm(&quot;Confirm delete?&quot;)">
+                                                <i class="fas fa-trash"> </i>
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             @endforeach

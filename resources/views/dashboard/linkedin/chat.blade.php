@@ -562,7 +562,7 @@
     <script src="/plugins/moment/moment.min.js"></script>
     <script>
         $(document).ready(function () {
-
+            @if($account)
             var online = {{$account->is_onlin ?? 0}};
             var life = {{ $life ??false }};
             @if(!$account->is_online || !$life)
@@ -573,7 +573,6 @@
 
 
                function check(online , life){
-                   console.log(online,life)
 
                    if (!online || !life){
                          $('.sendMessageGroup').hide()
@@ -590,7 +589,7 @@
                 $(this).parent().parent().parent().css('border', '1px solid #f7f7f7')
             })
 
-            @if($account)
+
             setInterval(function () {
                 $.ajax({
                     url: "/dashboard/accounts/{{$account->id}}/show",

@@ -156,6 +156,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
 
     Route::group(['prefix' => 'jobs'], function () {
         Route::get('',[App\Http\Controllers\Dashboard\JobController::class, 'index'])->name('jobs.index');
+        Route::post('/delete',[App\Http\Controllers\Dashboard\JobController::class, 'delete']);
     });
 
 

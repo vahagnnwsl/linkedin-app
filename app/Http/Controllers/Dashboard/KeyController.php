@@ -137,6 +137,16 @@ class KeyController extends Controller
     public function search(int $id): RedirectResponse
     {
         $key = $this->keyRepository->getById($id);
+        if (!$key->country){
+            $this->putFlashMessage(false, 'Has not country');
+            return redirect()->back();
+        }
+
+        if (!count($key->accounts)){
+            $this->putFlashMessage(false, 'Has not eny account');
+            return redirect()->back();
+        }
+
         DispatchSearch::dispatch($key);
         $this->putFlashMessage(true, 'Successfully run job');
         return redirect()->back();
@@ -150,6 +160,15 @@ class KeyController extends Controller
     public function searchByCompanies(int $id): RedirectResponse
     {
         $key = $this->keyRepository->getById($id);
+        if (!$key->country){
+            $this->putFlashMessage(false, 'Has not country');
+            return redirect()->back();
+        }
+
+        if (!count($key->accounts)){
+            $this->putFlashMessage(false, 'Has not eny account');
+            return redirect()->back();
+        }
         SearchByKeyCompanies::dispatch($key);
         $this->putFlashMessage(true, 'Successfully run job');
         return redirect()->back();

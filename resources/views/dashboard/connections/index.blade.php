@@ -1,12 +1,12 @@
 @extends('dashboard.layouts')
 
 @push('css')
-{{--    <link rel="stylesheet" href="/plugins/json-browse/jquery.json-browse.js"></li>--}}
+    {{--    <link rel="stylesheet" href="/plugins/json-browse/jquery.json-browse.js"></li>--}}
 @endpush
 
 
 @push('js')
-{{--    <script src="/plugins/json-browse/jquery.json-browse.js"></script>--}}
+    {{--    <script src="/plugins/json-browse/jquery.json-browse.js"></script>--}}
     <script src="/components/connection/request.js"></script>
     <script src="/components/connection/message.js"></script>
     <script src="/components/connection/info.js"></script>
@@ -61,7 +61,7 @@
                                class="btn btn-outline-info"
                                onclick="return confirm(&quot;Export cvs?&quot;)"
                             >
-                               Export CVS
+                                Export CVS
                             </a>
                             <a href="{{route('connections.carrierInterest')}}"
                                class="btn btn-outline-info"
@@ -89,152 +89,158 @@
                     @endif
                 </div>
                 <div class="card-body p-0">
-                  <div class="table-responsive">
-                      <table class="table table-striped ">
-                          <thead>
-                          <tr>
-                              <th>
-                                  ID
-                              </th>
-                              <th>
-                                  Avatar
-                              </th>
-                              <th>
-                                  Full name
-                              </th>
-                              <th>
-                                  Occupation
-                              </th>
+                    <div class="table-responsive">
+                        <table class="table table-striped ">
+                            <thead>
+                            <tr>
+                                <th>
+                                    ID
+                                </th>
+                                <th>
+                                    Avatar
+                                </th>
+                                <th>
+                                    Full name
+                                </th>
+                                <th>
+                                    Occupation
+                                </th>
 
-                              <th>
-                                  Accounts
-                              </th>
-                              <th>
-                                  Keys
-                              </th>
-                              <th>
-                                  Open to work
-                              </th>
-                              <th>
-                                  Requests
-                              </th>
-                              <th>
+                                <th>
+                                    Accounts
+                                </th>
+                                <th>
+                                    Keys
+                                </th>
+                                <th>
+                                    Open to work
+                                </th>
+                                <th>
+                                    Requests
+                                </th>
+                                <th>
 
-                              </th>
-                              <th class="float-right">
-                                  Actions
-                              </th>
-                          </tr>
-                          </thead>
-                          <tbody>
-                          @foreach($connections as $connection)
-                              <tr>
-                                  <td>
-                                      {{$connection->id}}
-                                  </td>
-                                  <td>
-                                      <img class="table-avatar" src="{{$connection->image}}"
-                                           onerror="this.src='/dist/img/lin_def_image.svg'" width="50">
-                                  </td>
-                                  <td>
-                                      {{$connection->fullName}}
-                                  </td>
+                                </th>
+                                <th class="float-right">
+                                    Actions
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($connections as $connection)
+                                <tr>
+                                    <td>
+                                        {{$connection->id}}
+                                    </td>
+                                    <td>
+                                        <img class="table-avatar" src="{{$connection->image}}"
+                                             onerror="this.src='/dist/img/lin_def_image.svg'" width="50">
+                                    </td>
+                                    <td>
+                                        {{$connection->fullName}}
+                                    </td>
 
-                                  <td>
-                                      {{$connection->occupation}}
-                                  </td>
-                                  <td>
-                                      @foreach($connection->accounts as $ac)
-                                          <span class="badge badge-primary">  {{$ac->full_name}}</span>
-                                      @endforeach
-                                  </td>
+                                    <td>
+                                        {{$connection->occupation}}
+                                    </td>
+                                    <td>
+                                        @foreach($connection->accounts as $ac)
+                                            <span class="badge badge-primary">  {{$ac->full_name}}</span>
+                                        @endforeach
+                                    </td>
 
-                                  <td>
-                                      @foreach($connection->keys as $key)
-                                          <span class="badge badge-success">#{{$key->name}}</span>
-                                      @endforeach
-                                  </td>
-                                  <td>
-                                      @if($connection->career_interest)
-                                          <span class="badge badge-success">Open</span>
-                                      @else
-                                          <span class="badge badge-danger">Close</span>
+                                    <td>
+                                        @foreach($connection->keys as $key)
+                                            <span class="badge badge-success">#{{$key->name}}</span>
+                                        @endforeach
+                                    </td>
+                                    <td>
+                                        @if($connection->career_interest)
+                                            <span class="badge badge-success">Open</span>
+                                        @else
+                                            <span class="badge badge-danger">Close</span>
 
-                                      @endif
-                                  </td>
-                                  <td>
-                                      @foreach($connection->requests as $requests)
-                                          <span class="badge badge-warning">{{$requests->account->full_name}}</span>
-                                      @endforeach
-                                  </td>
-                                  <td>
-                                      @foreach($connection->conversations as $conversation)
-                                          @if($userAccount && $conversation->account_id ===$userAccount->id)
-                                              <a title="Go to chat" target="_blank"
-                                                 href="{{route('linkedin.chat')}}#entityUrn:{{$conversation->entityUrn}}">
-                                                  <i class="fa fa-envelope"></i>
-                                              </a>
-                                          @else
-                                              <a>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @foreach($connection->requests as $requests)
+                                            @if($requests->account)
+                                               <span class="badge badge-warning">{{$requests->account->full_name}}</span>
+                                            @endif
+                                        @endforeach
+                                    </td>
+                                    <td>
+                                        @foreach($connection->conversations as $conversation)
+                                            @if($userAccount)
+                                                @if($userAccount && $conversation->account_id ===$userAccount->id)
+                                                    <a title="Go to chat" target="_blank"
+                                                       href="{{route('linkedin.chat')}}#entityUrn:{{$conversation->entityUrn}}">
+                                                        <i class="fa fa-envelope"></i>
+                                                    </a>
+                                                @else
+                                                    <a>
                                                 <span style="cursor: pointer"
                                                       class="fa fa-envelope getConversationMessages"
                                                       title=""
                                                       data-conversationId="{{$conversation->entityUrn}}"></span>
-                                              </a>
-                                              <br/>
-                                          @endif
-                                      @endforeach
+                                                    </a>
+                                                    <br/>
+                                                @endif
+                                            @endif
+                                        @endforeach
 
-                                  </td>
+                                    </td>
 
-                                  <td class="float-right">
-                                      <div class="dropdown dropleft">
-                                          <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
-                                              <i class="fa fa-universal-access"></i>
-                                          </a>
-                                          <div class="dropdown-menu">
+                                    <td class="float-right">
+                                        <div class="dropdown dropleft">
+                                            <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
+                                                <i class="fa fa-universal-access"></i>
+                                            </a>
+                                            <div class="dropdown-menu">
 
 
-                                              <a class=" dropdown-item" target="_blank"
-                                                 href="https://www.linkedin.com/in/{{$connection->entityUrn}}">
-                                                  <span class="text-bold text-black-50">Got to Linkedin</span>
-                                              </a>
-                                              <a class="getInfo dropdown-item" data-connectionId="{{$connection->id}}"
-                                                 href="javascript:void(0)">
-                                                  <span class="text-bold text-black-50">View info</span>
-                                              </a>
-                                              @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))
-                                                  <a class="dropdown-item"
-                                                     href="{{route('connections.getSkillsAndPositions',$connection->id)}}">
-                                                      <span class="text-bold text-black-50">Get skills/positions</span>
-                                                  </a>
+                                                <a class=" dropdown-item" target="_blank"
+                                                   href="https://www.linkedin.com/in/{{$connection->entityUrn}}">
+                                                    <span class="text-bold text-black-50">Got to Linkedin</span>
+                                                </a>
+                                                <a class="getInfo dropdown-item" data-connectionId="{{$connection->id}}"
+                                                   href="javascript:void(0)">
+                                                    <span class="text-bold text-black-50">View info</span>
+                                                </a>
+                                                @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))
+                                                    <a class="dropdown-item"
+                                                       href="{{route('connections.getSkillsAndPositions',$connection->id)}}">
+                                                        <span
+                                                            class="text-bold text-black-50">Get skills/positions</span>
+                                                    </a>
 
-                                              @endif
-                                              <a class="dropdown-item"
-                                                 href="{{route('connections.edit',$connection->id)}}">
-                                                  <span class="text-bold text-black-50">Edit</span>
-                                              </a>
-                                              <a class="dropdown-item fullInfo" data-connectionId="{{$connection->id}}"
-                                                 href="javascript:void(0)">
-                                                  <span class="text-bold text-black-50"> Get full info as JSON</span>
-                                              </a>
-                                              @if(!count($connection->requests) && $connection->accounts()->count() === 0 && $userAccount->getSendRequestCount() < $userAccount->limit_connection_request )
-                                                  <a class="dropdown-item setConnectionRequest"
-                                                     data-connectionId="{{$connection->id}}"
-                                                     href="javascript:void(0)">
-                                                      <span class="text-bold text-black-50">Send request</span>
-                                                  </a>
-                                              @endif
-                                          </div>
-                                      </div>
-                                  </td>
-                              </tr>
+                                                @endif
+                                                <a class="dropdown-item"
+                                                   href="{{route('connections.edit',$connection->id)}}">
+                                                    <span class="text-bold text-black-50">Edit</span>
+                                                </a>
+                                                <a class="dropdown-item fullInfo"
+                                                   data-connectionId="{{$connection->id}}"
+                                                   href="javascript:void(0)">
+                                                    <span class="text-bold text-black-50"> Get full info as JSON</span>
+                                                </a>
+                                                @if($userAccount && !count($connection->requests) && $connection->accounts()->count() === 0 && $userAccount->getSendRequestCount() < $userAccount->limit_connection_request )
+                                                    <a class="dropdown-item setConnectionRequest"
+                                                       data-connectionId="{{$connection->id}}"
+                                                       href="javascript:void(0)">
+                                                        <span class="text-bold text-black-50">Send request</span>
+                                                    </a>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
 
-                          @endforeach
+                            @endforeach
 
-                          </tbody>
-                      </table>
-                  </div>
+                            </tbody>
+                        </table>
+                    </div>
 
                 </div>
 

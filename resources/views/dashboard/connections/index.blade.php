@@ -53,7 +53,7 @@
             <div class="card">
                 @include('dashboard.connections.filter')
 
-                <div class="card-body text-right">
+                <div class="card-body text-right" style="z-index: 2">
                     @if(\Illuminate\Support\Facades\Auth::user()->hasRole('Admin'))
                         <div class="btn-group">
 
@@ -88,9 +88,9 @@
                         </div>
                     @endif
                 </div>
-                <div class="card-body p-0">
+                <div class="card-body p-0" >
                     <div class="table-responsive">
-                        <table class="table table-striped ">
+                        <table class="table table-striped " style="min-height: 300px">
                             <thead>
                             <tr>
                                 <th>

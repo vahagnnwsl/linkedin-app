@@ -100,6 +100,10 @@ class ConnectionRepository extends Repository
             $query->whereHas('keys', function ($subQuery) use ($requestData) {
                 $subQuery->whereIn('keys.id', $requestData['keys_ids']);
             });
+        })->when(isset($requestData['accountRequestIds']) && count($requestData['accountRequestIds']) > 0, function ($query) use ($requestData) {
+            $query->whereHas('requests', function ($subQuery) use ($requestData) {
+                $subQuery->whereIn('connection_requests.account_id', $requestData['accountRequestIds']);
+            });
         })->when(isset($requestData['categories']) && count($requestData['categories']) > 0, function ($query) use ($requestData) {
             $query->whereHas('statuses', function ($subQuery) use ($requestData) {
                 $ids = $requestData['categories'];
@@ -330,33 +334,34 @@ class ConnectionRepository extends Repository
         collect($resp)->map(function ($item) use ($account_id, $key_id) {
             DB::beginTransaction();
             try {
-                $connection = $this->updateOrCreate(['entityUrn' => $item['connection']['entityUrn']], $item['connection']);
+                if ($item['connection']['firstName'] !== 'Linkedin' && $item['connection']['lastName'] !== 'Member') {
+                    $connection = $this->updateOrCreate(['entityUrn' => $item['connection']['entityUrn']], $item['connection']);
 
-                DB::table('connections_keys')
-                    ->updateOrInsert(
-                        ['connection_id' => $connection->id, 'key_id' => $key_id],
-                        ['connection_id' => $connection->id, 'key_id' => $key_id]
-                    );
+                    DB::table('connections_keys')
+                        ->updateOrInsert(
+                            ['connection_id' => $connection->id, 'key_id' => $key_id],
+                            ['connection_id' => $connection->id, 'key_id' => $key_id]
+                        );
+                    if ($connection->occupation) {
 
-                if ($connection->occupation) {
+                        $chunks = preg_split('/(at|-|–)/', $connection->occupation, -1, PREG_SPLIT_NO_EMPTY);
 
-                    $chunks = preg_split('/(at|-|–)/', $connection->occupation, -1, PREG_SPLIT_NO_EMPTY);
+                        if (count($chunks) > 1) {
+                            $companyName = trim($chunks[count($chunks) - 1]);
 
-                    if (count($chunks) > 1) {
-                        $companyName = trim($chunks[count($chunks) - 1]);
+                            $company = $this->companyRepository->getByName($companyName);
 
-                        $company = $this->companyRepository->getByName($companyName);
+                            if (!$company) {
+                                $company = $this->companyRepository->store(['name' => $companyName]);
+                            }
 
-                        if (!$company) {
-                            $company = $this->companyRepository->store(['name' => $companyName]);
+
+                            DB::table('company_search_keys')
+                                ->updateOrInsert(
+                                    ['key_id' => $key_id, 'company_id' => $company->id],
+                                    ['key_id' => $key_id, 'company_id' => $company->id]
+                                );
                         }
-
-
-                        DB::table('company_search_keys')
-                            ->updateOrInsert(
-                                ['key_id' => $key_id, 'company_id' => $company->id],
-                                ['key_id' => $key_id, 'company_id' => $company->id]
-                            );
                     }
                 }
 

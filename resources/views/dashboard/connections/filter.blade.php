@@ -258,18 +258,39 @@
 
                 <div class="col-md-4">
                     <div class="row">
-                    <label for="accounts">Accounts</label>
-                    <select multiple="multiple" class="select2 form-control" data-placeholder="Select something"
-                            id="accounts" name="accounts[]">
-                        @foreach($accounts as $ac)
-                            <option
-                                @if(isset($req['accounts']) && count($req['accounts']) && in_array($ac->id,$req['accounts'])) selected
-                                @endif value="{{$ac->id}}"
+                     <div class="col-12">
+                         <label for="accounts">Accounts</label>
+                         <select multiple="multiple" class="select2 form-control" data-placeholder="Select something"
+                                 id="accounts" name="accounts[]">
+                             @foreach($accounts as $ac)
+                                 <option
+                                     @if(isset($req['accounts']) && count($req['accounts']) && in_array($ac->id,$req['accounts'])) selected
+                                     @endif value="{{$ac->id}}"
 
 
-                            >{{$ac->full_name}}</option>
-                        @endforeach
-                    </select>
+                                 >{{$ac->full_name}}</option>
+                             @endforeach
+                         </select>
+                     </div>
+                    </div>
+                    <hr/>
+                    <div class="row">
+                        <div class="col-md-12">
+
+                                <label for="account_request">Accounts requests</label>
+                                <select multiple="multiple" class="select2 form-control" data-placeholder="Select something"
+                                        id="account_request" name="accountRequestIds[]">
+                                    @foreach($accounts as $ac)
+                                        <option
+                                            @if(isset($req['accountRequestIds']) && count($req['accountRequestIds']) && in_array($ac->id,$req['accountRequestIds'])) selected
+                                            @endif value="{{$ac->id}}"
+
+
+                                        >{{$ac->full_name}}</option>
+                                    @endforeach
+                                </select>
+
+                        </div>
                     </div>
                     <hr/>
                     <div class="row">
@@ -282,9 +303,11 @@
                                 id="rangeval">{{isset($req['experience'])?$req['experience'].' years':''}}<!-- Default value --></span>
                         </div>
                     </div>
+
                 </div>
 
             </div>
+
 
             <div class="row">
                 <div class="col-md-12 mt-2">

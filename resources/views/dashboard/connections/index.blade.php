@@ -165,7 +165,11 @@
                                     <td>
                                         @foreach($connection->requests as $requests)
                                             @if($requests->account)
-                                               <span class="badge badge-warning">{{$requests->account->full_name}}</span>
+                                               <span class="badge badge-info">
+                                                   {{$requests->account->full_name}}
+                                                    <br>
+                                                   <i class="text-white"> {{$requests->date->format('Y d M h:i')}}</i>
+                                               </span>
                                             @endif
                                         @endforeach
                                     </td>

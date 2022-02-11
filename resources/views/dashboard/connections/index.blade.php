@@ -117,6 +117,20 @@
                                 </th>
                                 <th>
                                     Requests
+
+                                    @if( isset($req['sortBy']) && $req['sortBy'] === 'DESC')
+                                        <?php
+                                        $req['sortBy'] = 'ASC';
+                                        $req['sortColumn'] = 'date';
+                                        ?>
+                                        <a href="{{route('connections.index',$req)}}" title="SORT BY ASC"><i class="fa fa-arrow-up"></i></a>
+                                    @else
+                                        <?php
+                                        $req['sortBy'] = 'DESC';
+                                        $req['sortColumn'] = 'date';
+                                        ?>
+                                        <a href="{{route('connections.index',$req)}}" title="SORT BY DESC"><i class="fa fa-arrow-down"></i></a>
+                                    @endif
                                 </th>
                                 <th>
 

@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\AaccountsConversationsLimit;
 use App\Models\Category;
 use App\Models\Connection;
+use App\Models\ConnectionRequest;
 use App\Models\Key;
 use App\Models\Message;
 use App\Models\Position;
@@ -67,8 +68,17 @@ class ConnectionRepository extends Repository
         return $this->model()::where('entityUrn', $entityUrn)->first('id');
     }
 
-    public function filter(array $requestData, User $user, $paginate= true)
+    public function filter(array $requestData, User $user, $paginate = true)
     {
+
+        $sortColumn = 'id';
+
+        if ($requestData['sortColumn'] === 'date') {
+            $sortColumn = ConnectionRequest::select('date')
+                ->whereColumn('connection_id', 'connections.id')
+                ->orderby('date', $requestData['sortBy'])
+                ->limit(1);
+        }
 
         $data = $this->model()::when(isset($requestData['key']), function ($query) use ($requestData) {
             $query
@@ -115,7 +125,7 @@ class ConnectionRepository extends Repository
             });
         })->when(isset($requestData['name']), function ($query) use ($requestData) {
 
-            $query->where(function ($subQuery) use($requestData) {
+            $query->where(function ($subQuery) use ($requestData) {
                 $subQuery->where('firstName', 'LIKE', "%" . $requestData['name'] . "%")
                     ->orWhere('lastName', 'LIKE', "%" . $requestData['name'] . "%")
                     ->orWhere(DB::raw(' CONCAT(firstName," ", lastName)'), 'LIKE', "%" . $requestData['name'] . "%")
@@ -146,9 +156,9 @@ class ConnectionRepository extends Repository
             }
         })->when(isset($requestData['carrier_interest']), function ($query) use ($requestData) {
             if ($requestData['carrier_interest'] === 'open') {
-                $query->where(['career_interest' => 1 ]);
+                $query->where(['career_interest' => 1]);
             } else if ($requestData['carrier_interest'] === 'close') {
-                $query->where(['career_interest' => 0 ]);
+                $query->where(['career_interest' => 0]);
             }
         })->when(isset($requestData['contact']), function ($query) use ($requestData) {
             if ($requestData['contact'] === 'not_answered') {
@@ -184,11 +194,16 @@ class ConnectionRepository extends Repository
                 });
             });
 
-        })->with(['conversations' => function ($query) use ($requestData) {
-            $query->whereIn('conversations.account_id', $requestData['accountsIds']);
-        }])->orderby('id', 'desc');
+        })->with([
+            'conversations' => function ($query) use ($requestData) {
+                $query->whereIn('conversations.account_id', $requestData['accountsIds']);
+            },
+            'requests' => function($query) {
+                $query->select('date');
+            }
+        ])->orderby($sortColumn, $requestData['sortBy']);
 
-        if ($paginate){
+        if ($paginate) {
             return $data->paginate(20);
         }
         return $data->get();

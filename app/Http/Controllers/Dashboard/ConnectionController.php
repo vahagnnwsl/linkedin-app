@@ -101,6 +101,8 @@ class ConnectionController extends Controller
         $request['connections_keys'] = $request['connections_keys'] ?? 'all';
         $request['accountsIds'] = Auth::user()->unRealAccounts()->pluck('accounts.id')->toArray();
         $request['enableKeysIdes'] = $enableKeysIds;
+        $request['sortBy'] = $request['sortBy'] ?? 'ASC';
+        $request['sortColumn']  = $request['sortColumn'] ?? 'id';
 
         if ($userAccount) {
             array_push($request['accountsIds'], $userAccount->id);

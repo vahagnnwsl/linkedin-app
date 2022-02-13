@@ -3,25 +3,16 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\KeyRequest;
 use App\Http\Resources\MessageResource;
-use App\Jobs\SearchByKeyAndCompany;
 use App\Linkedin\Api;
 use App\Linkedin\Responses\Response;
 use App\Models\AccountConversationsLimit;
 use App\Repositories\ConversationRepository;
-use App\Repositories\KeyRepository;
 use App\Repositories\MessageRepository;
 use Carbon\Carbon;
 use GuzzleHttp\Exception\GuzzleException;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\View\Factory;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 
 

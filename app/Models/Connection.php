@@ -32,8 +32,17 @@ class Connection extends Model
         'position_parsed_date',
         'account_id',
         'until_disabled',
-        'career_interest'
+        'career_interest',
+        'localImage'
     ];
+
+    /**
+     * @return string
+     */
+    public function getPhotoAttribute(): string
+    {
+        return $this->localImage?? $this->image;
+    }
 
     /**
      * @return string

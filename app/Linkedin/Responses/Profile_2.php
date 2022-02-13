@@ -2,28 +2,23 @@
 
 namespace App\Linkedin\Responses;
 
-use App\Linkedin\Constants;
-use App\Linkedin\DTO\AbstractDTO;
-use App\Linkedin\DTO\Message;
-use App\Linkedin\DTO\Profile;
 use App\Linkedin\Helper;
-use Carbon\Carbon;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\File;
 
 
 class Profile_2
 {
 
     protected $data;
+    protected $account;
     const TYPE_KEY = '$type';
     const RESULTS_KEY = '*results';
     const EntityResultViewModel = 'EntityResultViewModel';
     const TYPE_BLENDED_SEARCH_CLUSTER = 'com.linkedin.voyager.search.BlendedSearchCluster';
 
-    public function __construct(array $data)
+    public function __construct(array $data, $account)
     {
         $this->data = $data;
+        $this->account = $account;
     }
 
 
@@ -74,8 +69,13 @@ class Profile_2
                         }
                         $a['image'] = $root . $item->image->attributes[0]->detailDataUnion->nonEntityProfilePicture->vectorImage->artifacts[0]->fileIdentifyingUrlPathSegment;
                     }
-                } catch (\Exception $exception) {
-                    $a['image'] = '';
+                } catch (\Exception $exception) {}
+
+                if (isset($a['image'])) {
+                    $localImageReq = Connection::getAndSaveImage($this->account,$a['image'],$a['entityUrn'].'_'.time());
+                    if ($localImageReq['success']){
+                        $a['localImage'] = $localImageReq['path'];
+                    }
                 }
 
                 return [

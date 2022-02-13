@@ -96,7 +96,7 @@ class ConnectionService
     public function recursiveSearch(Key $key, Account $account, Country $country, array $params = [], $start = 0)
     {
 
-        $result = (new Profile_2(Api::profile($account)->searchPeople($key->name, $country->entityUrn, $params['companyEntityUrn'] ?? null, $start)))();
+        $result = (new Profile_2(Api::profile($account)->searchPeople($key->name, $country->entityUrn, $params['companyEntityUrn'] ?? null, $start), $account))();
 
         if ($result['success']) {
             $this->connectionRepository->updateOrCreateConnectionsOnTimeKeySearch((array)$result['data'], $account->id, $key->id);

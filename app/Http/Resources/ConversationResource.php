@@ -25,7 +25,7 @@ class ConversationResource extends JsonResource
                 'entityUrn'=>$this->connection->entityUrn,
                 'fullName'=>$this->connection->fullName,
                 'occupation'=>$this->connection->occupation,
-                'image'=>$this->connection->image,
+                'image'=>$this->connection->photo,
                 'conversations'=>$this->connection->getConversations()
             ],
             'account' => $this->account,

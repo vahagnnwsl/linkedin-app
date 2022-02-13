@@ -3,11 +3,6 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\KeyRequest;
-use App\Jobs\SearchByKeyAndCompany;
-use App\Jobs\SyncLastMessagesForOneAccount;
-use App\Linkedin\Api;
-use App\Linkedin\Responses\Profile_2;
 use App\Models\Search;
 use App\Repositories\CompanyRepository;
 use App\Repositories\CountryRepository;
@@ -16,11 +11,8 @@ use App\Repositories\UserRepository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 
 

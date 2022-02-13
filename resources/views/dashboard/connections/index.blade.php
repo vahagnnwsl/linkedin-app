@@ -147,7 +147,7 @@
                                         {{$connection->id}}
                                     </td>
                                     <td>
-                                        <img class="table-avatar" src="{{$connection->image}}"
+                                        <img class="table-avatar" src="{{$connection->photo}}"
                                              onerror="this.src='/dist/img/lin_def_image.svg'" width="50">
                                     </td>
                                     <td>

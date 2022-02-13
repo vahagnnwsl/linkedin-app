@@ -9,6 +9,7 @@ use App\Linkedin\Helper;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 use Nesk\Puphpeteer\Puppeteer;
+use Nesk\Rialto\Data\JsFunction;
 
 class PuppeteerLogin extends Command
 {
@@ -101,6 +102,7 @@ class PuppeteerLogin extends Command
         $page->waitForNavigation();
 
         if (strpos($page->url(), $this->challenge_str) > 0) {
+            dump($page->url());
 
             $code = $this->ask('Enter code');
 
@@ -109,6 +111,7 @@ class PuppeteerLogin extends Command
             $page->screenshot(['path' => storage_path('1.png')]);
 
             $page->querySelector('button[id=email-pin-submit-button')->click();
+            $data = $page->evaluate(JsFunction::createWithBody('return document.documentElement.outerHTML'));
             $page->waitForNavigation();
 
             $page->screenshot(['path' => storage_path('3.png')]);

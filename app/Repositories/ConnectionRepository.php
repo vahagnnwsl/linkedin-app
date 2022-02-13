@@ -395,6 +395,8 @@ class ConnectionRepository extends Repository
             DB::beginTransaction();
             try {
                 $connection = $this->updateOrCreate(['entityUrn' => $item['connection']['entityUrn']], $item['connection']);
+
+
                 DB::table('account_connections')
                     ->updateOrInsert(
                         ['account_id' => $account_id, 'connection_id' => $connection->id],

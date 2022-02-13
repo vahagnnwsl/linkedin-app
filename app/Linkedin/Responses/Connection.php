@@ -2,8 +2,10 @@
 
 namespace App\Linkedin\Responses;
 
+use App\Linkedin\Api;
 use App\Linkedin\Constants;
 use App\Linkedin\Helper;
+use App\Models\Account;
 use Carbon\Carbon;
 use Carbon\CarbonInterval;
 use Illuminate\Support\Facades\File;
@@ -88,7 +90,8 @@ class Connection
      * @param array $data
      * @return array
      */
-    public static function parseSingle(array $data){
+    public static function parseSingle(array $data): array
+    {
 
         return [
             'entityUrn'=>  explode(':',$data['included'][0]->entityUrn)[3],
@@ -108,6 +111,37 @@ class Connection
                 }
         }
         return $careerInterest;
+    }
+
+    /**
+     * @param Account $account
+     * @param $id
+     * @param $url
+     * @return array|false[]
+     */
+    public static function getAndSaveImage(Account $account,string $url,string $name ): array
+    {
+
+        $resp = Api::connection($account)->getFile($url);
+
+
+        if ($resp['success']) {
+            if (!File::exists(storage_path('app/public/connections'))) {
+                File::makeDirectory(storage_path('app/public/connections'));
+            }
+            if (!File::exists(storage_path('app/public/connections'))) {
+                File::makeDirectory(storage_path('app/public/connections'));
+            }
+
+            file_put_contents(storage_path('app/public/connections/'.$name.'.jpg'), $resp['data']);
+            return [
+                'success' => true,
+                'path' => '/storage/connections/'.$name.'.jpg'
+            ];
+        }
+        return [
+            'success' => false,
+        ];
     }
 }
 

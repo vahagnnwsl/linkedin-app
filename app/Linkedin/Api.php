@@ -4,6 +4,7 @@ namespace App\Linkedin;
 
 use App\Linkedin\Repositories\Auth;
 use App\Linkedin\Repositories\Company;
+use App\Linkedin\Repositories\Connection;
 use App\Linkedin\Repositories\Conversation;
 use App\Linkedin\Repositories\Invitation;
 use App\Linkedin\Repositories\Profile;
@@ -64,4 +65,13 @@ class Api
         return (new Company())->setCredentials($account, $proxy);
     }
 
+    /**
+     * @param Account $account
+     * @return Connection
+     */
+    public static function connection(Account $account): Connection
+    {
+        $proxy = $account->proxy;
+        return (new Connection())->setCredentials($account, $proxy);
+    }
 }

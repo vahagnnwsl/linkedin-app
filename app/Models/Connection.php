@@ -36,12 +36,10 @@ class Connection extends Model
         'localImage'
     ];
 
-    /**
-     * @return string
-     */
-    public function getPhotoAttribute(): string
+
+    public function getPhotoAttribute()
     {
-        return $this->localImage?? $this->image;
+        return $this->localImage ?? $this->image;
     }
 
     /**

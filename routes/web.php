@@ -194,4 +194,8 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
         Route::get('/', [App\Http\Controllers\Dashboard\SearchController::class, 'index'])->name('searches.index');
         Route::delete('/{id}', [App\Http\Controllers\Dashboard\SearchController::class, 'destroy'])->name('searches.destroy');
     });
+
+    Route::group(['prefix' => 'logs'], function () {
+        Route::get('/', [App\Http\Controllers\Dashboard\LogController::class, 'index'])->name('logs.index');
+    });
 });

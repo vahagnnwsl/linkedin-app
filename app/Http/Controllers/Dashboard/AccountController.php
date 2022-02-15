@@ -386,22 +386,23 @@ class AccountController extends Controller
         $account = $this->accountRepository->getById($id);
         $proxy = $account->proxy;
         if (!$proxy) {
-            return response()->json(['life' => 'Account has not proxy']);
+            return response()->json(['life' => 'Account has not proxy'],412);
         }
 
         $success = $this->check($proxy);
         if (!$success) {
-            return response()->json(['life' => 'Invalid proxy']);
+            return response()->json(['life' => 'Invalid proxy'],412);
         }
         $resp = Api::profile($account)->getOwnProfile();
-        $life = false;
-        if ($resp['status'] === 200) {
+
+        if ($resp['status'] === 200 && $resp['success'] ) {
             $resp = Connection::parseSingle((array)$resp['data']);
             $account->update($resp);
-            $life = true;
+            return response()->json(['life' => 'Life goes on']);
+        }else{
+            return response()->json(['life' => 'Life does not go on'],412);
         }
 
-        return response()->json(['life' => $life]);
 
     }
 

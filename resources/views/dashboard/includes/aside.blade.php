@@ -32,6 +32,14 @@
                             <p>Jobs</p>
                         </a>
                     </li>
+
+                    <li class="nav-item">
+                        <a href="{{route('logs.index')}}"
+                           class="nav-link {{request()->is('dashboard/logs*') ?'active':''}}">
+                            <i class="fas fa-pencil-alt  nav-icon"></i>
+                            <p>Logs</p>
+                        </a>
+                    </li>
                 @endif
 
                     <li class="nav-item">

@@ -6,7 +6,6 @@ namespace App\Services;
 use App\Linkedin\Api;
 use App\Models\Account;
 use App\Models\Company;
-use App\Models\Proxy;
 use App\Repositories\CompanyRepository;
 
 class CompanyService

@@ -11,6 +11,9 @@ use Illuminate\Support\Arr;
 
 class Client
 {
+
+    protected $account;
+    protected $proxy;
     /**
      * @var GuzzleClient
      */
@@ -18,13 +21,15 @@ class Client
 
     /**
      * @param Account $account
-     * @param Proxy|null $proxy
      * @param string $header_type
      * @return $this
      */
-    public function setHeaders(Account $account, Proxy $proxy = null, string $header_type = 'REQUEST_HEADERS'): self
+    public function setHeaders(Account $account, string $header_type = 'REQUEST_HEADERS'): self
     {
 
+        $this->account = $account;
+        $proxy = $this->account->proxy;
+        $this->proxy = $proxy;
         $config = [];
 
         if ($proxy) {
@@ -68,17 +73,12 @@ class Client
         try {
             $response = $this->client->request('GET', $url, $query_params);
 
+            $this->successLogger($response->getStatusCode(), 'GET', $url);
             return $this->workOnResponse($response, $is_file);
 
         } catch (GuzzleException $e) {
 
-
-            Log::create([
-                'status' => $e->getCode(),
-                'msg' => $e->getMessage(),
-                'request_url' => $url,
-                'request_data' => json_encode($query_params),
-            ]);
+            $this->errorLogger($e, 'GET', $url );
 
             return [
                 'success' => false,
@@ -104,25 +104,18 @@ class Client
             $options[$body_type] = $payload;
         }
 
-//        if (!empty($query_params)) {
-//            $options['params'] = $query_params;
-//        }
-
         try {
 
 
             $response = $this->client->request('POST', $url, $options);
+            $this->successLogger($response->getStatusCode(), 'POST', $url, $options);
 
             return $this->workOnResponse($response);
 
         } catch (\Exception $e) {
 
-            Log::create([
-                'status' => $e->getCode(),
-                'msg' => $e->getMessage(),
-                'request_url' => $url,
-                'request_data' => json_encode($options),
-            ]);
+            $this->errorLogger($e, 'POST', $url, $options );
+
             return [
                 'success' => false,
                 'status' => $e->getCode(),
@@ -152,4 +145,28 @@ class Client
         return $response;
     }
 
+    public function errorLogger($e, $method, $url, $options = null)
+    {
+        Log::create([
+            'method' => $method,
+            'account_id' => $this->account->id,
+            'proxy_id' => $this->proxy->id ?? null,
+            'status' => $e->getCode(),
+            'msg' => $e->getMessage(),
+            'request_url' => $url,
+            'request_data' => $options ? json_encode($options) : null,
+        ]);
+    }
+
+    public function successLogger($status, $method, $url, $options = null)
+    {
+        Log::create([
+            'method' => $method,
+            'account_id' => $this->account->id,
+            'proxy_id' => $this->proxy->id ?? null,
+            'status' => $status,
+            'request_url' => $url,
+            'request_data' => $options ? json_encode($options) : null,
+        ]);
+    }
 }

@@ -339,18 +339,18 @@
             }
 
             function check() {
-                $.ajax({
-                    url: "/dashboard/accounts/checkAllLife",
-                    success: function (data) {
-                        for (let i in data) {
-                            if (data[i].success) {
-                                $('#life_' + data[i].id).html('<span class="badge badge-success">' + data[i].life + '</span>');
-                            } else {
-                                $('#life_' + data[i].id).html('<span class="badge badge-danger">' + data[i].life + '</span>');
-                            }
-                        }
-                    }
-                })
+              @foreach($accounts as $account)
+              $.ajax({
+                  url: "/dashboard/accounts/{{$account->id}}/checkLife",
+                  success: function (data) {
+                      $('#life_{{$account->id}}').html('<span class="badge badge-success">' + data.life + '</span>');
+                  },
+                  error: function (xhr) {
+                      var err = JSON.parse(xhr.responseText);
+                      $('#life_{{$account->id}}').html('<span class="badge badge-danger">' + err.life + '</span>');
+                  }
+              })
+             @endforeach
             }
 
             function online() {
@@ -373,7 +373,7 @@
 
             setInterval(function () {
                 check();
-            }, 30000)
+            }, 3000000)
             setInterval(function () {
                 online();
             }, 10000)

@@ -30,18 +30,18 @@ class Invitation
             $data = collect($data['data']->included);
 
             $invitations = $data->filter(function ($invitation) {
-                return $invitation->{self::TYPE_KEY} === self::KEY_INVITATION;
+                return $invitation->{self::TYPE_KEY} === self::KEY_INVITATION && $invitation->toMemberId;
             });
 
             $profiles = $data->filter(function ($profile) {
                 return $profile->{self::TYPE_KEY} === self::KEY_MINI_PROFILE;
             });
-
             $invitations = $invitations->map(function ($invitation) use ($profiles) {
 
                 $profile = $profiles->first(function ($profile) use ($invitation) {
                     return $profile->entityUrn === "urn:li:fs_miniProfile:" . $invitation->toMemberId;
                 });
+
 
                 $connection = [
                     'lastName' => $profile->lastName,

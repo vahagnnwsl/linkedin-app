@@ -590,24 +590,22 @@
             })
 
 
-            setInterval(function () {
-                $.ajax({
-                    url: "/dashboard/accounts/{{$account->id}}/show",
-                    success: function (data) {
-                        var p = data.account.is_online  === 1 ? true:false
-                        online = p
-                        check(p,life)
+            $.ajax({
+                url: "/dashboard/accounts/{{$account->id}}/show",
+                success: function (data) {
+                    var p = data.account.is_online  === 1 ? true:false
+                    online = p
+                    check(p,life)
 
-                    }
-                });
-                $.ajax({
-                    url: "/dashboard/accounts/{{$account->id}}/checkLife",
-                    success: function (data) {
-                        life = data.life
-                        check(online,data.life)
-                    }
-                });
-            }, 60000)
+                }
+            });
+            $.ajax({
+                url: "/dashboard/accounts/{{$account->id}}/checkLife",
+                success: function (data) {
+                    life = data.life
+                    check(online,data.life)
+                }
+            });
             @endif
 
         })

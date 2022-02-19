@@ -6,7 +6,6 @@ Vue.component('relative-conversation', {
             <div class="modal-content">
 
                 <div class="modal-header">
-                    <h4 class="modal-title">Modal Heading</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
 
@@ -56,10 +55,6 @@ Vue.component('relative-conversation', {
                         </div>
 
                     </div>
-                    <button v-if="messages.length" @click="getConversationMessages()"
-                            class="btn btn-default"
-                            style="float: right" title="load more messages"><i class="fa fa-arrow-circle-down"></i>
-                    </button>
                 </div>
             </div>
         </div>
@@ -86,7 +81,7 @@ Vue.component('relative-conversation', {
     methods: {
         getConversationMessages: function () {
 
-            this.$http.get(`/dashboard/conversations/${this.conversation_id}/messages?start=${this.start}`)
+            this.$http.get(`/dashboard/conversations/${this.conversation_id}/messages?type=all`)
                 .then((response) => {
                     this.messages.unshift(...response.data.messages)
 

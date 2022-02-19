@@ -371,12 +371,6 @@
                 })
             }
 
-            setInterval(function () {
-                check();
-            }, 3000000)
-            setInterval(function () {
-                online();
-            }, 10000)
             check();
             online();
 

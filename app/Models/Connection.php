@@ -78,6 +78,14 @@ class Connection extends Model
     /**
      * @return HasMany
      */
+    public function threads(): HasMany
+    {
+        return $this->hasMany(Conversation::class, 'connection_id');
+    }
+
+    /**
+     * @return HasMany
+     */
     public function messages(): HasMany
     {
         return $this->hasMany(Message::class, 'connection_id');

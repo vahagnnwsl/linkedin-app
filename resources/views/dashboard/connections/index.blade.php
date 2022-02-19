@@ -88,7 +88,7 @@
                         </div>
                     @endif
                 </div>
-                <div class="card-body p-0" >
+                <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-striped " style="min-height: 300px">
                             <thead>
@@ -123,13 +123,15 @@
                                         $req['sortBy'] = 'ASC';
                                         $req['sortColumn'] = 'date';
                                         ?>
-                                        <a href="{{route('connections.index',$req)}}" title="SORT BY ASC"><i class="fa fa-arrow-up"></i></a>
+                                        <a href="{{route('connections.index',$req)}}" title="SORT BY ASC"><i
+                                                class="fa fa-arrow-up"></i></a>
                                     @else
                                         <?php
                                         $req['sortBy'] = 'DESC';
                                         $req['sortColumn'] = 'date';
                                         ?>
-                                        <a href="{{route('connections.index',$req)}}" title="SORT BY DESC"><i class="fa fa-arrow-down"></i></a>
+                                        <a href="{{route('connections.index',$req)}}" title="SORT BY DESC"><i
+                                                class="fa fa-arrow-down"></i></a>
                                     @endif
                                 </th>
                                 <th>
@@ -179,7 +181,7 @@
                                     <td>
                                         @foreach($connection->requests as $requests)
                                             @if($requests->account)
-                                               <span class="badge badge-info">
+                                                <span class="badge badge-info">
                                                    {{$requests->account->full_name}}
                                                     <br>
                                                    <i class="text-white"> {{$requests->date->format('Y d M h:i')}}</i>
@@ -190,20 +192,23 @@
                                     <td>
                                         @foreach($connection->conversations as $conversation)
                                             @if($userAccount)
-                                                @if($userAccount && $conversation->account_id ===$userAccount->id)
+                                                @if($userAccount && $conversation->account_id === $userAccount->id)
                                                     <a title="Go to chat" target="_blank"
                                                        href="{{route('linkedin.chat')}}#entityUrn:{{$conversation->entityUrn}}">
                                                         <i class="fa fa-envelope"></i>
                                                     </a>
-                                                @else
-                                                    <a>
+                                                @endif
+                                            @endif
+                                        @endforeach
+
+                                        @foreach($connection->threads as $thread)
+                                            @if(!$userAccount || ($userAccount && $thread->account_id  !== $userAccount->id))
+                                               <br> <a title="">
                                                 <span style="cursor: pointer"
                                                       class="fa fa-envelope getConversationMessages"
-                                                      title=""
-                                                      data-conversationId="{{$conversation->entityUrn}}"></span>
-                                                    </a>
-                                                    <br/>
-                                                @endif
+                                                      title="{{$thread->account->login}}"
+                                                      data-conversationId="{{$thread->entityUrn}}"></span>
+                                                </a>
                                             @endif
                                         @endforeach
 

@@ -121,6 +121,16 @@ class ConversationRepository extends Repository
     }
 
     /**
+     * @return mixed
+     */
+    public function getAllMessages(int $id)
+    {
+        $conversation = $this->getById($id);
+
+        return $conversation->messages()->orderByDesc('date')->whereIsDelete(0)->get();
+    }
+
+    /**
      * @param int $connection_id
      * @param array $accounts_ids
      * @return mixed

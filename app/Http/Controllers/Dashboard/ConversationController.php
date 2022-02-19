@@ -92,14 +92,13 @@ class ConversationController extends Controller
         $relatedConversations = [];
         $conversation = $this->conversationRepository->getByEntityUrn($hash);
 
-        $messages = $this->conversationRepository->getMessages($conversation->id, $request->get('start'));
+        if ($request->has('type') && $request->get('type') === 'all') {
+            $messages = $this->conversationRepository->getAllMessages($conversation->id);
+        } else {
+            $messages = $this->conversationRepository->getMessages($conversation->id, $request->get('start'));
+        }
 
-//        if ($request->get('relative')) {
-//            $relatedAccountsIdes = Auth::user()->unRealAccounts()->pluck('accounts.id')->toArray();
-//            $conversation = $this->conversationRepository->getById($id);
-//            $relatedConversations = new ConversationCollection($this->conversationRepository->getConnectionConversationsByConnectionAndAccount($conversation->connection_id, $relatedAccountsIdes));
-//
-//        }
+
 
         return response()->json(['messages' => new MessageCollection(collect($messages)->sortBy('date')), 'relatedConversations' => $relatedConversations]);
     }

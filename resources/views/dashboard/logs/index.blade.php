@@ -6,7 +6,6 @@
 @endpush
 @push('js')
     <script src="/plugins/select2/js/select2.full.min.js"></script>
-    <script src="/plugins/moment/moment.min.js"></script>
 
     <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>

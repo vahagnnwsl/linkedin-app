@@ -68,6 +68,10 @@ class ConnectionRepository extends Repository
         return $this->model()::where('entityUrn', $entityUrn)->first('id');
     }
 
+    //30
+    //60
+    //90
+    //180  input dasht 
     public function filter(array $requestData, User $user, $paginate = true)
     {
 

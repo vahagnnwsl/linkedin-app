@@ -162,6 +162,17 @@
                                     <td>
                                         @foreach($connection->accounts as $ac)
                                             <span class="badge badge-primary">  {{$ac->full_name}}</span>
+                                            @foreach($connection->threads as $thread)
+                                                @if($userAccount && $thread->account_id  === $ac->id)
+                                                    <a style="float: right">
+                                                         <span style="cursor: pointer"
+                                                               class="fa fa-envelope getConversationMessages"
+                                                               title="{{$thread->account->login}}"
+                                                               data-conversationId="{{$thread->entityUrn}}"></span>
+                                                    </a>
+                                                @endif
+                                            @endforeach
+                                            <br>
                                         @endforeach
                                     </td>
 
@@ -200,18 +211,6 @@
                                                 @endif
                                             @endif
                                         @endforeach
-
-                                        @foreach($connection->threads as $thread)
-                                            @if(!$userAccount || ($userAccount && $thread->account_id  !== $userAccount->id))
-                                               <br> <a title="">
-                                                <span style="cursor: pointer"
-                                                      class="fa fa-envelope getConversationMessages"
-                                                      title="{{$thread->account->login}}"
-                                                      data-conversationId="{{$thread->entityUrn}}"></span>
-                                                </a>
-                                            @endif
-                                        @endforeach
-
                                     </td>
 
                                     <td class="float-right">

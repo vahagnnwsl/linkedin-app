@@ -322,6 +322,7 @@ class ConnectionController extends Controller
         return redirect()->back();
     }
 
+    /// onliy connection have not account and hav not send account
     public function carrierInterest(): RedirectResponse
     {
         $account = Auth::user()->account;

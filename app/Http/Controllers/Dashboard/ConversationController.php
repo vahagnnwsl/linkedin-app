@@ -7,6 +7,7 @@ use App\Http\Resources\Collections\ConversationCollection;
 use App\Http\Resources\Collections\MessageCollection;
 use App\Http\Resources\ConversationResource;
 use App\Jobs\Conversations\GetConversationMessages;
+use App\Repositories\AccountRepository;
 use App\Repositories\ConversationRepository;
 use App\Repositories\MessageRepository;
 use Illuminate\Http\JsonResponse;
@@ -20,17 +21,18 @@ class ConversationController extends Controller
 
     protected MessageRepository $messageRepository;
 
+    protected AccountRepository $accountRepository;
+
     /**
-     * PermissionController constructor.
      * @param ConversationRepository $conversationRepository
      * @param MessageRepository $messageRepository
+     * @param AccountRepository $accountRepository
      */
-
-    public function __construct(ConversationRepository $conversationRepository, MessageRepository $messageRepository)
+    public function __construct(ConversationRepository $conversationRepository, MessageRepository $messageRepository, AccountRepository $accountRepository)
     {
         $this->conversationRepository = $conversationRepository;
-
         $this->messageRepository = $messageRepository;
+        $this->accountRepository = $accountRepository;
     }
 
 
@@ -38,11 +40,16 @@ class ConversationController extends Controller
      * @param $id
      * @return JsonResponse
      */
-    public function synLastMessages($id): JsonResponse
+    public function synLastMessages($id,Request $request): JsonResponse
     {
         $account = Auth::user()->account;
-
         $conversation = $this->conversationRepository->getById($id);
+
+
+        if ($request->has('account_id')) {
+            $account = $this->accountRepository->getById((int)$request->get('account_id'));
+        }
+
 
         GetConversationMessages::dispatch(Auth::user(), $account, $conversation, true);
 
@@ -91,6 +98,10 @@ class ConversationController extends Controller
 
         $relatedConversations = [];
         $conversation = $this->conversationRepository->getByEntityUrn($hash);
+        $users = [
+            'connection' => $conversation->connection,
+            'account' => $conversation->account,
+        ];
 
         if ($request->has('type') && $request->get('type') === 'all') {
             $messages = $this->conversationRepository->getAllMessages($conversation->id);
@@ -100,7 +111,12 @@ class ConversationController extends Controller
 
 
 
-        return response()->json(['messages' => new MessageCollection(collect($messages)->sortBy('date')), 'relatedConversations' => $relatedConversations]);
+        return response()->json([
+            'messages' => new MessageCollection(collect($messages)->sortBy('date')),
+            'relatedConversations' => $relatedConversations,
+            'users' => $users,
+            'conversation' => $conversation,
+        ]);
     }
 
 }

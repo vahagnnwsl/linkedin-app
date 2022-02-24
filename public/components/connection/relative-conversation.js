@@ -5,8 +5,14 @@ Vue.component('relative-conversation', {
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
 
-                <div class="modal-header">
+                <div class="modal-header" style="position: relative">
+                    <h4 class="modal-title">
+                        <span v-if="account">Account: {{account.login}}</span> <br>
+                        <span  v-if="connection">Connection: {{connection.firstName }} {{connection.lastName }}</span>
+                    </h4>
+                    <button v-if="conversation_id" @click="syncMessages" type="button" class="close" style="position: absolute; bottom: 5px; right: 16px"><i class="fa fa-sync"> </i></button>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
+
                 </div>
 
                 <div class="modal-body">
@@ -65,7 +71,10 @@ Vue.component('relative-conversation', {
         return {
             conversation_id: '',
             start: 0,
-            messages: []
+            messages: [],
+            account: null,
+            connection: null,
+            conversation: null,
         }
     },
     mounted() {
@@ -74,7 +83,9 @@ Vue.component('relative-conversation', {
             $('#conversationModal').modal('show')
             _this.conversation_id = id;
             _this.start = 0;
-            _this.messages = [];
+            _this.account = null;
+            _this.conversation = null;
+            _this.connection = null;
             _this.getConversationMessages()
         });
     },
@@ -84,9 +95,20 @@ Vue.component('relative-conversation', {
             this.$http.get(`/dashboard/conversations/${this.conversation_id}/messages?type=all`)
                 .then((response) => {
                     this.messages.unshift(...response.data.messages)
-
+                    this.conversation = response.data.conversation;
+                    this.account = response.data.users.account;
+                    this.connection = response.data.users.connection;
                     this.start += 10;
                 })
         },
+
+        syncMessages: function (){
+
+            this.$http.post(`/dashboard/conversations/${this.conversation.id}/sync-last-messages?account_id=${this.account.id}`).then(() => {
+                toastr.success('Your request on process');
+            }).catch(() => {
+                toastr.error('Something went wrong');
+            })
+        }
     }
 })

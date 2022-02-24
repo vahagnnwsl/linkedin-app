@@ -106,7 +106,7 @@
                                     Occupation
                                 </th>
 
-                                <th>
+                                <th width="15%">
                                     Accounts
                                 </th>
                                 <th>
@@ -160,20 +160,25 @@
                                         {{$connection->occupation}}
                                     </td>
                                     <td>
-                                        @foreach($connection->accounts as $ac)
-                                            <span class="badge badge-primary">  {{$ac->full_name}}</span>
-                                            @foreach($connection->threads as $thread)
-                                                @if($userAccount && $thread->account_id  === $ac->id)
-                                                    <a style="float: right">
-                                                         <span style="cursor: pointer"
-                                                               class="fa fa-envelope getConversationMessages"
-                                                               title="{{$thread->account->login}}"
-                                                               data-conversationId="{{$thread->entityUrn}}"></span>
-                                                    </a>
-                                                @endif
+                                        <ul style="padding: 0;">
+                                            @foreach($connection->accounts as $ac)
+                                                <li class="d-flex align-items-center">
+                                                    <span class="badge badge-primary" >  {{$ac->full_name}}</span>
+                                                    @foreach($connection->threads as $thread)
+                                                        @if($userAccount && $thread->account_id  === $ac->id)
+                                                            <a>
+                                                                 <span
+                                                                     style="margin-left: 5px;cursor: pointer"
+                                                                     class="fa fa-envelope getConversationMessages"
+                                                                     title="{{$thread->account->login}}"
+                                                                     data-conversationId="{{$thread->entityUrn}}"
+                                                                 ></span>
+                                                            </a>
+                                                        @endif
+                                                    @endforeach
+                                                </li>
                                             @endforeach
-                                            <br>
-                                        @endforeach
+                                        </ul>
                                     </td>
 
                                     <td>

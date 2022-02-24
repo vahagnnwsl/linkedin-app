@@ -71,7 +71,7 @@ class ConnectionRepository extends Repository
     //30
     //60
     //90
-    //180  input dasht 
+    //180  input dasht
     public function filter(array $requestData, User $user, $paginate = true)
     {
 
@@ -151,6 +151,8 @@ class ConnectionRepository extends Repository
                 $query->doesnthave('accounts');
             } else if ($requestData['distance'] === 'accounts') {
                 $query->whereHas('accounts');
+            }else if ($requestData['distance'] === 'no_accounts_no_requests') {
+                $query->doesnthave('accounts')->doesnthave('requests');
             }
         })->when(isset($requestData['connections_keys']), function ($query) use ($requestData) {
             if ($requestData['connections_keys'] === 'have_keys') {
@@ -165,7 +167,9 @@ class ConnectionRepository extends Repository
                 $query->where(['career_interest' => 0]);
             }
         })->when(isset($requestData['contact']), function ($query) use ($requestData) {
+
             if ($requestData['contact'] === 'not_answered') {
+
                 $query->whereHas('conversations', function ($subQuery) {
                     $subQuery->whereHas('messages');
                 })->doesnthave('messages');
@@ -174,8 +178,9 @@ class ConnectionRepository extends Repository
                     $subQuery->whereHas('messages');
                 })->whereHas('messages');;
             } else if ($requestData['contact'] === 'month') {
-                $query->whereHas('conversations', function ($subQuery) {
-                    $subQuery->whereHas('messages')->where('conversations.lastActivityAt', '<=', date('Y-m-d', strtotime('-1 months')));
+                $query->whereHas('conversations', function ($subQuery) use ($requestData) {
+                    $month = (int)$requestData['month_count'] ?? 1;
+                    $subQuery->whereHas('messages')->where('conversations.lastActivityAt', '<=', date('Y-m-d', strtotime('-'.$month.' months')));
                 });
             } else if ($requestData['contact'] === 'request') {
                 $query->whereHas('requests');

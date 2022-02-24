@@ -188,7 +188,8 @@
                         </div>
                         <div class="form-check w-100">
                             <label class="form-check-label" style="cursor: pointer">
-                                <input type="radio" class="form-check-input" value="month" name="contact"  @if(isset($req['contact']) && $req['contact'] === 'month') checked @endif>Past  30 days
+                                <input type="radio" class="form-check-input" value="month" name="contact"  @if(isset($req['contact']) && $req['contact'] === 'month') checked @endif>Month
+                                <input type="number"  @if(!isset($req['contact']) || $req['contact'] !== 'month') disabled @endif  style="width: 50%" name="month_count" value="{{$req['month_count'] ?? ''}}" min="1">
                             </label>
                         </div>
                         <div class="form-check w-100">
@@ -217,6 +218,13 @@
                                 <input type="radio" class="form-check-input" value="no_accounts" name="distance"
                                        @if(isset($req['distance']) && $req['distance'] === 'no_accounts') checked @endif
                                 >Only connections that have not accounts
+                            </label>
+                        </div>
+                        <div class="form-check  w-100">
+                            <label class="form-check-label" style="cursor: pointer">
+                                <input type="radio" class="form-check-input" value="no_accounts_no_requests" name="distance"
+                                       @if(isset($req['distance']) && $req['distance'] === 'no_accounts_no_requests') checked @endif
+                                >Only connections that have not accounts have not send requests
                             </label>
                         </div>
                         <div class="form-check  w-100">
@@ -378,6 +386,15 @@
                 allowClear: true,
                 tags: true //
             })
+
+            $('input[name=contact]').click(function (){
+                if ($(this).val() === 'month') {
+                    $('input[name=month_count]').removeAttr('disabled')
+                }else {
+                    $('input[name=month_count]').attr('disabled','disabled')
+                    $('input[name=month_count]').val(null)
+                }
+            });
 
             $('.select2Company').select2({
                 multiple: true,

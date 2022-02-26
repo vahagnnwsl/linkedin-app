@@ -64,6 +64,7 @@ class ConversationRepository extends Repository
     {
 
         $take = $key ? 400 : 10;
+        $start = 0;
         return $this->model()::where('account_id', $account_id)->whereNotNull('connection_id')
             ->when($key, function ($query) use ($key, $distance) {
 
@@ -95,7 +96,8 @@ class ConversationRepository extends Repository
                         });
                     });
                 });
-            })->when($distance, function ($query) use ($condition) {
+            })
+            ->when($distance, function ($query) use ($condition) {
                 if ($condition === 'not_answered') {
                     $query->whereHas('connection', function ($q) {
                         $q->doesnthave('messages');
@@ -105,7 +107,8 @@ class ConversationRepository extends Repository
                         $q->whereHas('messages');
                     });
                 }
-            })->skip($start)->take($take)->orderByDesc('lastActivityAt')->get();
+            })
+            ->skip($start)->take($take)->orderByDesc('lastActivityAt')->get();
     }
 
     /**
@@ -123,11 +126,11 @@ class ConversationRepository extends Repository
     /**
      * @return mixed
      */
-    public function getAllMessages(int $id)
+    public function getAllMessages(int $id, $re = 'DESC')
     {
         $conversation = $this->getById($id);
 
-        return $conversation->messages()->orderByDesc('date')->whereIsDelete(0)->get();
+        return $conversation->messages()->orderBy('date', $re )->whereIsDelete(0)->get();
     }
 
     /**

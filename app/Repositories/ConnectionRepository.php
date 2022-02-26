@@ -176,11 +176,12 @@ class ConnectionRepository extends Repository
             } else if ($requestData['contact'] === 'answered') {
                 $query->whereHas('conversations', function ($subQuery) {
                     $subQuery->whereHas('messages');
-                })->whereHas('messages');;
+                })->whereHas('messages');
             } else if ($requestData['contact'] === 'month') {
                 $query->whereHas('conversations', function ($subQuery) use ($requestData) {
                     $month = (int)$requestData['month_count'] ?? 1;
-                    $subQuery->whereHas('messages')->where('conversations.lastActivityAt', '<=', date('Y-m-d', strtotime('-'.$month.' months')));
+                    $subQuery->where('conversations.lastActivityAt', '<=', date('Y-m-d', strtotime('-'.$month.' months')))
+                        ->whereHas('messages');
                 });
             } else if ($requestData['contact'] === 'request') {
                 $query->whereHas('requests');

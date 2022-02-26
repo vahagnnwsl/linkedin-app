@@ -104,15 +104,18 @@ class ConversationController extends Controller
         ];
 
         if ($request->has('type') && $request->get('type') === 'all') {
-            $messages = $this->conversationRepository->getAllMessages($conversation->id);
+            $messages = $this->conversationRepository->getAllMessages($conversation->id,'ASC');
+            $messages= new MessageCollection($messages);
+
         } else {
             $messages = $this->conversationRepository->getMessages($conversation->id, $request->get('start'));
+            $messages= new MessageCollection(collect($messages)->sortBy('date'));
         }
 
 
 
         return response()->json([
-            'messages' => new MessageCollection(collect($messages)->sortBy('date')),
+            'messages' => $messages,
             'relatedConversations' => $relatedConversations,
             'users' => $users,
             'conversation' => $conversation,

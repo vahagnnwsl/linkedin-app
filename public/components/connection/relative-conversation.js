@@ -86,6 +86,7 @@ Vue.component('relative-conversation', {
             _this.account = null;
             _this.conversation = null;
             _this.connection = null;
+            _this.messages = [];
             _this.getConversationMessages()
         });
     },

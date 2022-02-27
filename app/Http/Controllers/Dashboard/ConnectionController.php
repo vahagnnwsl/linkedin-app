@@ -141,6 +141,7 @@ class ConnectionController extends Controller
         $data = $this->prepareGetAll($req);
 
         $connections = $data['connections'];
+
         $connections->load('accounts', 'keys', 'requests', 'requests.account', 'threads','threads.account');
 
         $keys = $data['keys'];

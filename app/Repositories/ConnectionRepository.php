@@ -6,6 +6,7 @@ use App\Models\AaccountsConversationsLimit;
 use App\Models\Category;
 use App\Models\Connection;
 use App\Models\ConnectionRequest;
+use App\Models\Conversation;
 use App\Models\Key;
 use App\Models\Message;
 use App\Models\Position;
@@ -151,7 +152,7 @@ class ConnectionRepository extends Repository
                 $query->doesnthave('accounts');
             } else if ($requestData['distance'] === 'accounts') {
                 $query->whereHas('accounts');
-            }else if ($requestData['distance'] === 'no_accounts_no_requests') {
+            } else if ($requestData['distance'] === 'no_accounts_no_requests') {
                 $query->doesnthave('accounts')->doesnthave('requests');
             }
         })->when(isset($requestData['connections_keys']), function ($query) use ($requestData) {
@@ -180,8 +181,16 @@ class ConnectionRepository extends Repository
             } else if ($requestData['contact'] === 'month') {
                 $query->whereHas('conversations', function ($subQuery) use ($requestData) {
                     $month = (int)$requestData['month_count'] ?? 1;
-                    $subQuery->where('conversations.lastActivityAt', '<=', date('Y-m-d', strtotime('-'.$month.' months')))
-                        ->whereHas('messages');
+                   dump( date('Y-m-d', strtotime('-' . $month . ' months')));
+                    $subQuery
+                        ->whereExists(function($a) use ($month)
+                        {
+                            $a->select(DB::raw('*'))
+                                ->from('conversations')
+                                ->whereRaw('conversations.connection_id = connections.id')
+                                ->where('conversations.lastActivityAt', '<', date('Y-m-d', strtotime('-' . $month . ' months')));
+                        });
+//                        ->whereHas('messages');
                 });
             } else if ($requestData['contact'] === 'request') {
                 $query->whereHas('requests');
@@ -208,11 +217,12 @@ class ConnectionRepository extends Repository
             'conversations' => function ($query) use ($requestData) {
                 $query->whereIn('conversations.account_id', $requestData['accountsIds']);
             },
-            'requests' => function($query) {
+            'requests' => function ($query) {
                 $query->select('date');
             }
         ])->orderby($sortColumn, $requestData['sortBy']);
 
+//        dd($data->toSql());
         if ($paginate) {
             return $data->paginate(20);
         }

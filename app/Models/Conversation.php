@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -61,6 +62,19 @@ class Conversation extends Model
     public function account(): BelongsTo
     {
         return $this->belongsTo(Account::class);
+    }
+
+    public static function boot(): void
+    {
+        parent::boot();
+
+        static::created(function ($model) {
+            $model->conversation->connection(['lastActivityAt' => $model->lastActivityAt]);
+        });
+
+        static::updated(function ($model) {
+            $model->conversation->connection(['lastActivityAt' => $model->lastActivityAt]);
+        });
     }
 
 }

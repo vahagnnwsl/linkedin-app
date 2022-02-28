@@ -142,7 +142,7 @@ class ConnectionController extends Controller
 
         $connections = $data['connections'];
 
-        $connections->load('accounts', 'keys', 'requests', 'requests.account', 'threads','threads.account');
+        $connections->load('accounts', 'keys', 'requests', 'requests.account','threads.account');
 
         $keys = $data['keys'];
         $userAccount = $data['userAccount'];

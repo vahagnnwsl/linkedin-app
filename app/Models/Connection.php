@@ -33,9 +33,16 @@ class Connection extends Model
         'account_id',
         'until_disabled',
         'career_interest',
-        'localImage'
+        'localImage',
+        'lastActivityAt'
     ];
 
+    /**
+     * @var string[]
+     */
+    protected $casts = [
+        'lastActivityAt' => 'datetime:Y-m-d H:m'
+    ];
 
     public function getPhotoAttribute()
     {

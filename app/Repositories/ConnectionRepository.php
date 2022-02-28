@@ -181,15 +181,8 @@ class ConnectionRepository extends Repository
             } else if ($requestData['contact'] === 'month') {
                 $query->whereHas('conversations', function ($subQuery) use ($requestData) {
                     $month = (int)$requestData['month_count'] ?? 1;
-                    $subQuery
-                        ->whereNotExists(function($a) use ($month)
-                        {
-                            $a->select(DB::raw('*'))
-                                ->from('conversations')
-                                ->whereRaw('conversations.connection_id = connections.id')
-                                ->whereDate('conversations.lastActivityAt', '<', date('Y-m-d', strtotime('-' . $month . ' months')));
-                        });
-//                        ->whereHas('messages');
+                    dump( date('Y-m-d', strtotime('-' . $month . ' months')));
+                    $subQuery->whereDate('connections.lastActivityAt', '>', date('Y-m-d', strtotime('-' . $month . ' months')));
                 });
             } else if ($requestData['contact'] === 'request') {
                 $query->whereHas('requests');

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Jobs\Conversations\GetConversationsLastMessages;
+use App\Models\Moderator;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
@@ -57,6 +58,8 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+        $this->middleware('guest:moderator')->except('logout');
+
     }
 
     /**
@@ -70,5 +73,38 @@ class LoginController extends Controller
             $this->username() => 'exists:users,' . $this->username() . ',status,1',
             'password' => 'required|string',
         ]);
+    }
+
+
+    public function showLoginForm()
+    {
+        $url = route('login');
+        return view('auth.login', compact('url'));
+    }
+
+    public function showModeratorLoginForm()
+    {
+        $url = route('moderatorLogin');
+        return view('auth.login', compact('url'));
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function moderatorLogin(Request $request): \Illuminate\Http\RedirectResponse
+    {
+        $this->validate($request, [
+            'email'   => 'required|email',
+            'password' => 'required|min:6'
+        ]);
+
+
+        if (Auth::guard('moderator')->attempt(['email' => $request->email, 'password' => $request->password], $request->get('remember'))) {
+
+            return redirect()->intended('/moderators/welcome');
+        }
+        return back()->withInput($request->only('email', 'remember'));
     }
 }

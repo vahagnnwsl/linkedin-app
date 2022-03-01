@@ -40,6 +40,13 @@
                             <p>Logs</p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="{{route('moderators.index')}}"
+                           class="nav-link {{request()->is('dashboard/moderators*') ?'active':''}}">
+                            <i class="fas  fa-user-cog   nav-icon"></i>
+                            <p>Moderators</p>
+                        </a>
+                    </li>
                 @endif
 
                     <li class="nav-item">

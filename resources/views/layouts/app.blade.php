@@ -29,7 +29,7 @@
     <link href="/dist/css/loader.css"  rel="stylesheet">
 
 </head>
-<body class="{{request()->is('login*')|| request()->is('user-invitation*')  ?'hold-transition login-page':'sidebar-mini'}}">
+<body class="{{request()->is('moderators/login*')|| request()->is('login*')|| request()->is('user-invitation*')  ?'hold-transition login-page':'sidebar-mini'}}">
 @yield('content')
 
 <script src="/plugins/jquery/jquery.min.js"></script>

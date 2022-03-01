@@ -22,6 +22,15 @@ Auth::routes(['register' => false]);
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
+Route::group([ 'prefix' => 'moderators'], function () {
+    Route::get('/login', [\App\Http\Controllers\Auth\LoginController::class,'showModeratorLoginForm'])->name('showModeratorLoginForm');
+    Route::post('/login', [\App\Http\Controllers\Auth\LoginController::class,'moderatorLogin'])->name('moderatorLogin');
+    Route::get('/welcome', [\App\Http\Controllers\Moderators\ConversationsController::class,'index'])->name('moderators.conversations.index')->middleware('auth:moderator');
+    Route::get('/conversation/{id}', [\App\Http\Controllers\Moderators\ConversationsController::class,'conversation'])->name('moderators.conversation')->middleware('auth:moderator');
+
+
+});
+
 Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
 
     Route::get('/', [App\Http\Controllers\Dashboard\IndexController::class, 'home'])->name('dashboard.index');
@@ -143,6 +152,15 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
         Route::get('/{entityUrn}/messages', [App\Http\Controllers\Dashboard\ConversationController::class, 'getMessages']);
         Route::post('/{id}/sync-last-messages', [App\Http\Controllers\Dashboard\ConversationController::class, 'synLastMessages']);
 
+    });
+
+    Route::group(['prefix' => 'moderators','middleware'=>'role:Admin'], function () {
+        Route::get('/', [App\Http\Controllers\Dashboard\ModeratorController::class, 'index'])->name('moderators.index');
+        Route::get('/{id}/edit', [App\Http\Controllers\Dashboard\ModeratorController::class, 'edit'])->name('moderators.edit');
+        Route::get('/create', [App\Http\Controllers\Dashboard\ModeratorController::class, 'create'])->name('moderators.create');
+        Route::post('/store', [App\Http\Controllers\Dashboard\ModeratorController::class, 'store'])->name('moderators.store');
+        Route::put('/{id}', [App\Http\Controllers\Dashboard\ModeratorController::class, 'update'])->name('moderators.update');
+        Route::delete('/{id}', [App\Http\Controllers\Dashboard\ModeratorController::class, 'delete'])->name('moderators.destroy');
     });
 
     Route::group(['prefix' => 'messages'], function () {

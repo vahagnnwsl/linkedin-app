@@ -95,4 +95,14 @@ class MessageRepository extends Repository
         return $this->model()::whereConversationId($conversation_id)->with('connection')->orderByDesc('date')->paginate(20);
     }
 
+
+    /**
+     * @param $conversation_id
+     * @return mixed
+     */
+    public function getMessagesAllByConversationId($conversation_id)
+    {
+        return $this->model()::whereConversationId($conversation_id)->orderBy('date','asc')->get();
+    }
+
 }

@@ -163,9 +163,11 @@
                                         <ul style="padding: 0;">
                                             @foreach($connection->accounts as $ac)
                                                 <li class="d-flex align-items-center">
-                                                    <span class="badge badge-primary" >  {{$ac->full_name}}</span>
+                                                    <span class="badge badge-primary">
+                                                        {{$ac->full_name}}
+                                                    </span>
                                                     @foreach($connection->threads as $thread)
-                                                        @if($userAccount && $thread->account_id  === $ac->id)
+                                                        @if((int)$thread->account_id  === (int)$ac->id)
                                                             <a>
                                                                  <span
                                                                      style="margin-left: 5px;cursor: pointer"

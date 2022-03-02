@@ -182,7 +182,7 @@ class ConnectionRepository extends Repository
                 $query->whereHas('conversations', function ($subQuery) use ($requestData) {
                     $month = (int)$requestData['month_count'] ?? 1;
                     dump( date('Y-m-d', strtotime('-' . $month . ' months')));
-                    $subQuery->whereDate('connections.lastActivityAt', '>', date('Y-m-d', strtotime('-' . $month . ' months')));
+                    $subQuery->whereDate('connections.lastActivityAt', '<', date('Y-m-d', strtotime('-' . $month . ' months')));
                 });
             } else if ($requestData['contact'] === 'request') {
                 $query->whereHas('requests');

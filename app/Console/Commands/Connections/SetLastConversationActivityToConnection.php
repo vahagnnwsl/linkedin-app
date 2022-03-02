@@ -40,7 +40,7 @@ class SetLastConversationActivityToConnection extends Command
      */
     public function handle():void
     {
-       $conversations  = Conversation::with('connection')->select('lastActivityAt','connection_id')->orderBy('lastActivityAt','DESC')->get();
+       $conversations  = Conversation::with('connection')->select('lastActivityAt','connection_id')->orderBy('lastActivityAt','ASC')->get();
 
         $conversations->map(function ($conversation) {
            if ($conversation->connection) {

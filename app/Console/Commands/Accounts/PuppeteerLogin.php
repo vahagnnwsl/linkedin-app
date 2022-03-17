@@ -70,6 +70,9 @@ class PuppeteerLogin extends Command
     public function handle(): int
     {
 
+        if (!File::exists(storage_path('login'))) {
+            File::makeDirectory(storage_path('login'));
+        }
 
         $accounts = Account::pluck('login')->toArray();
 
@@ -100,24 +103,25 @@ class PuppeteerLogin extends Command
         $page->querySelector('button[type=submit')->click();
 
         $page->waitForNavigation();
-        $page->screenshot(['path' => storage_path('afterSubmit.png')]);
+        $page->screenshot(['path' => storage_path('login/afterSubmit_'.$account->id.'.png')]);
 
         if (strpos($page->url(), $this->challenge_str) > 0) {
 
             $code = $this->ask('Enter code');
+            $page->screenshot(['path' => storage_path('login/beforeTypePin_'.$account->id.'.png')]);
 
             $codeInput = $page->querySelector('[name="' . $this->code_selector . '"]');
             $codeInput->type($code);
-            $page->screenshot(['path' => storage_path('1.png')]);
+            $page->screenshot(['path' => storage_path('login/afterTypePin_'.$account->id.'.png')]);
 
             $page->querySelector('button[id=email-pin-submit-button')->click();
             $data = $page->evaluate(JsFunction::createWithBody('return document.documentElement.outerHTML'));
             $page->waitForNavigation();
 
-            $page->screenshot(['path' => storage_path('redirectAfterChallenge.png')]);
+            $page->screenshot(['path' => storage_path('login/redirectAfterChallenge_'.$account->id.'.png')]);
         }
 
-        $page->screenshot(['path' => storage_path('login.png')]);
+        $page->screenshot(['path' => storage_path('login/login_'.$account->id.'.png')]);
         $cookies = $page->cookies();
 //      $cookies = $page->evaluate(JsFunction::createWithBody("return document.cookie;"));
 

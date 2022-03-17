@@ -72,7 +72,7 @@ class Profile_2
                 } catch (\Exception $exception) {}
 
                 if (isset($a['image'])) {
-                    $localImageReq = Connection::getAndSaveImage($this->account,$a['image'],$a['entityUrn'].'_'.time());
+                    $localImageReq = Connection::getAndSaveImage($this->account,$a['image'],$a['entityUrn']);
                     if ($localImageReq['success']){
                         $a['localImage'] = $localImageReq['path'];
                     }

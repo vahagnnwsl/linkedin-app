@@ -100,9 +100,9 @@ class PuppeteerLogin extends Command
         $page->querySelector('button[type=submit')->click();
 
         $page->waitForNavigation();
+        $page->screenshot(['path' => storage_path('afterSubmit.png')]);
 
         if (strpos($page->url(), $this->challenge_str) > 0) {
-            dump($page->url());
 
             $code = $this->ask('Enter code');
 
@@ -114,10 +114,10 @@ class PuppeteerLogin extends Command
             $data = $page->evaluate(JsFunction::createWithBody('return document.documentElement.outerHTML'));
             $page->waitForNavigation();
 
-            $page->screenshot(['path' => storage_path('3.png')]);
+            $page->screenshot(['path' => storage_path('redirectAfterChallenge.png')]);
         }
 
-        $page->screenshot(['path' => storage_path('4.png')]);
+        $page->screenshot(['path' => storage_path('login.png')]);
         $cookies = $page->cookies();
 //      $cookies = $page->evaluate(JsFunction::createWithBody("return document.cookie;"));
 
@@ -164,7 +164,6 @@ class PuppeteerLogin extends Command
                     'APP_URL' => config('app.url')
                 ],
             ];
-            dump(config('app.url'));
 
             File::put(storage_path('linkedin/' . $account->login . '.json'), json_encode($app));
 

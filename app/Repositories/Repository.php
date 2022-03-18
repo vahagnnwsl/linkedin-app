@@ -101,4 +101,11 @@ abstract class Repository
         })->get()->toArray();
     }
 
+    /**
+     * @return mixed
+     */
+    public function getCount(){
+        return $this->model()::count();
+    }
+
 }

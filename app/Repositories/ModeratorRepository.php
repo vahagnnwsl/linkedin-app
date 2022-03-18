@@ -11,4 +11,21 @@ class ModeratorRepository extends Repository
     {
         return Moderator::class;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getCount(){
+        return $this->model()::count();
+    }
+
+    /**
+     * @param int $id
+     * @return mixed
+     */
+    public function getById(int $id)
+    {
+        return $this->model()::byRating()->whereId($id)->first();
+    }
+
 }

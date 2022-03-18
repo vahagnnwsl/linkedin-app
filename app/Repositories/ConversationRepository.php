@@ -140,7 +140,6 @@ class ConversationRepository extends Repository
      */
     public function getConnectionConversationsByConnectionAndAccount(int $connection_id, array $accounts_ids)
     {
-
         return $this->model()::where('connection_id', $connection_id)->whereIn('account_id', $accounts_ids)->get();
     }
 
@@ -151,8 +150,11 @@ class ConversationRepository extends Repository
      */
     public function getConnectionConversationByConnectionAndAccount(int $connection_id, int $accounts_id)
     {
-
         return $this->model()::where('connection_id', $connection_id)->where('account_id', $accounts_id)->first();
     }
 
+
+    public function getByOffsetLimit(int $offset, int $limit) {
+        return $this->model()::offset($offset)->take($limit)->get();
+    }
 }

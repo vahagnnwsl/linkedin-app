@@ -27,8 +27,6 @@ Route::group([ 'prefix' => 'moderators'], function () {
     Route::post('/login', [\App\Http\Controllers\Auth\LoginController::class,'moderatorLogin'])->name('moderatorLogin');
     Route::get('/welcome', [\App\Http\Controllers\Moderators\ConversationsController::class,'index'])->name('moderators.conversations.index')->middleware('auth:moderator');
     Route::get('/conversation/{id}', [\App\Http\Controllers\Moderators\ConversationsController::class,'conversation'])->name('moderators.conversation')->middleware('auth:moderator');
-
-
 });
 
 Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {

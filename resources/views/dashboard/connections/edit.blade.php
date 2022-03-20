@@ -140,13 +140,22 @@
                                         <div class="card-body">
                                             <div class="row">
                                                 @foreach($connection->statuses as $status)
-                                                    <div
-                                                        class="col-12  border-bottom  {{$status->is_last === 1 ? 'border-warning border' : ''}}">
-                                                        <h5 class="text-bold text-black-50">{{$status->category->name}}</h5>
+                                                    <div class="col-12  border p-1">
                                                         <p>
-                                                            <em>
-                                                                <mark>{{$status->comment}} </mark>
-                                                            </em>
+                                                          <strong>Comment</strong>:  <em><mark>{{$status->text}} </mark></em>
+                                                        </p>
+                                                        <p>
+                                                            <strong> Created at</strong>:  {{$status->created_at}}
+                                                        </p>
+                                                        <p>
+                                                            <strong> Creator</strong>:  {{$status->morphClass}}
+                                                            <strong> Id</strong>:  {{$status->morphedModel}}
+                                                        </p>
+                                                        <p>
+                                                            <strong> Categories</strong>:
+                                                            @foreach($status->categories as $category)
+                                                                <span class="badge badge-primary">   {{$category->name}} </span>
+                                                            @endforeach
                                                         </p>
                                                     </div>
                                                 @endforeach
@@ -213,13 +222,26 @@
 
                             <div class="form-group">
                                 <label>Category</label>
-                                <select class="form-control w-100" name="category_id" aria-required="true" required>
-                                    <option selected disabled value="">Select one</option>
-                                    @foreach($categories as $category)
-                                        <option value="{{$category->id}}">{{$category->name}} </option>
-                                    @endforeach
-                                </select>
-                                @error('category_id')
+                                @foreach($categories as $category)
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="checkbox" name="categories[]" class="form-check-input"
+                                                   value="{{$category->id}}">
+                                            {{$category->name}}
+                                        </label>
+                                        @foreach($category->children as $child)
+
+                                            <div class="form-check">
+                                                <label class="form-check-label">
+                                                    <input type="checkbox" name="categories[]" class="form-check-input"
+                                                           value="{{$child->id}}">
+                                                    {{$child->name}}
+                                                </label>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @endforeach
+                                @error('categories')
                                 <span class="invalid-feedback d-block" role="alert">
                                          <strong>{{ $message }}</strong>
                                      </span>
@@ -227,7 +249,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Comment</label>
-                                <textarea class="form-control" name="comment" rows="4"></textarea>
+                                <textarea class="form-control" name="text" rows="4" required></textarea>
                                 <div class="form-group">
                                     <button class="btn btn-success mt-2 float-right">Submit</button>
                                 </div>

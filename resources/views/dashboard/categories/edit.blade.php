@@ -63,6 +63,20 @@
                                         </div>
 
                                         <div class="form-group">
+                                            <label for="roles">Show oin moderators *</label>
+                                            <select class="form-control" name="isShowModerators">
+                                                <option selected disabled>Select</option>
+                                                <option value="1" @if ( $category->isShowModerators === 1) selected @endif>Show</option>
+                                                <option value="0" @if ( $category->isShowModerators === 0) selected @endif>Hide</option>
+                                            </select>
+                                            @error('isShowModerators')
+                                            <span class="invalid-feedback d-block" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                            @enderror
+                                        </div>
+
+                                        <div class="form-group">
                                             <button type="submit" class="btn btn-success float-right"><i
                                                     class="fa fa-check-circle"></i> Submit
                                             </button>

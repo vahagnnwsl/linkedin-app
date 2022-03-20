@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CategoryRequest extends FormRequest
+class ConnectionStatusRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,9 +25,8 @@ class CategoryRequest extends FormRequest
     {
 
         return [
-            'isShowModerators' => 'required',
-            'name' => 'required|string|max:255',
-            'parent_id' =>  'nullable|sometimes|exists:App\Models\Category,id',
+            'text' => 'required|string',
+            'categories' =>  'required|array|min:1',
         ];
 
     }

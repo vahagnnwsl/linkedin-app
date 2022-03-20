@@ -139,9 +139,9 @@ class PuppeteerLogin extends Command
         $data['cookie_socket_str'] = $cookie['str'];
         $account->update($data);
         $resp = Api::profile($account)->getOwnProfile();
-
-        if ($resp['status'] === 200) {
+        if ($resp['status'] === 200 && $resp['success']) {
             $resp = Connection::parseSingle((array)$resp['data']);
+
             $account->update($resp);
 
             if (!File::exists(storage_path('linkedin'))) {

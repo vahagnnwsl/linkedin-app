@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Exports\ConnectionExport;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ConnectionStatusRequest;
 use App\Http\Requests\StatusRequest;
 use App\Jobs\Connections\CalcExperience;
 use App\Jobs\Connections\GetConnectionCareerInterest;
@@ -15,6 +16,7 @@ use App\Jobs\Connections\GetConnectionsSkills;
 use App\Linkedin\Api;
 use App\Linkedin\Responses\Response;
 use App\Models\Search;
+use App\Models\User;
 use App\Repositories\AccountRepository;
 use App\Repositories\CategoryRepository;
 use App\Repositories\CompanyRepository;
@@ -170,8 +172,7 @@ class ConnectionController extends Controller
         $connection->load('positions.company');
         $connection->load('skills');
         $connection->load('statuses');
-        $connection->load('statuses.category');
-        $categories = $this->categoryRepository->getAll();
+        $categories = $this->categoryRepository->getParentsWithChild(true);
         $keys = $this->keyRepository->getAll();
 
         return view('dashboard.connections.edit', compact('connection', 'categories', 'keys'));
@@ -373,13 +374,20 @@ class ConnectionController extends Controller
     }
 
     /**
-     * @param StatusRequest $statusRequest
+     * @param StatusRequest $request
      * @param int $id
      * @return RedirectResponse
      */
-    public function addStatus(StatusRequest $statusRequest, int $id): RedirectResponse
+    public function addStatus(ConnectionStatusRequest $request, int $id): RedirectResponse
     {
-        $this->connectionRepository->addStatus($statusRequest->validated(), $id);
+        $data = [
+            "morphedModel" => Auth::user()->id,
+            "morphClass" => class_basename(User::class),
+            "text" =>$request->get('text'),
+            "categories" => $request->get('categories'),
+        ];
+
+        $this->connectionRepository->addStatus($id, $data);
         $this->putFlashMessage(true, 'Successfully added');
         return redirect()->back();
     }

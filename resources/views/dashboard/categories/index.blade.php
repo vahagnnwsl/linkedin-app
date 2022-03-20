@@ -36,11 +36,12 @@
                             <th style="width: 20%">
                                 Parent
                             </th>
-
+                            <th style="width: 20%">
+                                Show in moderators
+                            </th>
                             <th style="width: 20%">
 
                             </th>
-
                         </tr>
                         </thead>
                         <tbody>
@@ -54,6 +55,9 @@
                                 </td>
                                 <td class="text-info text-bold">
                                     {{$category->parent()->exists()?$category->parent->name:''}}
+                                </td>
+                                <td class="text-info text-bold">
+                                    {{$category->isShowModerators}}
                                 </td>
                                 <td class="text-right">
                                     <a class="btn btn-info btn-sm" href="{{route('categories.edit',$category->id)}}"

@@ -6,9 +6,11 @@ use App\Models\AaccountsConversationsLimit;
 use App\Models\Category;
 use App\Models\Connection;
 use App\Models\ConnectionRequest;
+use App\Models\ConnectionStatus;
 use App\Models\Conversation;
 use App\Models\Key;
 use App\Models\Message;
+use App\Models\Moderator;
 use App\Models\Position;
 use App\Models\Status;
 use App\Models\User;
@@ -120,10 +122,10 @@ class ConnectionRepository extends Repository
                 $subQuery->whereIn('connection_requests.account_id', $requestData['accountRequestIds']);
             });
         })->when(isset($requestData['categories']) && count($requestData['categories']) > 0, function ($query) use ($requestData) {
-            $query->whereHas('statuses', function ($subQuery) use ($requestData) {
-                $ids = $requestData['categories'];
-                $subQuery->whereIn('statuses.category_id', DB::table('categories')->select('id')->whereIn('id', $ids)->orWhereIn('parent_id', $ids)->pluck('id'));
-            });
+//            $query->whereHas('statuses', function ($subQuery) use ($requestData) {
+//                $ids = $requestData['categories'];
+//                $subQuery->whereIn('statuses.category_id', DB::table('categories')->select('id')->whereIn('id', $ids)->orWhereIn('parent_id', $ids)->pluck('id'));
+//            });
         })->when(isset($requestData['companies']) && count($requestData['companies']) > 0, function ($query) use ($requestData) {
             $query->whereHas('positions', function ($subQuery) use ($requestData) {
                 $subQuery->whereIn('positions.company_id', $requestData['companies']);
@@ -181,7 +183,7 @@ class ConnectionRepository extends Repository
             } else if ($requestData['contact'] === 'month') {
                 $query->whereHas('conversations', function ($subQuery) use ($requestData) {
                     $month = (int)$requestData['month_count'] ?? 1;
-                    dump( date('Y-m-d', strtotime('-' . $month . ' months')));
+                    dump(date('Y-m-d', strtotime('-' . $month . ' months')));
                     $subQuery->whereDate('connections.lastActivityAt', '<', date('Y-m-d', strtotime('-' . $month . ' months')));
                 });
             } else if ($requestData['contact'] === 'request') {
@@ -306,18 +308,6 @@ class ConnectionRepository extends Repository
         return $this->model()::whereDay('position_parsed_date', '!=', $currentDay)->orWhere('position_parsed_date', null)->get();
     }
 
-    /**
-     * @param array $data
-     * @param int $connection_id
-     * @return Status
-     */
-    public function addStatus(array $data, int $connection_id): Status
-    {
-        Status::where('connection_id', $connection_id)->update(['is_last' => 0]);
-        $data['connection_id'] = $connection_id;
-        $data['is_last'] = 1;
-        return Status::create($data);
-    }
 
     /**
      * @return Collection
@@ -439,5 +429,22 @@ class ConnectionRepository extends Repository
     public function addKeys(int $id, array $dataKeys)
     {
         $this->model()::whereId($id)->first()->keys()->sync($dataKeys);
+    }
+
+    /**
+     * @param $id
+     * @param array $data
+     */
+    public function addStatus($id, array $data)
+    {
+
+        $connectionStatus = ConnectionStatus::create([
+            'connection_id' => $id,
+            'morphedModel' => $data['morphedModel'],
+            'morphClass' => $data['morphClass'],
+            'text' => $data['text']
+        ]);
+
+        $connectionStatus->categories()->sync($data['categories']);
     }
 }

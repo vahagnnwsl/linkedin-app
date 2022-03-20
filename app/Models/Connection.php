@@ -143,7 +143,7 @@ class Connection extends Model
      */
     public function statuses(): HasMany
     {
-        return $this->hasMany(Status::class)->orderBy('statuses.created_at', 'DESC');
+        return $this->hasMany(ConnectionStatus::class)->orderBy('id', 'DESC');
     }
 
     /**

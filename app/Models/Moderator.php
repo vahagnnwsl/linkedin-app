@@ -4,11 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\DB;
 
 class Moderator  extends Authenticatable
 {
+    use SoftDeletes;
+
     protected $guard = 'moderator';
 
     protected  $fillable = [
@@ -16,11 +19,4 @@ class Moderator  extends Authenticatable
         'password',
         'password_non_hash'
     ];
-
-    public function scopeByRating($query)
-    {
-        $query->selectRaw("@row_number:=@row_number+1 AS position, moderators.*")
-            ->from(DB::raw("moderators, (SELECT @row_number:=0) AS t"))
-            ->orderBy('id', 'ASC');
-    }
 }

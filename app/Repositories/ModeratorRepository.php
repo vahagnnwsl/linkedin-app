@@ -25,7 +25,7 @@ class ModeratorRepository extends Repository
      */
     public function getById(int $id)
     {
-        return $this->model()::byRating()->whereId($id)->first();
+        return $this->model()::whereId($id)->first();
     }
 
 }

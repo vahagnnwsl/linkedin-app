@@ -3,8 +3,12 @@
 namespace App\Http\Controllers\Moderators;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ConnectionRequest;
+use App\Http\Requests\ConnectionStatusRequest;
 use App\Models\Conversation;
 use App\Models\Moderator;
+use App\Repositories\CategoryRepository;
+use App\Repositories\ConnectionRepository;
 use App\Repositories\ConversationRepository;
 use App\Repositories\MessageRepository;
 use App\Repositories\ModeratorRepository;
@@ -31,11 +35,32 @@ class ConversationsController extends Controller
      */
     private $moderatorRepository;
 
-    public function __construct(MessageRepository $messageRepository, ConversationRepository $conversationRepository, ModeratorRepository $moderatorRepository)
+    /**
+     * @var CategoryRepository
+     */
+    private $categoryRepository;
+    /**
+     * @var ConnectionRepository
+     */
+
+    /**
+     * @var ConnectionRepository
+     */
+    private $connectionRepository;
+
+    public function __construct(
+        MessageRepository      $messageRepository,
+        ConversationRepository $conversationRepository,
+        ModeratorRepository    $moderatorRepository,
+        CategoryRepository     $categoryRepository,
+        ConnectionRepository $connectionRepository
+    )
     {
         $this->messageRepository = $messageRepository;
         $this->conversationRepository = $conversationRepository;
         $this->moderatorRepository = $moderatorRepository;
+        $this->categoryRepository = $categoryRepository;
+        $this->connectionRepository = $connectionRepository;
     }
 
     public function index(Request $request)
@@ -43,24 +68,25 @@ class ConversationsController extends Controller
         $conversationCount = $this->conversationRepository->getCount();
         $moderatorCount = $this->moderatorRepository->getCount();
 
-        $mod = $this->moderatorRepository->getById(Auth::guard('moderator')->user()->id);
+        $moderator = $this->moderatorRepository->getById(Auth::guard('moderator')->user()->id);
+        $moderators = $this->moderatorRepository->getAll();
 
+        $position = collect($moderators)->filter(function ($m) use ($moderator) {
+            return $m->id === $moderator->id;
+        })->toArray();
+        $moderatorConversationCount = (int)round($conversationCount / $moderatorCount);
+
+        $position = array_keys($position)[0];
         $perPage = 20;
-        $total =  (int)round($conversationCount / $moderatorCount,-1);
 
+        $conversations = Conversation::offset($moderatorConversationCount * $position)->take($moderatorConversationCount)->get();
+        $conversationsChunks = $conversations->chunk($perPage);
+        $pagesCount = count($conversationsChunks);
+        $page = $request->has('page') ? $request->get('page') : 0;
+        if ($page >= $pagesCount) $page = 0;
+        $conversations = $conversationsChunks[$page];
 
-        dd($mod);
-        $enableMinOffset = ceil($conversationCount / $moderatorCount * ($mod->position-1));
-
-        $offset = $request->has('offset') ? $request->get('offset') : $enableMinOffset;
-        $enableMaxOffset = ceil($conversationCount / $moderatorCount - 15);
-        dump($enableMaxOffset, $offset,$mod->position);
-
-        if ($offset > $enableMaxOffset) $offset = $enableMinOffset;
-
-
-        $conversations = DB::table('conversations')->offset($offset)->take(15)->get();
-        return view('moderators.welcome',compact('conversations', 'total', 'perPage'));
+        return view('moderators.welcome', compact('conversations', 'pagesCount'));
     }
 
     public function conversation($id)
@@ -69,7 +95,31 @@ class ConversationsController extends Controller
         $conversation = $this->conversationRepository->getByEntityUrn($id);
         if (!$conversation) return redirect(route('moderators.conversations.index'));
         $messages = $this->messageRepository->getMessagesAllByConversationId($conversation->id);
-        return view('moderators.conversations', compact('messages'));
+        $categories = $this->categoryRepository->getParentsWithChild();
+        $connection = $this->connectionRepository->getById($conversation->connection_id);
 
+        return view('moderators.conversations', compact('messages','categories','conversation','connection'));
+
+    }
+
+    /**
+     * @param int $id
+     * @param ConnectionStatusRequest $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function conversationStatus(int $id, ConnectionStatusRequest $request): \Illuminate\Http\RedirectResponse
+    {
+        $conversation = $this->conversationRepository->getById($id);
+
+        $data = [
+            "morphedModel" => Auth::guard('moderator')->user()->id,
+            "morphClass" => class_basename(Moderator::class),
+            "text" =>$request->get('text'),
+            "categories" => $request->get('categories'),
+        ];
+
+        $this->connectionRepository->addStatus( $conversation->connection_id, $data);
+        $this->putFlashMessage(true, 'successfully added');
+        return redirect()->back();
     }
 }

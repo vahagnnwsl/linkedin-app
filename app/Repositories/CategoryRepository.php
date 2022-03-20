@@ -57,4 +57,17 @@ class CategoryRepository extends Repository
         }
         $category->delete();
     }
+
+    /**
+     * @return mixed
+     */
+    public function getParentsWithChild($all = false)
+    {
+        return $this->model()::with([
+            'children' => function ($q) use ($all) {
+                return $q->whereIn('isShowModerators', $all ? [0, 1] : [1]);
+            }
+        ])->whereIn('isShowModerators', $all ? [0, 1] : [1])
+            ->whereNull('parent_id')->get();
+    }
 }

@@ -123,7 +123,6 @@ class PuppeteerLogin extends Command
 
         $page->screenshot(['path' => storage_path('login/login_'.$account->id.'.png')]);
         $cookies = $page->cookies();
-//      $cookies = $page->evaluate(JsFunction::createWithBody("return document.cookie;"));
 
         foreach ($cookies as $item) {
             $filtered[$item['name']] = str_replace('"', '', $item['value']);

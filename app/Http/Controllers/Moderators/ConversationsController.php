@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Moderators;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ConnectionRequest;
 use App\Http\Requests\ConnectionStatusRequest;
 use App\Models\Conversation;
 use App\Models\Moderator;
@@ -12,9 +11,13 @@ use App\Repositories\ConnectionRepository;
 use App\Repositories\ConversationRepository;
 use App\Repositories\MessageRepository;
 use App\Repositories\ModeratorRepository;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 
 class ConversationsController extends Controller
@@ -48,6 +51,13 @@ class ConversationsController extends Controller
      */
     private $connectionRepository;
 
+    /**
+     * @param MessageRepository $messageRepository
+     * @param ConversationRepository $conversationRepository
+     * @param ModeratorRepository $moderatorRepository
+     * @param CategoryRepository $categoryRepository
+     * @param ConnectionRepository $connectionRepository
+     */
     public function __construct(
         MessageRepository      $messageRepository,
         ConversationRepository $conversationRepository,
@@ -63,6 +73,10 @@ class ConversationsController extends Controller
         $this->connectionRepository = $connectionRepository;
     }
 
+    /**
+     * @param Request $request
+     * @return Application|Factory|View
+     */
     public function index(Request $request)
     {
         $conversationCount = $this->conversationRepository->getCount();
@@ -79,17 +93,48 @@ class ConversationsController extends Controller
         $position = array_keys($position)[0];
         $perPage = 20;
 
-        $conversations = Conversation::offset($moderatorConversationCount * $position)->take($moderatorConversationCount)->get();
-        $conversationsChunks = $conversations->chunk($perPage);
-        $pagesCount = count($conversationsChunks);
+        $conversations = Conversation::with('connection','connection.statuses')
+            ->offset($moderatorConversationCount * $position)
+            ->take($moderatorConversationCount)
+            ->get();
+
+        $conversations = $conversations->take(100);
+
+        $status = $request->get('status') ?? 2;
+
+
+        if ((int)$status === 1 || (int)$status === 0) {
+
+            $conversations = $conversations->filter(function ($conversation) use($status) {
+
+                if ((int)$status === 0){
+                    return !count($conversation->connection->statuses);
+                }
+                if ((int)$status === 1){
+                    return (bool)count($conversation->connection->statuses);
+                }
+            });
+        }
         $page = $request->has('page') ? $request->get('page') : 0;
+
+       if ($conversations->count()){
+           $conversationsChunks = $conversations->chunk($perPage);
+           $pagesCount = count($conversationsChunks);
+           $conversations = $conversationsChunks[$page];
+
+       }else{
+           $pagesCount = 0;
+       }
         if ($page >= $pagesCount) $page = 0;
-        $conversations = $conversationsChunks[$page];
 
         return view('moderators.welcome', compact('conversations', 'pagesCount'));
     }
 
-    public function conversation($id)
+    /**
+     * @param string $id
+     * @return Application|Factory|View|RedirectResponse|Redirector
+     */
+    public function conversation(string $id)
     {
 
         $conversation = $this->conversationRepository->getByEntityUrn($id);
@@ -105,9 +150,9 @@ class ConversationsController extends Controller
     /**
      * @param int $id
      * @param ConnectionStatusRequest $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
-    public function conversationStatus(int $id, ConnectionStatusRequest $request): \Illuminate\Http\RedirectResponse
+    public function conversationStatus(int $id, ConnectionStatusRequest $request): RedirectResponse
     {
         $conversation = $this->conversationRepository->getById($id);
 

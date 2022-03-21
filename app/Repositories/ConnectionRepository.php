@@ -110,7 +110,8 @@ class ConnectionRepository extends Repository
                 })->when(isset($requestData['statuses']) && $requestData['statuses'] != 'clear', function ($q) use ($requestData) {
                     $q->whereHas('statuses', function ($subQ) use ($requestData) {
                         $type = $requestData['statuses'] === 'all' ? [0, 1] : [1];
-                        $subQ->where('statuses.comment', 'LIKE', '%' . $requestData['key'] . '%')->whereIn('is_last', $type);
+//                        $subQ->where('connection_statuses.text', 'LIKE', '%' . $requestData['key'] . '%')->whereIn('is_last', $type);
+                        $subQ->where('connection_statuses.text', 'LIKE', '%' . $requestData['key'] . '%');
                     });
                 });
         })->when(isset($requestData['keys_ids']) && count($requestData['keys_ids']) > 0, function ($query) use ($requestData) {

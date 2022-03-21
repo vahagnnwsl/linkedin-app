@@ -13,11 +13,16 @@ class CreateConnectionStatusesTable extends Migration
      */
     public function up()
     {
-        Schema::table('connection_statuses', function (Blueprint $table) {
+        Schema::create('connection_statuses', function (Blueprint $table) {
+            $table->id();
+            $table->longText('text')->nullable();
             $table->unsignedBigInteger('connection_id');
             $table->foreign('connection_id')->references('id')->on('connections')->onDelete('cascade');
             $table->string('morphClass');
             $table->unsignedBigInteger('morphedModel');
+            $table->timestamps();
+            $table->softDeletes();
+
         });
     }
 }

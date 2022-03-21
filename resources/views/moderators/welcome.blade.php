@@ -37,13 +37,17 @@
                 @endforeach
                 </tbody>
             </table>
-            <ul class="pagination pagination-md m-0 mb-2" style="justify-content: center;">
-                @for($x = 0; $x<$pagesCount; $x+=1)
-                    <li class="page-item  @if((int)request()->page === $x) active @endif "><a class="page-link"
-                                                                                              href="/moderators/welcome?page={{$x}}">{{$x+1}}</a>
-                    </li>
-                @endfor
-            </ul>
+        </div>
+        <div class="row">
+           <div class="col-12">
+               <ul class="pagination pagination-md m-0 mb-2  flex-wrap" style="justify-content: center;">
+                   @for($x = 0; $x<$pagesCount; $x+=1)
+                       <li class="page-item  @if((int)request()->page === $x) active @endif "><a class="page-link"
+                                                                                                 href="/moderators/welcome?page={{$x}}">{{$x+1}}</a>
+                       </li>
+                   @endfor
+               </ul>
+           </div>
         </div>
     </div>
 @endsection

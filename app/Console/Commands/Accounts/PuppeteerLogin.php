@@ -115,14 +115,15 @@ class PuppeteerLogin extends Command
             $page->screenshot(['path' => storage_path('login/afterTypePin_'.$account->id.'.png')]);
 
             $page->querySelector('button[id=email-pin-submit-button')->click();
-            $data = $page->evaluate(JsFunction::createWithBody('return document.documentElement.outerHTML'));
-            $page->waitForNavigation();
+//            $page->evaluate(JsFunction::createWithBody('return document.documentElement.outerHTML'));
+            $page->waitForNavigation([  'timeout' => 900000]);
 
             $page->screenshot(['path' => storage_path('login/redirectAfterChallenge_'.$account->id.'.png')]);
         }
 
         $page->screenshot(['path' => storage_path('login/login_'.$account->id.'.png')]);
         $cookies = $page->cookies();
+        $browser->close();
 
         foreach ($cookies as $item) {
             $filtered[$item['name']] = str_replace('"', '', $item['value']);
@@ -137,6 +138,7 @@ class PuppeteerLogin extends Command
         $data['cookie_web_str'] = $cookie['str'];
         $data['cookie_socket_str'] = $cookie['str'];
         $account->update($data);
+
         $resp = Api::profile($account)->getOwnProfile();
         if ($resp['status'] === 200 && $resp['success']) {
             $resp = Connection::parseSingle((array)$resp['data']);
@@ -170,10 +172,9 @@ class PuppeteerLogin extends Command
 
             File::put(storage_path('linkedin/' . $account->login . '.json'), json_encode($app));
 
-            shell_exec('pm2 start ' . storage_path('linkedin/' . $account->login . '.json'));
+//            shell_exec('pm2 start ' . storage_path('linkedin/' . $account->login . '.json'));
         }
 
-        $browser->close();
 
         return 1;
     }

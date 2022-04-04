@@ -69,11 +69,11 @@ class Conversation extends Model
         parent::boot();
 
         static::created(function ($model) {
-            $model->conversation->connection(['lastActivityAt' => $model->lastActivityAt]);
+            $model->connection(['lastActivityAt' => $model->lastActivityAt]);
         });
 
         static::updated(function ($model) {
-            $model->conversation->connection(['lastActivityAt' => $model->lastActivityAt]);
+            $model->connection(['lastActivityAt' => $model->lastActivityAt]);
         });
     }
 

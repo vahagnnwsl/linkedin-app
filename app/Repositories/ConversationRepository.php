@@ -64,7 +64,6 @@ class ConversationRepository extends Repository
     {
 
         $take = $key ? 400 : 10;
-        $start = 0;
         return $this->model()::where('account_id', $account_id)->whereNotNull('connection_id')
             ->when($key, function ($query) use ($key, $distance) {
 

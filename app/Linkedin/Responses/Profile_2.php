@@ -3,6 +3,7 @@
 namespace App\Linkedin\Responses;
 
 use App\Linkedin\Helper;
+use Illuminate\Support\Facades\File;
 
 
 class Profile_2
@@ -63,11 +64,12 @@ class Profile_2
                 try {
                     if (isset($item->image) && isset($item->image->attributes) && count($item->image->attributes)) {
                         $root = $item->image->attributes[0]->detailDataUnion->nonEntityProfilePicture->vectorImage->rootUrl;
-                        $str = Helper::searchInString($root, 'profile-', 'shrink_');
+                        $image =  $root . $item->image->attributes[0]->detailDataUnion->nonEntityProfilePicture->vectorImage->artifacts[0]->fileIdentifyingUrlPathSegment;
+                        $str = Helper::searchInString($image, 'profile-', 'shrink_');
                         if (isset($str) && $str === 'framedphoto-'){
                             $a['career_interest'] = 1;
                         }
-                        $a['image'] = $root . $item->image->attributes[0]->detailDataUnion->nonEntityProfilePicture->vectorImage->artifacts[0]->fileIdentifyingUrlPathSegment;
+                        $a['image'] = $image;
                     }
                 } catch (\Exception $exception) {}
 

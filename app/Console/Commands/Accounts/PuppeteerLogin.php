@@ -105,6 +105,7 @@ class PuppeteerLogin extends Command
         $page->waitForNavigation();
         $page->screenshot(['path' => storage_path('login/afterSubmit_'.$account->id.'.png')]);
 
+        dump($page->url());
         if (strpos($page->url(), $this->challenge_str) > 0) {
 
             $code = $this->ask('Enter code');
@@ -114,8 +115,14 @@ class PuppeteerLogin extends Command
             $codeInput->type($code);
             $page->screenshot(['path' => storage_path('login/afterTypePin_'.$account->id.'.png')]);
 
-            $page->querySelector('button[id=email-pin-submit-button')->click();
+//            try {
+//                $page->querySelector('button[id=email-pin-submit-button')->click();
+//            }catch (\Exception $exception){
+//                $page->querySelector('button[id=two-step-submit-button')->click();
+//            }
 //            $page->evaluate(JsFunction::createWithBody('return document.documentElement.outerHTML'));
+            $page->querySelector('button[type=submit')->click();
+
             $page->waitForNavigation([  'timeout' => 900000]);
 
             $page->screenshot(['path' => storage_path('login/redirectAfterChallenge_'.$account->id.'.png')]);
